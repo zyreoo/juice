@@ -3,10 +3,11 @@ import { Canvas } from "@react-three/fiber";
 import { OrbitControls, useGLTF, useTexture } from "@react-three/drei";
 import { Geist, Geist_Mono } from "next/font/google";
 import styles from "@/styles/Home.module.css";
-import { Suspense } from "react";
+import { Suspense, useState, useRef, useEffect } from "react";
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
-import { useLoader } from '@react-three/fiber';
+import { useLoader, useFrame } from '@react-three/fiber';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
+import gsap from 'gsap';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -109,6 +110,8 @@ function MacModel() {
 function Disk() {
   const obj = useLoader(OBJLoader, '/models/disk.obj');
   const diskTexture = useTexture('/textures/D.tga.png');
+  const meshRef = useRef();
+  const [isClicked, setIsClicked] = useState(false);
 
   obj.traverse((child) => {
     if (child.isMesh) {
@@ -119,17 +122,54 @@ function Disk() {
     }
   });
 
+  useEffect(() => {
+    if (meshRef.current) {
+      meshRef.current.rotation.y = Math.PI / 4;
+    }
+  }, []);
+
+  const handleClick = () => {
+    if (!isClicked && meshRef.current) {
+      setIsClicked(true);
+      const targetRotation = -Math.PI / 2;
+      
+      // First rotate
+      gsap.to(meshRef.current.rotation, {
+        y: targetRotation,
+        duration: 1.5,
+        ease: "none",
+        onComplete: () => {
+          // Then move up
+          gsap.to(meshRef.current.position, {
+            y: meshRef.current.position.y + 2.75,
+            duration: 1.0,
+            ease: "none",
+            onComplete: () => {
+              // Finally move forward with ease-out
+              gsap.to(meshRef.current.position, {
+                z: meshRef.current.position.z - 3.2,
+                duration: 2.0,
+                ease: "power1.out",
+                onComplete: () => setIsClicked(false)
+              });
+            }
+          });
+        }
+      });
+    }
+  };
+
   return (
     <primitive 
+      ref={meshRef}
       object={obj} 
       scale={0.5}
       position={[1, -6.3, 6]}
-      rotation={[0, Math.PI / 4, 0]}
-      onClick={() => console.log("Floppy Disk Pressed")}
-      onPointerOver={(e) => {
+      onClick={handleClick}
+      onPointerOver={() => {
         document.body.style.cursor = 'pointer';
       }}
-      onPointerOut={(e) => {
+      onPointerOut={() => {
         document.body.style.cursor = 'default';
       }}
     />
