@@ -123,8 +123,15 @@ function Disk() {
     <primitive 
       object={obj} 
       scale={0.5}
-      position={[1, -6.3, 6]} // Positioned on the desk next to the Mac
-      rotation={[0, Math.PI / 4, 0]} // Rotated 45 degrees for better visibility
+      position={[1, -6.3, 6]}
+      rotation={[0, Math.PI / 4, 0]}
+      onClick={() => console.log("Floppy Disk Pressed")}
+      onPointerOver={(e) => {
+        document.body.style.cursor = 'pointer';
+      }}
+      onPointerOut={(e) => {
+        document.body.style.cursor = 'default';
+      }}
     />
   );
 }
