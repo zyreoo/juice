@@ -1,10 +1,11 @@
 import Head from "next/head";
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
+import { OrbitControls, useGLTF, useTexture } from "@react-three/drei";
 import { Geist, Geist_Mono } from "next/font/google";
 import styles from "@/styles/Home.module.css";
-import { useRef } from "react";
-import { useFrame } from "@react-three/fiber";
+import { Suspense } from "react";
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
+import { useLoader } from '@react-three/fiber';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,19 +17,59 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-function Cube() {
-  const meshRef = useRef();
+function Lights() {
+  return (
+    <>
+      {/* Brighter ambient light */}
+      <ambientLight intensity={0.6} />
+      
+      {/* Brighter key light */}
+      <directionalLight
+        position={[5, 8, 3]}
+        intensity={1.5}
+        castShadow
+        shadow-mapSize-width={2048}
+        shadow-mapSize-height={2048}
+      />
+      
+      {/* Stronger fill light */}
+      <pointLight position={[-5, 2, -5]} intensity={0.8} color="#ffffff" />
+      
+      {/* Additional front light for better visibility */}
+      <pointLight position={[0, 2, 8]} intensity={0.8} color="#ffffff" />
+      
+      {/* Softer rim light */}
+      <spotLight
+        position={[0, 10, -10]}
+        intensity={0.4}
+        angle={0.6}
+        penumbra={1}
+        color="#ffffff"
+      />
+    </>
+  );
+}
 
-  useFrame((state, delta) => {
-    meshRef.current.rotation.x += delta * 0.5;
-    meshRef.current.rotation.y += delta * 0.5;
+function MacModel() {
+  const fbx = useLoader(FBXLoader, '/models/mac_classic.fbx');
+  const colorTexture = useTexture('/textures/Mac.TriSurface_Color.png');
+
+  fbx.traverse((child) => {
+    if (child.isMesh) {
+      child.material.map = colorTexture;
+      child.material.needsUpdate = true;
+      // Enable shadows
+      child.castShadow = true;
+      child.receiveShadow = true;
+    }
   });
 
   return (
-    <mesh ref={meshRef}>
-      <boxGeometry args={[2, 2, 2]} />
-      <meshStandardMaterial color="orange" />
-    </mesh>
+    <primitive 
+      object={fbx} 
+      scale={0.01}
+      position={[0, 0, 0]}
+    />
   );
 }
 
@@ -43,11 +84,21 @@ export default function Home() {
       </Head>
       <main className={styles.main}>
         <div style={{ width: "100vw", height: "100vh" }}>
-          <Canvas camera={{ position: [0, 0, 5] }}>
-            <ambientLight intensity={0.5} />
-            <pointLight position={[10, 10, 10]} />
-            <Cube />
-            <OrbitControls />
+          <Canvas 
+            camera={{ position: [0, 0, 5] }}
+            shadows
+          >
+            <color attach="background" args={['#ffffff']} />
+            <Lights />
+            <Suspense fallback={null}>
+              <MacModel />
+            </Suspense>
+            <OrbitControls 
+              minPolarAngle={Math.PI/4}
+              maxPolarAngle={Math.PI/1.5}
+              enableZoom={true}
+              enablePan={true}
+            />
           </Canvas>
         </div>
       </main>
