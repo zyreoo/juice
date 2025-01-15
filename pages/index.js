@@ -185,47 +185,42 @@ function Disk({ onInserted }) {
         outlineRef.current.material.opacity = 0.8;
       }
       
-      const targetRotation = -Math.PI / 2;
-      
-      gsap.to(meshRef.current.rotation, {
-        y: targetRotation,
-        duration: 0.75,
-        ease: "none",
-        onComplete: () => {
-          gsap.to(meshRef.current.position, {
-            y: meshRef.current.position.y + 2.75,
-            duration: 0.5,
-            ease: "none",
-            onComplete: () => {
-              gsap.to(meshRef.current.position, {
-                z: meshRef.current.position.z - 3.2,
-                duration: 2.0,
-                ease: "power1.out",
-                onUpdate: function() {
-                  if (this.progress() > 0.75) {
-                    bootSound.current?.play();
-                    this.onUpdate = null;
-                  }
-                },
-                onComplete: () => {
-                  setIsClicked(false);
-                  onInserted();
-                  
-                  if (meshRef.current) {
-                    gsap.to(meshRef.current.material, {
-                      opacity: 0,
-                      duration: 0.3
-                    });
-                  }
-                  if (outlineRef.current) {
-                    outlineRef.current.material.opacity = 0;
-                  }
-                }
+      gsap.timeline()
+        .to(meshRef.current.rotation, {
+          y: -Math.PI / 2,
+          duration: 0.75,
+          ease: "power1.out"
+        }, 0)
+        .to(meshRef.current.position, {
+          y: meshRef.current.position.y + 2.75,
+          duration: 0.75,
+          ease: "power1.out"
+        }, 0)
+        .to(meshRef.current.position, {
+          z: meshRef.current.position.z - 3.2,
+          duration: 2.5,
+          ease: "power2.out",
+          onUpdate: function() {
+            if (this.progress() > 0.75 && bootSound.current) {
+              bootSound.current.play();
+              this.onUpdate = null;
+            }
+          },
+          onComplete: () => {
+            setIsClicked(false);
+            onInserted();
+            
+            if (meshRef.current) {
+              gsap.to(meshRef.current.material, {
+                opacity: 0,
+                duration: 0.3
               });
             }
-          });
-        }
-      });
+            if (outlineRef.current) {
+              outlineRef.current.material.opacity = 0;
+            }
+          }
+        }, 0);
     }
   };
 
@@ -247,19 +242,59 @@ function Disk({ onInserted }) {
 }
 
 export default function Home() {
-  const [isInserted, setIsInserted] = useState(false);
+  const [stage, setStage] = useState('mac'); // 'mac', 'loading', or 'computer'
+  const progressRef = useRef(0);
 
-  return (
-    <>
-      <Head>
-        <title>Juice</title>
-        <meta name="description" content="juice" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <main className={styles.main}>
-        <div style={{ width: "100vw", height: "100vh" }}>
-          {!isInserted ? (
+  useEffect(() => {
+    if (stage === 'loading') {
+      const startTime = Date.now();
+      const duration = 12500;
+      let animationFrame;
+
+      // Easing function for smooth acceleration and deceleration
+      const easeInOutCubic = (x) => {
+        return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+      };
+
+      const updateProgress = () => {
+        const elapsed = Date.now() - startTime;
+        const rawProgress = Math.min(elapsed / duration, 1);
+        // Apply easing to the raw progress
+        const easedProgress = easeInOutCubic(rawProgress) * 100;
+        
+        const progressBar = document.getElementById('progress-bar');
+        if (progressBar) {
+          progressBar.style.width = `${easedProgress}%`;
+        }
+
+        if (rawProgress < 1) {
+          animationFrame = requestAnimationFrame(updateProgress);
+        } else {
+          setStage('computer');
+        }
+      };
+
+      animationFrame = requestAnimationFrame(updateProgress);
+      
+      return () => {
+        if (animationFrame) {
+          cancelAnimationFrame(animationFrame);
+        }
+      };
+    }
+  }, [stage]);
+
+  if (stage === 'mac') {
+    return (
+      <>
+        <Head>
+          <title>Juice</title>
+          <meta name="description" content="juice" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <link rel="icon" href="/favicon.ico" />
+        </Head>
+        <main className={styles.main}>
+          <div style={{ width: "100vw", height: "100vh" }}>
             <Canvas 
               camera={{ 
                 position: [0, -1.0, 17.5],
@@ -273,14 +308,50 @@ export default function Home() {
                 <Wall />
                 <Desk />
                 <MacModel />
-                <Disk onInserted={() => setIsInserted(true)} />
+                <Disk onInserted={() => setStage('loading')} />
               </Suspense>
             </Canvas>
-          ) : (
-            <p>Hello World</p>
-          )}
+          </div>
+        </main>
+      </>
+    );
+  }
+
+  if (stage === 'loading') {
+    return (
+      <div style={{
+        width: '100vw',
+        height: '100vh',
+        backgroundColor: 'black',
+        color: 'white',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: '20px'
+      }}>
+        <div style={{ fontSize: '32px' }}>Juice</div>
+        <div style={{
+          width: '300px',
+          height: '4px',
+          backgroundColor: '#333',
+          borderRadius: '2px'
+        }}>
+          <div 
+            id="progress-bar"
+            style={{
+              width: '0%',
+              height: '100%',
+              backgroundColor: 'white',
+              transition: 'width 0.1s linear',
+              borderRadius: '2px'
+            }}
+          />
         </div>
-      </main>
-    </>
-  );
+      </div>
+    );
+  }
+
+  // Computer view (final stage)
+  return <p>Hello World</p>;
 }
