@@ -114,6 +114,12 @@ function Disk({ onInserted }) {
   const meshRef = useRef();
   const outlineRef = useRef();
   const [isClicked, setIsClicked] = useState(false);
+  const bootSound = useRef(null);
+
+  // Initialize sound
+  useEffect(() => {
+    bootSound.current = new Audio('/sounds/bootSound.mp3');
+  }, []);
 
   // Create outline geometry from the original geometry
   useEffect(() => {
@@ -195,6 +201,12 @@ function Disk({ onInserted }) {
                 z: meshRef.current.position.z - 3.2,
                 duration: 2.0,
                 ease: "power1.out",
+                onUpdate: function() {
+                  if (this.progress() > 0.75) {
+                    bootSound.current?.play();
+                    this.onUpdate = null;
+                  }
+                },
                 onComplete: () => {
                   setIsClicked(false);
                   onInserted();
