@@ -50,6 +50,39 @@ function Lights() {
   );
 }
 
+function Wall() {
+  return (
+    <mesh 
+      position={[0, 0, -5]} 
+      receiveShadow
+    >
+      <planeGeometry args={[100, 50]} />
+      <meshStandardMaterial 
+        color="#f0f0f0"
+        roughness={0.8}
+        metalness={0.1}
+      />
+    </mesh>
+  );
+}
+
+function Desk() {
+  return (
+    <mesh 
+      position={[0, -6.75, -2]} 
+      receiveShadow
+      castShadow
+    >
+      <boxGeometry args={[40, 0.75, 20]} /> {/* width, height, depth */}
+      <meshStandardMaterial 
+        color="#8B4513"  // A wood-like brown color
+        roughness={0.7}
+        metalness={0.1}
+      />
+    </mesh>
+  );
+}
+
 function MacModel() {
   const fbx = useLoader(FBXLoader, '/models/mac_classic.fbx');
   const colorTexture = useTexture('/textures/Mac.TriSurface_Color.png');
@@ -58,7 +91,6 @@ function MacModel() {
     if (child.isMesh) {
       child.material.map = colorTexture;
       child.material.needsUpdate = true;
-      // Enable shadows
       child.castShadow = true;
       child.receiveShadow = true;
     }
@@ -68,7 +100,7 @@ function MacModel() {
     <primitive 
       object={fbx} 
       scale={0.01}
-      position={[0, 0, 0]}
+      position={[0, -1.4, 0]} // Adjusted to sit on the desk
     />
   );
 }
@@ -91,6 +123,8 @@ export default function Home() {
             <color attach="background" args={['#ffffff']} />
             <Lights />
             <Suspense fallback={null}>
+              <Wall />
+              <Desk />
               <MacModel />
             </Suspense>
             <OrbitControls 
