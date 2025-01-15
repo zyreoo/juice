@@ -6,6 +6,7 @@ import styles from "@/styles/Home.module.css";
 import { Suspense } from "react";
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 import { useLoader } from '@react-three/fiber';
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -105,6 +106,29 @@ function MacModel() {
   );
 }
 
+function Disk() {
+  const obj = useLoader(OBJLoader, '/models/disk.obj');
+  const diskTexture = useTexture('/textures/D.tga.png');
+
+  obj.traverse((child) => {
+    if (child.isMesh) {
+      child.material.map = diskTexture;
+      child.material.needsUpdate = true;
+      child.castShadow = true;
+      child.receiveShadow = true;
+    }
+  });
+
+  return (
+    <primitive 
+      object={obj} 
+      scale={0.5}
+      position={[1, -6.3, 6]} // Positioned on the desk next to the Mac
+      rotation={[0, Math.PI / 4, 0]} // Rotated 45 degrees for better visibility
+    />
+  );
+}
+
 export default function Home() {
   return (
     <>
@@ -126,6 +150,7 @@ export default function Home() {
               <Wall />
               <Desk />
               <MacModel />
+              <Disk />
             </Suspense>
             <OrbitControls 
               minPolarAngle={Math.PI/4}
