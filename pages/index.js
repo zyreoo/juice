@@ -8,6 +8,7 @@ import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 import { useLoader, useFrame } from '@react-three/fiber';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import gsap from 'gsap';
+import * as THREE from 'three';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -107,50 +108,107 @@ function MacModel() {
   );
 }
 
-function Disk() {
+function Disk({ onInserted }) {
   const obj = useLoader(OBJLoader, '/models/disk.obj');
   const diskTexture = useTexture('/textures/D.tga.png');
   const meshRef = useRef();
+  const outlineRef = useRef();
   const [isClicked, setIsClicked] = useState(false);
 
-  obj.traverse((child) => {
-    if (child.isMesh) {
-      child.material.map = diskTexture;
-      child.material.needsUpdate = true;
-      child.castShadow = true;
-      child.receiveShadow = true;
+  // Create outline geometry from the original geometry
+  useEffect(() => {
+    if (obj && meshRef.current) {
+      // Set initial rotation
+      meshRef.current.rotation.y = Math.PI / 4;
+      
+      obj.traverse((child) => {
+        if (child.isMesh) {
+          // Create outline mesh with yellow color
+          const outlineMaterial = new THREE.MeshBasicMaterial({
+            color: 0xffffa0,  // Subtle yellow color
+            transparent: true,
+            opacity: 0,
+            side: THREE.BackSide
+          });
+
+          const outlineMesh = child.clone();
+          outlineMesh.material = outlineMaterial;
+          // Scale slightly larger to create outline effect
+          outlineMesh.scale.multiplyScalar(1.05);
+          
+          outlineRef.current = outlineMesh;
+          meshRef.current.add(outlineMesh);
+        }
+
+        // Original material setup
+        if (child.isMesh) {
+          child.material.map = diskTexture;
+          child.material.needsUpdate = true;
+          child.castShadow = true;
+          child.receiveShadow = true;
+        }
+      });
     }
-  });
+  }, [obj]);
+
+  // Update outline based on cursor position
+  const handlePointerMove = (event) => {
+    if (outlineRef.current && !isClicked) {  // Only update when not animating
+      const x = (event.clientX / window.innerWidth) * 2 - 1;
+      const y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+      const distance = Math.sqrt(
+        Math.pow(x - (meshRef.current.position.x / 10), 2) + 
+        Math.pow(y - (meshRef.current.position.y / 10), 2)
+      );
+
+      const intensity = Math.max(0, 1 - distance);
+      outlineRef.current.material.opacity = intensity * 0.8;
+    }
+  };
 
   useEffect(() => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y = Math.PI / 4;
-    }
-  }, []);
+    window.addEventListener('mousemove', handlePointerMove);
+    return () => window.removeEventListener('mousemove', handlePointerMove);
+  }, [isClicked]);
 
   const handleClick = () => {
     if (!isClicked && meshRef.current) {
       setIsClicked(true);
+      if (outlineRef.current) {
+        outlineRef.current.material.opacity = 0.8;
+      }
+      
       const targetRotation = -Math.PI / 2;
       
-      // First rotate
       gsap.to(meshRef.current.rotation, {
         y: targetRotation,
-        duration: 1.5,
+        duration: 0.75,
         ease: "none",
         onComplete: () => {
-          // Then move up
           gsap.to(meshRef.current.position, {
             y: meshRef.current.position.y + 2.75,
-            duration: 1.0,
+            duration: 0.5,
             ease: "none",
             onComplete: () => {
-              // Finally move forward with ease-out
               gsap.to(meshRef.current.position, {
                 z: meshRef.current.position.z - 3.2,
                 duration: 2.0,
                 ease: "power1.out",
-                onComplete: () => setIsClicked(false)
+                onComplete: () => {
+                  setIsClicked(false);
+                  onInserted();
+                  
+                  if (meshRef.current) {
+                    gsap.to(meshRef.current.material, {
+                      opacity: 0,
+                      duration: 0.3
+                    });
+                  }
+                  if (outlineRef.current) {
+                    outlineRef.current.material.opacity = 0;
+                  }
+                }
               });
             }
           });
@@ -177,6 +235,8 @@ function Disk() {
 }
 
 export default function Home() {
+  const [isInserted, setIsInserted] = useState(false);
+
   return (
     <>
       <Head>
@@ -187,25 +247,26 @@ export default function Home() {
       </Head>
       <main className={styles.main}>
         <div style={{ width: "100vw", height: "100vh" }}>
-          <Canvas 
-            camera={{ position: [0, 0, 5] }}
-            shadows
-          >
-            <color attach="background" args={['#ffffff']} />
-            <Lights />
-            <Suspense fallback={null}>
-              <Wall />
-              <Desk />
-              <MacModel />
-              <Disk />
-            </Suspense>
-            <OrbitControls 
-              minPolarAngle={Math.PI/4}
-              maxPolarAngle={Math.PI/1.5}
-              enableZoom={true}
-              enablePan={true}
-            />
-          </Canvas>
+          {!isInserted ? (
+            <Canvas 
+              camera={{ 
+                position: [0, -1.0, 17.5],
+                fov: 70
+              }}
+              shadows
+            >
+              <color attach="background" args={['#ffffff']} />
+              <Lights />
+              <Suspense fallback={null}>
+                <Wall />
+                <Desk />
+                <MacModel />
+                <Disk onInserted={() => setIsInserted(true)} />
+              </Suspense>
+            </Canvas>
+          ) : (
+            <p>Hello World</p>
+          )}
         </div>
       </main>
     </>
