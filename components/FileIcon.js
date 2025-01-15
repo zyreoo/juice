@@ -18,10 +18,11 @@ export default function FileIcon({ icon, text, isSelected, onClick }) {
                 height: 64, 
                 width: 64, 
                 borderRadius: 8, 
-                backgroundColor: isSelected ? "#e0e0e0" : "#000",
+                backgroundColor: isSelected ? "#e0e0e0" : (icon ? 'transparent' : "#000"),
                 backgroundImage: icon ? `url(${icon})` : 'none',
-                backgroundSize: 'cover',
+                backgroundSize: 'contain',
                 backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
                 userSelect: "none",
                 WebkitUserSelect: "none",
                 msUserSelect: "none"

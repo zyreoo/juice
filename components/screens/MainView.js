@@ -4,6 +4,7 @@ import WelcomeWindow from './WelcomeWindow';
 import AchievementsWindow from './AchievementsWindow';
 import WutIsThisWindow from './WutIsThisWindow';
 import RegisterWindow from './RegisterWindow';
+import VideoWindow from './VideoWindow';
 
 export default function MainView() {
   const [time, setTime] = React.useState(new Date());
@@ -19,6 +20,7 @@ export default function MainView() {
   const [selectedRank, setSelectedRank] = React.useState(1);
   const [wutIsThisPosition, setWutIsThisPosition] = React.useState({ x: 100, y: 100 });
   const [registerPosition, setRegisterPosition] = React.useState({ x: 150, y: 150 });
+  const [videoPosition, setVideoPosition] = React.useState({ x: 200, y: 200 });
 
   // Constants
   const TOP_BAR_HEIGHT = 36;
@@ -26,7 +28,8 @@ export default function MainView() {
     welcomeWindow: 160,
     achievements: 320,
     wutIsThis: 470,
-    register: 200
+    register: 200,
+    video: 397
   };
   const BASE_Z_INDEX = 1;
   const ACTIVE_Z_INDEX = 2;
@@ -78,6 +81,11 @@ export default function MainView() {
           setOpenWindows(prev => [...prev, 'register']);
         }
         setActiveZIndex('register');
+      } else if (fileId === "video.mp4") {
+        if (!openWindows.includes('video')) {
+          setOpenWindows(prev => [...prev, 'video']);
+        }
+        setActiveZIndex('video');
       }
     } else {
       setSelectedFile(fileId);
@@ -103,6 +111,9 @@ export default function MainView() {
         break;
       case 'register':
         position = registerPosition;
+        break;
+      case 'video':
+        position = videoPosition;
         break;
       default:
         position = { x: 0, y: 0 };
@@ -137,6 +148,8 @@ export default function MainView() {
         setWutIsThisPosition(newPosition);
       } else if (activeWindow === 'register') {
         setRegisterPosition(newPosition);
+      } else if (activeWindow === 'video') {
+        setVideoPosition(newPosition);
       }
     }
   };
@@ -236,6 +249,19 @@ export default function MainView() {
           />
         )}
 
+        {openWindows.includes('video') && (
+          <VideoWindow 
+            position={videoPosition}
+            isDragging={isDragging}
+            isActive={activeZIndex === 'video'}
+            handleMouseDown={handleMouseDown}
+            handleDismiss={handleDismiss}
+            handleWindowClick={handleWindowClick}
+            BASE_Z_INDEX={BASE_Z_INDEX}
+            ACTIVE_Z_INDEX={ACTIVE_Z_INDEX}
+          />
+        )}
+
         <div style={{position: "absolute", top: TOP_BAR_HEIGHT, left: 0}}>
             <div style={{height: `calc(100vh - ${TOP_BAR_HEIGHT}px)`, display: "flex", gap: 8, flexDirection: "column", padding: 8}}>
                 <FileIcon 
@@ -257,10 +283,10 @@ export default function MainView() {
                     onClick={handleFileClick("Register")}
                 />
                 <FileIcon 
-                    text="Free Stickers" 
-                    icon={null} 
-                    isSelected={selectedFile === "Stickers"}
-                    onClick={handleFileClick("Stickers")}
+                    text="video.mp4" 
+                    icon="./thumbnail.png" 
+                    isSelected={selectedFile === "video.mp4"}
+                    onClick={handleFileClick("video.mp4")}
                 />
             </div>
         </div>
