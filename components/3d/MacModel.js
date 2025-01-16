@@ -4,7 +4,7 @@ import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 
 export default function MacModel() {
   const fbx = useLoader(FBXLoader, '/models/mac_classic.fbx');
-  const colorTexture = useTexture('/textures/Mac.TriSurface_Color.png');
+  const colorTexture = useTexture('/Textures/Mac.TriSurface_Color.png');
 
   fbx.traverse((child) => {
     if (child.isMesh) {

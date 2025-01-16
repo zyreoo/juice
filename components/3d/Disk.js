@@ -7,7 +7,7 @@ import * as THREE from 'three';
 
 export default function Disk({ onInserted }) {
   const obj = useLoader(OBJLoader, '/models/disk.obj');
-  const diskTexture = useTexture('/textures/D.tga.png');
+  const diskTexture = useTexture('/Textures/D.tga.png');
   const meshRef = useRef();
   const outlineRef = useRef();
   const [isClicked, setIsClicked] = useState(false);

@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import FileIcon from '../FileIcon';
 import WelcomeWindow from './WelcomeWindow';
 import AchievementsWindow from './AchievementsWindow';
 import WutIsThisWindow from './WutIsThisWindow';
 import RegisterWindow from './RegisterWindow';
 import VideoWindow from './VideoWindow';
+import Background from '../Background';
 
 export default function MainView() {
   const [time, setTime] = React.useState(new Date());
@@ -205,9 +206,32 @@ export default function MainView() {
   return (
     <div>
         {/* top bar */}
-        <div style={{position: "absolute", zIndex: 3, height: TOP_BAR_HEIGHT, borderBottom: "1px solid #000", justifyContent: "space-between", padding: 8, top: 0, left: 0, display: "flex", width: "100vw", margin: 0}}>
-            <p onClick={handleJuiceClick} style={{cursor: "pointer"}}>Juice</p>
-            <p>{formattedTime}</p>
+        <div style={{
+            position: "absolute", 
+            zIndex: 3, 
+            height: TOP_BAR_HEIGHT, 
+            borderBottom: "1px solid rgba(255, 255, 255, 0.2)", 
+            justifyContent: "space-between", 
+            padding: "8px 16px", 
+            top: 0, 
+            left: 0, 
+            display: "flex", 
+            width: "100vw", 
+            margin: 0,
+            backgroundColor: 'rgba(255, 255, 255, 0.7)',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+            boxShadow: '0 1px 20px rgba(0, 0, 0, 0.1)'
+        }}>
+            <p onClick={handleJuiceClick} style={{
+                cursor: "pointer",
+                color: "rgba(0, 0, 0, 0.8)",
+                fontWeight: 500
+            }}>Juice</p>
+            <p style={{
+                color: "rgba(0, 0, 0, 0.8)",
+                fontWeight: 500
+            }}>{formattedTime}</p>
         </div>
 
         {openWindows.includes('welcomeWindow') && (
@@ -278,31 +302,35 @@ export default function MainView() {
         )}
 
         <div style={{position: "absolute", top: TOP_BAR_HEIGHT, left: 0}}>
-            <div style={{height: `calc(100vh - ${TOP_BAR_HEIGHT}px)`, display: "flex", gap: 8, flexDirection: "column", padding: 8}}>
-                <FileIcon 
-                    text="wutIsThis.txt" 
-                    icon={null} 
-                    isSelected={selectedFile === "file1"}
-                    onClick={handleFileClick("file1")}
-                />
-                <FileIcon 
-                    text="Achievements" 
-                    icon={null} 
-                    isSelected={selectedFile === "Achievements"}
-                    onClick={handleFileClick("Achievements")}
-                />
-                <FileIcon 
-                    text="Register" 
-                    icon={null} 
-                    isSelected={selectedFile === "Register"}
-                    onClick={handleFileClick("Register")}
-                />
-                <FileIcon 
-                    text="video.mp4" 
-                    icon="./thumbnail.png" 
-                    isSelected={selectedFile === "video.mp4"}
-                    onClick={handleFileClick("video.mp4")}
-                />
+            <div style={{height: `calc(100vh - ${TOP_BAR_HEIGHT}px)`, display: "flex", gap: 8, flexDirection: "row", padding: 8}}>
+                <div>
+                    <FileIcon 
+                        text="wutIsThis.txt" 
+                        icon={null} 
+                        isSelected={selectedFile === "file1"}
+                        onClick={handleFileClick("file1")}
+                    />
+                    <FileIcon 
+                        text="Achievements" 
+                        icon={null} 
+                        isSelected={selectedFile === "Achievements"}
+                        onClick={handleFileClick("Achievements")}
+                    />
+                </div>
+                <div>
+                    <FileIcon 
+                        text="Register" 
+                        icon={null} 
+                        isSelected={selectedFile === "Register"}
+                        onClick={handleFileClick("Register")}
+                    />
+                    <FileIcon 
+                        text="video.mp4" 
+                        icon="./thumbnail.png" 
+                        isSelected={selectedFile === "video.mp4"}
+                        onClick={handleFileClick("video.mp4")}
+                    />
+                </div>
             </div>
         </div>
 
@@ -324,7 +352,8 @@ export default function MainView() {
         {/* background goes here */}
         <div 
             onClick={() => setSelectedFile(null)}
-            style={{width: "100vw", height: "100vh", backgroundColor: "#fff", display: "flex", margin: 0, cursor: "default"}}>
+            style={{width: "100vw", height: "100vh", display: "flex", margin: 0, cursor: "default"}}>
+            <Background />
         </div>
     </div>
   );
