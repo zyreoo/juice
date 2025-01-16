@@ -16,7 +16,7 @@ export default function MainView() {
   const [achievementsPosition, setAchievementsPosition] = React.useState({ x: 50, y: 50 });
   const [dragStart, setDragStart] = React.useState({ x: 0, y: 0 });
   const [openWindows, setOpenWindows] = React.useState(['welcomeWindow']);
-  const [activeZIndex, setActiveZIndex] = React.useState('welcomeWindow');
+  const [windowOrder, setWindowOrder] = React.useState(['welcomeWindow']);
   const [selectedRank, setSelectedRank] = React.useState(1);
   const [wutIsThisPosition, setWutIsThisPosition] = React.useState({ x: 100, y: 100 });
   const [registerPosition, setRegisterPosition] = React.useState({ x: 150, y: 150 });
@@ -32,7 +32,6 @@ export default function MainView() {
     video: 397
   };
   const BASE_Z_INDEX = 1;
-  const ACTIVE_Z_INDEX = 2;
 
   React.useEffect(() => {
     const timer = setInterval(() => {
@@ -69,23 +68,31 @@ export default function MainView() {
       if (fileId === "Achievements") {
         if (!openWindows.includes('achievements')) {
           setOpenWindows(prev => [...prev, 'achievements']);
+          setWindowOrder(prev => [...prev.filter(w => w !== 'achievements'), 'achievements']);
+        } else {
+          setWindowOrder(prev => [...prev.filter(w => w !== 'achievements'), 'achievements']);
         }
-        setActiveZIndex('achievements');
       } else if (fileId === "file1") {
         if (!openWindows.includes('wutIsThis')) {
           setOpenWindows(prev => [...prev, 'wutIsThis']);
+          setWindowOrder(prev => [...prev.filter(w => w !== 'wutIsThis'), 'wutIsThis']);
+        } else {
+          setWindowOrder(prev => [...prev.filter(w => w !== 'wutIsThis'), 'wutIsThis']);
         }
-        setActiveZIndex('wutIsThis');
       } else if (fileId === "Register") {
         if (!openWindows.includes('register')) {
           setOpenWindows(prev => [...prev, 'register']);
+          setWindowOrder(prev => [...prev.filter(w => w !== 'register'), 'register']);
+        } else {
+          setWindowOrder(prev => [...prev.filter(w => w !== 'register'), 'register']);
         }
-        setActiveZIndex('register');
       } else if (fileId === "video.mp4") {
         if (!openWindows.includes('video')) {
           setOpenWindows(prev => [...prev, 'video']);
+          setWindowOrder(prev => [...prev.filter(w => w !== 'video'), 'video']);
+        } else {
+          setWindowOrder(prev => [...prev.filter(w => w !== 'video'), 'video']);
         }
-        setActiveZIndex('video');
       }
     } else {
       setSelectedFile(fileId);
@@ -96,7 +103,7 @@ export default function MainView() {
     e.stopPropagation();
     setIsDragging(true);
     setActiveWindow(windowName);
-    setActiveZIndex(windowName);
+    setWindowOrder(prev => [...prev.filter(w => w !== windowName), windowName]);
     
     let position;
     switch(windowName) {
@@ -161,19 +168,22 @@ export default function MainView() {
 
   const handleDismiss = (windowName) => {
     setOpenWindows(openWindows.filter(window => window !== windowName));
+    setWindowOrder(prev => prev.filter(w => w !== windowName));
   };
 
   const handleJuiceClick = () => {
     if (!openWindows.includes('welcomeWindow')) {
       setOpenWindows(prev => [...prev, 'welcomeWindow']);
       setWelcomePosition({ x: 0, y: 0 });
-      setActiveZIndex('welcomeWindow');
+      setWindowOrder(prev => [...prev.filter(w => w !== 'welcomeWindow'), 'welcomeWindow']);
+    } else {
+      setWindowOrder(prev => [...prev.filter(w => w !== 'welcomeWindow'), 'welcomeWindow']);
     }
   };
 
   const handleWindowClick = (windowName) => (e) => {
     e.stopPropagation();
-    setActiveZIndex(windowName);
+    setWindowOrder(prev => [...prev.filter(w => w !== windowName), windowName]);
   };
 
   React.useEffect(() => {
@@ -187,6 +197,11 @@ export default function MainView() {
     };
   }, [isDragging, dragStart]);
 
+  const getWindowZIndex = (windowName) => {
+    const index = windowOrder.indexOf(windowName);
+    return BASE_Z_INDEX + index;
+  };
+
   return (
     <div>
         {/* top bar */}
@@ -199,12 +214,12 @@ export default function MainView() {
           <WelcomeWindow 
             position={welcomePosition}
             isDragging={isDragging}
-            isActive={activeZIndex === 'welcomeWindow'}
+            isActive={windowOrder[windowOrder.length - 1] === 'welcomeWindow'}
             handleMouseDown={handleMouseDown}
             handleDismiss={handleDismiss}
             handleWindowClick={handleWindowClick}
-            BASE_Z_INDEX={BASE_Z_INDEX}
-            ACTIVE_Z_INDEX={ACTIVE_Z_INDEX}
+            BASE_Z_INDEX={getWindowZIndex('welcomeWindow')}
+            ACTIVE_Z_INDEX={getWindowZIndex('welcomeWindow')}
           />
         )}
 
@@ -212,14 +227,14 @@ export default function MainView() {
           <AchievementsWindow 
             position={achievementsPosition}
             isDragging={isDragging}
-            isActive={activeZIndex === 'achievements'}
+            isActive={windowOrder[windowOrder.length - 1] === 'achievements'}
             handleMouseDown={handleMouseDown}
             handleDismiss={handleDismiss}
             handleWindowClick={handleWindowClick}
             selectedRank={selectedRank}
             setSelectedRank={setSelectedRank}
-            BASE_Z_INDEX={BASE_Z_INDEX}
-            ACTIVE_Z_INDEX={ACTIVE_Z_INDEX}
+            BASE_Z_INDEX={getWindowZIndex('achievements')}
+            ACTIVE_Z_INDEX={getWindowZIndex('achievements')}
           />
         )}
 
@@ -227,12 +242,12 @@ export default function MainView() {
           <WutIsThisWindow 
             position={wutIsThisPosition}
             isDragging={isDragging}
-            isActive={activeZIndex === 'wutIsThis'}
+            isActive={windowOrder[windowOrder.length - 1] === 'wutIsThis'}
             handleMouseDown={handleMouseDown}
             handleDismiss={handleDismiss}
             handleWindowClick={handleWindowClick}
-            BASE_Z_INDEX={BASE_Z_INDEX}
-            ACTIVE_Z_INDEX={ACTIVE_Z_INDEX}
+            BASE_Z_INDEX={getWindowZIndex('wutIsThis')}
+            ACTIVE_Z_INDEX={getWindowZIndex('wutIsThis')}
           />
         )}
 
@@ -240,12 +255,12 @@ export default function MainView() {
           <RegisterWindow 
             position={registerPosition}
             isDragging={isDragging}
-            isActive={activeZIndex === 'register'}
+            isActive={windowOrder[windowOrder.length - 1] === 'register'}
             handleMouseDown={handleMouseDown}
             handleDismiss={handleDismiss}
             handleWindowClick={handleWindowClick}
-            BASE_Z_INDEX={BASE_Z_INDEX}
-            ACTIVE_Z_INDEX={ACTIVE_Z_INDEX}
+            BASE_Z_INDEX={getWindowZIndex('register')}
+            ACTIVE_Z_INDEX={getWindowZIndex('register')}
           />
         )}
 
@@ -253,12 +268,12 @@ export default function MainView() {
           <VideoWindow 
             position={videoPosition}
             isDragging={isDragging}
-            isActive={activeZIndex === 'video'}
+            isActive={windowOrder[windowOrder.length - 1] === 'video'}
             handleMouseDown={handleMouseDown}
             handleDismiss={handleDismiss}
             handleWindowClick={handleWindowClick}
-            BASE_Z_INDEX={BASE_Z_INDEX}
-            ACTIVE_Z_INDEX={ACTIVE_Z_INDEX}
+            BASE_Z_INDEX={getWindowZIndex('video')}
+            ACTIVE_Z_INDEX={getWindowZIndex('video')}
           />
         )}
 

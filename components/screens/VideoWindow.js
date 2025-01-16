@@ -27,7 +27,7 @@ export default function VideoWindow({ position, isDragging, isActive, handleMous
                 <div style={{display: "flex", flexDirection: "row", gap: 8}}>
                     <button onClick={(e) => { e.stopPropagation(); handleDismiss('video'); }}>x</button>
                 </div>
-                <p>juice.mp4</p>
+                <p>video.mp4</p>
                 <div></div>
             </div>
             <div style={{flex: 1, display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "#000"}}>
