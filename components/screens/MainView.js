@@ -306,13 +306,13 @@ export default function MainView() {
                 <div>
                     <FileIcon 
                         text="wutIsThis.txt" 
-                        icon={null} 
+                        icon="./texticon.png"
                         isSelected={selectedFile === "file1"}
                         onClick={handleFileClick("file1")}
                     />
                     <FileIcon 
                         text="Achievements" 
-                        icon={null} 
+                        icon="achievmentsicon.png"
                         isSelected={selectedFile === "Achievements"}
                         onClick={handleFileClick("Achievements")}
                     />
@@ -320,7 +320,7 @@ export default function MainView() {
                 <div>
                     <FileIcon 
                         text="Register" 
-                        icon={null} 
+                        icon="registericon.png" 
                         isSelected={selectedFile === "Register"}
                         onClick={handleFileClick("Register")}
                     />
