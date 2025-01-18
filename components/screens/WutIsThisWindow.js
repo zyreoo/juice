@@ -1,6 +1,15 @@
 import React from 'react';
 
 export default function WutIsThisWindow({ position, isDragging, isActive, handleMouseDown, handleDismiss, handleWindowClick, BASE_Z_INDEX, ACTIVE_Z_INDEX }) {
+    const handleRegisterClick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const registerButton = document.querySelector('button[data-register-button="true"]');
+        if (registerButton) {
+            registerButton.click();
+        }
+    };
+
     return (
         <div 
             onClick={handleWindowClick('wutIsThis')}
@@ -37,10 +46,10 @@ export default function WutIsThisWindow({ position, isDragging, isActive, handle
                 <p>We have travel stipends available to game devs who:</p>
                 <ul style={{marginLeft: 16}}>
                     <li>spends 100+ hours spent building the game</li>
-                    <li>creates at least 30 minutes of unique game content</li>
                     <li>includes no spoken or written words in their game (languageless)</li>
+                    <li>ships their game to the Steam Store (30min playable content)</li>
                 </ul>
-                <p>Beginners welcome & all of the tools are in your hands to make this adventure happen, so it's up to you. Do you want to make this adventure happen? If <a href="register">let's do this together</a></p>
+                <p>Beginners welcome & all of the tools are in your hands to make this adventure happen, so it's up to you. Do you want to make this adventure happen? If <a href="#" onClick={handleRegisterClick}>let's do this together</a></p>
             </div>
         </div>
     );
