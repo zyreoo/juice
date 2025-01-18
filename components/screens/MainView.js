@@ -321,8 +321,17 @@ export default function MainView() {
           />
         )}
 
-        <div style={{position: "absolute", top: TOP_BAR_HEIGHT, left: 0}}>
-            <div style={{height: `calc(100vh - ${TOP_BAR_HEIGHT}px)`, display: "flex", gap: 8, flexDirection: "row", padding: 8}}>
+        <div style={{
+            position: "absolute", 
+            top: TOP_BAR_HEIGHT, 
+            left: 0,
+            backgroundImage: 'url(background.GIF)',
+            backgroundSize: 'cover', 
+            imageRendering: 'pixelated',
+            width: "100vw", 
+            height: "100vh"
+        }}>
+            <div style={{display: "flex", gap: 8, flexDirection: "row", padding: 8}}>
                 <div>
                     <FileIcon 
                         text="wutIsThis.txt" 
