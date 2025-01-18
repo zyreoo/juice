@@ -6,6 +6,7 @@ import WutIsThisWindow from './WutIsThisWindow';
 import RegisterWindow from './RegisterWindow';
 import VideoWindow from './VideoWindow';
 import Background from '../Background';
+import ShareSuccessPanel from './ShareSuccessPanel';
 
 export default function MainView() {
   const [time, setTime] = React.useState(new Date());
@@ -187,6 +188,15 @@ export default function MainView() {
     setWindowOrder(prev => [...prev.filter(w => w !== windowName), windowName]);
   };
 
+  const handleRegisterOpen = () => {
+    if (!openWindows.includes('register')) {
+      setOpenWindows(prev => [...prev, 'register']);
+      setWindowOrder(prev => [...prev.filter(w => w !== 'register'), 'register']);
+    } else {
+      setWindowOrder(prev => [...prev.filter(w => w !== 'register'), 'register']);
+    }
+  };
+
   React.useEffect(() => {
     if (isDragging) {
       window.addEventListener('mousemove', handleMouseMove);
@@ -228,10 +238,16 @@ export default function MainView() {
                 color: "rgba(0, 0, 0, 0.8)",
                 fontWeight: 500
             }}>Juice</p>
+            <div style={{display: "flex", flexDirection: "row", gap: 16}}>
+            <div style={{display: "flex", border: "1px solid #000", alignItems: "center", justifyContent: "space-around", borderRadius: 4, width: 32}}>  
+                <img style={{width: 14, height: 14}} src={"./kudos.svg"}/>
+                <p style={{fontSize: 16}}>0</p>
+            </div>
             <p style={{
                 color: "rgba(0, 0, 0, 0.8)",
                 fontWeight: 500
             }}>{formattedTime}</p>
+            </div>
         </div>
 
         {openWindows.includes('welcomeWindow') && (
@@ -309,12 +325,14 @@ export default function MainView() {
                         icon={null} 
                         isSelected={selectedFile === "file1"}
                         onClick={handleFileClick("file1")}
+                        delay={0}
                     />
                     <FileIcon 
                         text="Achievements" 
                         icon={null} 
                         isSelected={selectedFile === "Achievements"}
                         onClick={handleFileClick("Achievements")}
+                        delay={0.1}
                     />
                 </div>
                 <div>
@@ -323,29 +341,62 @@ export default function MainView() {
                         icon={null} 
                         isSelected={selectedFile === "Register"}
                         onClick={handleFileClick("Register")}
+                        delay={0.2}
                     />
                     <FileIcon 
                         text="video.mp4" 
                         icon="./thumbnail.png" 
                         isSelected={selectedFile === "video.mp4"}
                         onClick={handleFileClick("video.mp4")}
+                        delay={0.3}
                     />
                 </div>
             </div>
         </div>
 
         <div style={{position: "absolute", top: TOP_BAR_HEIGHT + 8, right: 8}}>
-            <div style={{width: 332, backgroundColor: "#fff", border: "1px solid #000", borderRadius: 4, padding: 12}}>
-                <p>{timeRemaining}</p>
+            <div style={{
+                width: 332, 
+                backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)',
+                border: "1px solid rgba(255, 255, 255, 0.2)",
+                borderRadius: 8,
+                padding: 12,
+                boxShadow: '0 1px 20px rgba(0, 0, 0, 0.1)'
+            }}>
+                <p style={{ color: "rgba(0, 0, 0, 0.8)", margin: "0 0 8px 0" }}>{timeRemaining}</p>
                 <div style={{display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
-                    <p>Kickoff Call (2/1/25)</p>
-                    <p>7:30 PM EST SAT</p>
+                    <p style={{ color: "rgba(0, 0, 0, 0.8)", margin: 0 }}>Kickoff Call (2/1/25)</p>
+                    <p style={{ color: "rgba(0, 0, 0, 0.8)", margin: 0 }}>7:30 PM EST SAT</p>
                 </div>
-                <button>RSVP</button>
+                <button 
+                    data-register-button="true"
+                    onClick={handleRegisterOpen}
+                    style={{
+                        marginTop: 8,
+                        padding: "4px 12px",
+                        backgroundColor: "rgba(0, 0, 0, 0.8)",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: 4,
+                        cursor: "pointer"
+                    }}>Register</button>
             </div>
-            <div style={{width: 332, marginTop: 8, backgroundColor: "#fff", border: "1px solid #000", borderRadius: 4, padding: 12}}>
-            <p>Hackers currently online...</p>
-            <p><i>(coming soon)</i></p>
+            <ShareSuccessPanel />
+            <div style={{
+                width: 332,
+                marginTop: 8,
+                backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)',
+                border: "1px solid rgba(255, 255, 255, 0.2)",
+                borderRadius: 8,
+                padding: 12,
+                boxShadow: '0 1px 20px rgba(0, 0, 0, 0.1)'
+            }}>
+                <p style={{ color: "rgba(0, 0, 0, 0.8)", margin: "0 0 4px 0" }}>Hackers currently online...</p>
+                <p style={{ color: "rgba(0, 0, 0, 0.6)", margin: 0, fontStyle: "italic" }}>(coming soon)</p>
             </div>
         </div>
 

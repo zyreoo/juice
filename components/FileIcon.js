@@ -1,8 +1,9 @@
 import React from 'react';
 
-export default function FileIcon({ text, icon, isSelected, onClick }) {
+export default function FileIcon({ text, icon, isSelected, onClick, delay }) {
     return (
         <div 
+            data-file-name={text}
             onClick={onClick}
             style={{
                 display: 'flex',
@@ -12,7 +13,9 @@ export default function FileIcon({ text, icon, isSelected, onClick }) {
                 padding: 8,
                 cursor: 'pointer',
                 margin: '4px 0',
-                width: 90
+                width: 90,
+                animation: `popIn 0.3s ease-out ${delay}s both`,
+                opacity: 0
             }}
         >
             <div 
@@ -24,11 +27,12 @@ export default function FileIcon({ text, icon, isSelected, onClick }) {
                     backgroundSize: 'contain',
                     backgroundPosition: 'center',
                     backgroundRepeat: 'no-repeat',
-                    borderRadius: 4
+                    borderRadius: 4,
+                    filter: icon ? 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))' : 'none'
                 }}
             />
             <div style={{
-                backgroundColor: isSelected ? 'rgba(66, 133, 244, 0.9)' : 'transparent',
+                backgroundColor: isSelected ? 'rgba(66, 133, 244, 0.12)' : 'transparent',
                 borderRadius: 4,
                 padding: '2px 8px'
             }}>
@@ -36,21 +40,38 @@ export default function FileIcon({ text, icon, isSelected, onClick }) {
                     margin: 0,
                     fontSize: 12,
                     textAlign: 'center',
-                    color: '#ffffff',
-                    textShadow: isSelected ? 'none' : `
-                        -1px -1px 0 rgba(0,0,0,1),  
-                        1px -1px 0 rgba(0,0,0,1),
-                        -1px 1px 0 rgba(0,0,0,1),
-                        1px 1px 0 rgba(0,0,0,1),
-                        0 1px 3px rgba(0,0,0,0.9)
-                    `,
-                    maxWidth: '100%',
+                    color: isSelected ? '#FFE600' : '#ffffff',
+                    textShadow: `
+                        -1px -1px 0 #000,
+                        1px -1px 0 #000,
+                        -1px 1px 0 #000,
+                        1px 1px 0 #000,
+                        -2px 0 0 #000,
+                        2px 0 0 #000,
+                        0 -2px 0 #000,
+                        0 2px 0 #000`,
                     fontWeight: 600,
                     letterSpacing: '0.2px'
                 }}>
                     {text}
                 </p>
             </div>
+            <style>{`
+                @keyframes popIn {
+                    0% {
+                        transform: scale(0);
+                        opacity: 0;
+                    }
+                    70% {
+                        transform: scale(1.1);
+                        opacity: 1;
+                    }
+                    100% {
+                        transform: scale(1);
+                        opacity: 1;
+                    }
+                }
+            `}</style>
         </div>
     );
 } 
