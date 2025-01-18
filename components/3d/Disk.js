@@ -13,6 +13,19 @@ export default function Disk({ onInserted }) {
   const [isClicked, setIsClicked] = useState(false);
   const bootSound = useRef(null);
 
+  const requestFullscreen = () => {
+    if (typeof window !== 'undefined') {
+      const element = document.documentElement;
+      if (element.requestFullscreen) {
+        element.requestFullscreen().catch(err => console.log('Fullscreen request failed:', err));
+      } else if (element.webkitRequestFullscreen) {
+        element.webkitRequestFullscreen().catch(err => console.log('Fullscreen request failed:', err));
+      } else if (element.msRequestFullscreen) {
+        element.msRequestFullscreen().catch(err => console.log('Fullscreen request failed:', err));
+      }
+    }
+  };
+
   useEffect(() => {
     bootSound.current = new Audio('/sounds/bootSound.mp3');
   }, []);
@@ -74,6 +87,8 @@ export default function Disk({ onInserted }) {
       if (outlineRef.current) {
         outlineRef.current.material.opacity = 0.8;
       }
+      
+      requestFullscreen();
       
       gsap.timeline()
         .to(meshRef.current.rotation, {

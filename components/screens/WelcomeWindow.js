@@ -184,7 +184,7 @@ export default function WelcomeWindow({ position, isDragging, isActive, handleMo
                 <span>2 month online game jam</span>
                 <span>then 7 day in-person popup</span>
                 <span>game cafe in China</span>
-                <i>(Jam starts Jan 31)</i>
+                <i>(Flight Stipends Available)</i>
             </p>
             <div style={{ display: "flex", flexDirection: "column", gap: 12, fontFamily: "monospace", fontSize: "28px", marginTop: 'auto' }}>
                 {options.map((option, index) => (
