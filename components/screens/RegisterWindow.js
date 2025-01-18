@@ -48,7 +48,8 @@ export default function RegisterWindow({ position, isDragging, isActive, handleM
                     />
                     <button style={{height: 24}}>signup</button>
                 </div>
-                <p>I will email you invites to our weekly calls, news about people's games, and juice updates.</p>
+                <p>I will immediately email you a guide & special key to get your game started & start juicing.</p>
+                {/* <p>In the weeks to come, I will email you invites to our weekly calls, news about people's games, and juice updates.</p> */}
             </div>
         </div>
     );
