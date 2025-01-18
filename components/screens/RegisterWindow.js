@@ -1,13 +1,38 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 export default function RegisterWindow({ position, isDragging, isActive, handleMouseDown, handleDismiss, handleWindowClick, BASE_Z_INDEX, ACTIVE_Z_INDEX }) {
     const inputRef = useRef(null);
+    const [email, setEmail] = useState('');
+    const [status, setStatus] = useState('idle');
 
     useEffect(() => {
         if (inputRef.current) {
             inputRef.current.focus();
         }
     }, []);
+
+    const handleSubmit = async () => {
+        if (!email) return;
+        
+        setStatus('loading');
+        try {
+            const response = await fetch('/api/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email }),
+            });
+
+            if (!response.ok) throw new Error('Registration failed');
+
+            setStatus('success');
+            setEmail('');
+        } catch (error) {
+            console.error('Registration error:', error);
+            setStatus('error');
+        }
+    };
 
     return (
         <div 
@@ -39,18 +64,33 @@ export default function RegisterWindow({ position, isDragging, isActive, handleM
                 <p>Register</p>
                 <div></div>
             </div>
-            <div style={{flex: 1, padding: 16, display: "flex", flexDirection: "column", gap: 12}}>
-                <p><i>Adventure Calls...</i> signing up means joining our team and committing to making your game.</p>
-                <div style={{display: "flex", height: 24, flexDirection: "row", gap: 8}}>
-                    <input 
-                        ref={inputRef}
-                        style={{height: 24, padding: "2px 4px"}} 
-                        placeholder='marsha@mellow.yum'
-                    />
-                    <button style={{height: 24}}>signup</button>
-                </div>
-                <p>I will immediately email you a guide & special key to get your game started & start juicing.</p>
-                {/* <p>In the weeks to come, I will email you invites to our weekly calls, news about people's games, and juice updates.</p> */}
+            <div style={{flex: 1, padding: 16, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center"}}>
+                {status === 'success' ? (
+                    <p>Thanks! Check your inbox.</p>
+                ) : (
+                    <>
+                        <p><i>Adventure Calls...</i> signing up means joining our team and committing to making your game.</p>
+                        <div style={{display: "flex", height: 24, flexDirection: "row", gap: 8}}>
+                            <input 
+                                ref={inputRef}
+                                style={{height: 24, padding: "2px 4px"}} 
+                                placeholder='marsha@mellow.yum'
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
+                            />
+                            <button 
+                                style={{height: 24}}
+                                onClick={handleSubmit}
+                                disabled={status === 'loading'}
+                            >
+                                {status === 'loading' ? 'Sending...' : 'signup'}
+                            </button>
+                        </div>
+                        {status === 'error' && <p style={{color: 'red'}}>Oops! Something went wrong. Please try again.</p>}
+                        <p>I will immediately email you a guide & special key to get your game started & start juicing.</p>
+                    </>
+                )}
             </div>
         </div>
     );
