@@ -16,6 +16,7 @@ export default function AchievementsWindow({ position, isDragging, isActive, han
                 borderRadius: 4,
                 flexDirection: "column",
                 padding: 0,
+                color: 'black',
                 justifyContent: "space-between",
                 transform: `translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px))`,
                 top: "50%",

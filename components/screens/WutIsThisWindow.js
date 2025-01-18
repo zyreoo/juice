@@ -18,6 +18,7 @@ export default function WutIsThisWindow({ position, isDragging, isActive, handle
                 position: "absolute", 
                 zIndex: isActive ? ACTIVE_Z_INDEX : BASE_Z_INDEX, 
                 width: 650,
+                color: 'black',
                 height: 470,
                 backgroundColor: "#fff", 
                 border: "1px solid #000", 

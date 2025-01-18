@@ -45,6 +45,7 @@ export default function RegisterWindow({ position, isDragging, isActive, handleM
                 zIndex: isActive ? ACTIVE_Z_INDEX : BASE_Z_INDEX, 
                 width: 400,
                 height: 200,
+                color: 'black',
                 backgroundColor: "#fff", 
                 border: "1px solid #000", 
                 borderRadius: 4,
