@@ -28,6 +28,8 @@ export default function RegisterWindow({ position, isDragging, isActive, handleM
 
             setStatus('success');
             setEmail('');
+            // Optional: close the window after successful registration
+            // handleDismiss('register');
         } catch (error) {
             console.error('Registration error:', error);
             setStatus('error');
@@ -63,32 +65,29 @@ export default function RegisterWindow({ position, isDragging, isActive, handleM
                 <p>Register</p>
                 <div></div>
             </div>
-            <div style={{flex: 1, padding: 16, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center"}}>
-                {status === 'success' ? (
-                    <p>Thanks! Check your inbox.</p>
-                ) : (
-                    <>
-                        <p><i>Adventure Calls...</i> signing up means joining our team and committing to making your game.</p>
-                        <div style={{display: "flex", height: 24, flexDirection: "row", gap: 8}}>
-                            <input 
-                                ref={inputRef}
-                                style={{height: 24, padding: "2px 4px"}} 
-                                placeholder='marsha@mellow.yum'
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
-                            />
-                            <button 
-                                style={{height: 24}}
-                                onClick={handleSubmit}
-                                disabled={status === 'loading'}
-                            >
-                                {status === 'loading' ? 'Sending...' : 'signup'}
-                            </button>
-                        </div>
-                        {status === 'error' && <p style={{color: 'red'}}>Oops! Something went wrong. Please try again.</p>}
-                        <p>I will immediately email you a guide & special key to get your game started & start juicing.</p>
-                    </>
+            <div style={{flex: 1, padding: 16, display: "flex", flexDirection: "column", gap: 12}}>
+                <p><i>Adventure Calls...</i> signing up means joining our team and committing to making your game.</p>
+                <div style={{display: "flex", height: 24, flexDirection: "row", gap: 8}}>
+                    <input 
+                        ref={inputRef}
+                        style={{height: 24, padding: "2px 4px"}} 
+                        placeholder='marsha@mellow.yum'
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
+                    />
+                    <button 
+                        style={{height: 24}}
+                        onClick={handleSubmit}
+                        disabled={status === 'loading'}
+                    >
+                        {status === 'loading' ? 'Sending...' : 'signup'}
+                    </button>
+                </div>
+                {status === 'success' && <p style={{color: 'green'}}>Thanks! Check your email soon.</p>}
+                {status === 'error' && <p style={{color: 'red'}}>Oops! Something went wrong. Please try again.</p>}
+                {(!(status === "error" || status == "success")) && (
+                    <p>I will immediately email you a guide & special key to get your game started & start juicing.</p>
                 )}
             </div>
         </div>

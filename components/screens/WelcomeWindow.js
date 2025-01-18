@@ -181,8 +181,8 @@ export default function WelcomeWindow({ position, isDragging, isActive, handleMo
                 gap: 4,
                 lineHeight: 0.75
             }}>
-                <span>2 month online game jam</span>
-                <span>then 7 day in-person popup</span>
+                <span>build a game in 2 months</span>
+                <span>then run in-person popup</span>
                 <span>game cafe in China</span>
                 <i>(Flight Stipends Available)</i>
             </p>

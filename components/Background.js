@@ -9,7 +9,7 @@ export default function Background() {
       width: '100vw',
       height: '100vh',
       zIndex: -1,
-      backgroundImage: 'url(/background.png)',
+      backgroundImage: 'url(/background.gif)',
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',

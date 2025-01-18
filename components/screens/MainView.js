@@ -325,11 +325,12 @@ export default function MainView() {
             position: "absolute", 
             top: TOP_BAR_HEIGHT, 
             left: 0,
-            backgroundImage: 'url(background.GIF)',
+            // backgroundImage: 'url(background.GIF)',
             backgroundSize: 'cover', 
             imageRendering: 'pixelated',
             width: "100vw", 
-            height: "100vh"
+            overflow: "hidden"
+            // height: "100vh"
         }}>
             <div style={{display: "flex", gap: 8, flexDirection: "row", padding: 8}}>
                 <div>
