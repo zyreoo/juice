@@ -4,6 +4,7 @@ export default function VideoWindow({ position, isDragging, isActive, handleMous
     return (
         <div 
             onClick={handleWindowClick('video')}
+            data-window-id="video"
             style={{
                 display: "flex", 
                 position: "absolute", 

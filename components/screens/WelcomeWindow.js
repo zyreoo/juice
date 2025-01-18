@@ -1,14 +1,101 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Canvas } from '@react-three/fiber';
+import { JuiceShader } from '../shaders/JuiceShader';
 
-export default function WelcomeWindow({ position, isDragging, isActive, handleMouseDown, handleDismiss, handleWindowClick, BASE_Z_INDEX, ACTIVE_Z_INDEX }) {
-    const handleRegisterClick = (e) => {
-        e.stopPropagation();
-        // Find and click the register button in the top bar
-        const registerButton = document.querySelector('button[data-register-button="true"]');
-        if (registerButton) {
-            registerButton.click();
+export default function WelcomeWindow({ position, isDragging, isActive, handleMouseDown, handleDismiss, handleWindowClick, BASE_Z_INDEX, ACTIVE_Z_INDEX, setOpenWindows, setWindowOrder, openWindows }) {
+    const [selectedOption, setSelectedOption] = useState(0);
+    const [executedOptions, setExecutedOptions] = useState(new Set());
+    const audioRef = useRef(null);
+    const options = ['Join Jam', 'Learn More', 'Exit'];
+
+    useEffect(() => {
+        // Start playing audio when component mounts
+        if (audioRef.current) {
+            audioRef.current.volume = 0.5; // Set initial volume to 50%
+            audioRef.current.play().catch(e => {
+                console.log("Audio autoplay was prevented:", e);
+            });
+        }
+    }, []);
+
+    const handleKeyDown = (e) => {
+        if (e.key === 'ArrowUp') {
+            setSelectedOption((prev) => (prev > 0 ? prev - 1 : prev));
+        } else if (e.key === 'ArrowDown') {
+            setSelectedOption((prev) => (prev < options.length - 1 ? prev + 1 : prev));
+        } else if (e.key === 'Enter') {
+            handleOptionClick(selectedOption);
         }
     };
+
+    const handleOptionClick = (index) => {
+        setExecutedOptions(prev => new Set([...prev, options[index]]));
+        if (options[index] === 'Exit') {
+            handleDismiss('welcomeWindow');
+        } else if (options[index] === 'Learn More') {
+            if (audioRef.current) {
+                audioRef.current.volume = 0;
+            }
+            setTimeout(() => {
+                setOpenWindows(prev => [...prev, 'wutIsThis']);
+                setWindowOrder(prev => [...prev.filter(w => w !== 'wutIsThis'), 'wutIsThis']);
+                
+                setTimeout(() => {
+                    setOpenWindows(prev => [...prev, 'video']);
+                    setWindowOrder(prev => [...prev.filter(w => w !== 'video'), 'video']);
+                }, 100);
+            }, 100);
+        } else if (options[index] === 'Join Jam') {
+            setTimeout(() => {
+                const registerButton = document.querySelector('button[data-register-button="true"]');
+                if (registerButton) {
+                    registerButton.click();
+                }
+            }, 100);
+        }
+    };
+
+    // Update executedOptions when windows are closed
+    useEffect(() => {
+        if (!openWindows.includes('wutIsThis') && !openWindows.includes('video')) {
+            setExecutedOptions(prev => {
+                const newSet = new Set(prev);
+                newSet.delete('Learn More');
+                return newSet;
+            });
+        }
+        if (!openWindows.includes('register')) {
+            setExecutedOptions(prev => {
+                const newSet = new Set(prev);
+                newSet.delete('Join Jam');
+                return newSet;
+            });
+        }
+    }, [openWindows]);
+
+    useEffect(() => {
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [selectedOption]);
+
+    // Add new effect to handle video window state
+    useEffect(() => {
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.type === 'childList') {
+                    const videoWindow = document.querySelector('[data-window-id="video"]');
+                    if (audioRef.current) {
+                        // If video window exists, mute audio, otherwise restore to 50%
+                        audioRef.current.volume = videoWindow ? 0 : 0.5;
+                    }
+                }
+            });
+        });
+
+        observer.observe(document.body, { childList: true, subtree: true });
+
+        return () => observer.disconnect();
+    }, []);
 
     return (
         <div 
@@ -19,8 +106,8 @@ export default function WelcomeWindow({ position, isDragging, isActive, handleMo
                 position: "absolute", 
                 zIndex: isActive ? ACTIVE_Z_INDEX : BASE_Z_INDEX, 
                 width: 400,
-                height: 160,
-                backgroundColor: "#fff", 
+                height: 300,
+                backgroundColor: "transparent", 
                 border: "1px solid #000", 
                 borderRadius: 4,
                 flexDirection: "column",
@@ -30,21 +117,114 @@ export default function WelcomeWindow({ position, isDragging, isActive, handleMo
                 top: "50%",
                 left: "50%",
                 userSelect: "none",
-                cursor: isDragging ? 'grabbing' : 'grab'
+                cursor: isDragging ? 'grabbing' : 'grab',
+                overflow: 'hidden'
             }}>
+            <audio ref={audioRef} loop>
+                <source src="./music.mp3" type="audio/mpeg" />
+            </audio>
+            <div style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                width: '100%',
+                height: '100%',
+                zIndex: -1,
+                background: 'transparent'
+            }}>
+                <Canvas
+                    style={{ width: '100%', height: '100%' }}
+                    camera={{ 
+                        position: [0, 0, 1],
+                        near: 0.1,
+                        far: 1000,
+                        zoom: 1
+                    }}
+                    gl={{ alpha: true }}
+                >
+                    <ambientLight intensity={1} />
+                    <JuiceShader />
+                </Canvas>
+            </div>
+            <style>{`
+                @keyframes blink {
+                    0%, 49% { opacity: 1; }
+                    50%, 100% { opacity: 0; }
+                }
+            `}</style>
             <div style={{
                 margin: -16,
-                marginBottom: 0,
+                marginBottom: 8,
                 padding: 16,
                 paddingBottom: 0,
                 pointerEvents: 'none'
             }}>
-                <p className="welcome-title">Welcome to Juice</p>
+                <img src="./logo_transparent.svg" alt="Juice" width={180} style={{ pointerEvents: 'none' }} />
             </div>
-            <p style={{ pointerEvents: 'none' }}>2 month online game jam followed by an in-person popup hacker cafe in Shanghai, China<br/> <i>(flight stipends available for game devs)</i></p>
-            <div style={{display: "flex", flexDirection: "row", gap: 8, pointerEvents: 'auto'}}>
-                <button onClick={handleRegisterClick}>Register</button>
-                <button onClick={() => handleDismiss('welcomeWindow')}>Dismiss</button>
+            <p style={{ 
+                pointerEvents: 'none', 
+                margin: '0 0 16px 0',
+                color: '#000',
+                textShadow: `
+                    -1px -1px 0 #FFE135,
+                    1px -1px 0 #FFE135,
+                    -1px 1px 0 #FFE135,
+                    1px 1px 0 #FFE135,
+                    -2px 0 0 #FFE135,
+                    2px 0 0 #FFE135,
+                    0 -2px 0 #FFE135,
+                    0 2px 0 #FFE135`,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 4,
+                lineHeight: 0.75
+            }}>
+                <span>2 month online game jam</span>
+                <span>then 7 day in-person popup</span>
+                <span>game cafe in China</span>
+                <i>(Jam starts Jan 31)</i>
+            </p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 12, fontFamily: "monospace", fontSize: "28px", marginTop: 'auto' }}>
+                {options.map((option, index) => (
+                    <div
+                        key={option}
+                        onClick={() => handleOptionClick(index)}
+                        onMouseEnter={() => setSelectedOption(index)}
+                        style={{
+                            cursor: 'pointer',
+                            fontSize: 24,
+                            color: selectedOption === index ? '#FFE135' : '#000',
+                            textShadow: selectedOption === index ? `
+                                -1px -1px 0 #000,
+                                1px -1px 0 #000,
+                                -1px 1px 0 #000,
+                                1px 1px 0 #000,
+                                -2px 0 0 #000,
+                                2px 0 0 #000,
+                                0 -2px 0 #000,
+                                0 2px 0 #000` : `
+                                -1px -1px 0 #FFE135,
+                                1px -1px 0 #FFE135,
+                                -1px 1px 0 #FFE135,
+                                1px 1px 0 #FFE135,
+                                -2px 0 0 #FFE135,
+                                2px 0 0 #FFE135,
+                                0 -2px 0 #FFE135,
+                                0 2px 0 #FFE135`,
+                            transition: 'all 0.2s',
+                            fontWeight: 'bold',
+                            letterSpacing: '0.2px',
+                            minWidth: '200px'
+                        }}
+                    >
+                        <span style={{
+                            animation: selectedOption === index && !executedOptions.has(option) ? 'blink 1s step-end infinite' : 'none',
+                            opacity: selectedOption === index && !executedOptions.has(option) ? 1 : 0
+                        }}>{'>'}</span> {option}
+                    </div>
+                ))}
             </div>
         </div>
     );

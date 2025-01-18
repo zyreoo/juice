@@ -23,6 +23,7 @@ export default function MainView() {
   const [wutIsThisPosition, setWutIsThisPosition] = React.useState({ x: 100, y: 100 });
   const [registerPosition, setRegisterPosition] = React.useState({ x: 150, y: 150 });
   const [videoPosition, setVideoPosition] = React.useState({ x: 200, y: 200 });
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
 
   // Constants
   const TOP_BAR_HEIGHT = 36;
@@ -260,6 +261,9 @@ export default function MainView() {
             handleWindowClick={handleWindowClick}
             BASE_Z_INDEX={getWindowZIndex('welcomeWindow')}
             ACTIVE_Z_INDEX={getWindowZIndex('welcomeWindow')}
+            setOpenWindows={setOpenWindows}
+            setWindowOrder={setWindowOrder}
+            openWindows={openWindows}
           />
         )}
 
@@ -326,6 +330,7 @@ export default function MainView() {
                         isSelected={selectedFile === "file1"}
                         onClick={handleFileClick("file1")}
                         delay={0}
+                        data-file-id="file1"
                     />
                     <FileIcon 
                         text="Achievements" 
@@ -333,6 +338,7 @@ export default function MainView() {
                         isSelected={selectedFile === "Achievements"}
                         onClick={handleFileClick("Achievements")}
                         delay={0.1}
+                        data-file-id="Achievements"
                     />
                 </div>
                 <div>
@@ -342,6 +348,7 @@ export default function MainView() {
                         isSelected={selectedFile === "Register"}
                         onClick={handleFileClick("Register")}
                         delay={0.2}
+                        data-file-id="Register"
                     />
                     <FileIcon 
                         text="video.mp4" 
@@ -349,6 +356,7 @@ export default function MainView() {
                         isSelected={selectedFile === "video.mp4"}
                         onClick={handleFileClick("video.mp4")}
                         delay={0.3}
+                        data-file-id="video.mp4"
                     />
                 </div>
             </div>
@@ -383,21 +391,25 @@ export default function MainView() {
                         cursor: "pointer"
                     }}>Register</button>
             </div>
-            <ShareSuccessPanel />
-            <div style={{
-                width: 332,
-                marginTop: 8,
-                backgroundColor: 'rgba(255, 255, 255, 0.7)',
-                backdropFilter: 'blur(10px)',
-                WebkitBackdropFilter: 'blur(10px)',
-                border: "1px solid rgba(255, 255, 255, 0.2)",
-                borderRadius: 8,
-                padding: 12,
-                boxShadow: '0 1px 20px rgba(0, 0, 0, 0.1)'
-            }}>
-                <p style={{ color: "rgba(0, 0, 0, 0.8)", margin: "0 0 4px 0" }}>Hackers currently online...</p>
-                <p style={{ color: "rgba(0, 0, 0, 0.6)", margin: 0, fontStyle: "italic" }}>(coming soon)</p>
-            </div>
+            {isLoggedIn && (
+              <>
+                <ShareSuccessPanel />
+                <div style={{
+                    width: 332,
+                    marginTop: 8,
+                    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                    backdropFilter: 'blur(10px)',
+                    WebkitBackdropFilter: 'blur(10px)',
+                    border: "1px solid rgba(255, 255, 255, 0.2)",
+                    borderRadius: 8,
+                    padding: 12,
+                    boxShadow: '0 1px 20px rgba(0, 0, 0, 0.1)'
+                }}>
+                    <p style={{ color: "rgba(0, 0, 0, 0.8)", margin: "0 0 4px 0" }}>Hackers currently online...</p>
+                    <p style={{ color: "rgba(0, 0, 0, 0.6)", margin: 0, fontStyle: "italic" }}>(coming soon)</p>
+                </div>
+              </>
+            )}
         </div>
 
         {/* background goes here */}
