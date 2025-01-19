@@ -234,10 +234,11 @@ export default function WelcomeWindow({ position, isDragging, isActive, handleMo
                 src="/juiceboxbuilding.png"
                 alt="Juicebox Building" 
                 style={{ 
-                    width: '100%',
-                    height: '100%',
+                    width: '110%',
+                    height: '110%',
                     imageRendering: 'pixelated', 
-                    marginLeft: '-50px',
+                    marginLeft: '-70px',
+                    marginBottom: '50px',
                     objectFit: 'contain',
                 }} 
             />
