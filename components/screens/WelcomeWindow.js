@@ -114,6 +114,7 @@ export default function WelcomeWindow({ position, isDragging, isActive, handleMo
                 flexDirection: "row",
                 padding: 16,
                 justifyContent: "space-between",
+                alignItems: "center",
                 transform: `translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px))`,
                 top: "50%",
                 left: "50%",
@@ -121,41 +122,41 @@ export default function WelcomeWindow({ position, isDragging, isActive, handleMo
                 cursor: isDragging ? 'grabbing' : 'grab',
                 overflow: 'hidden'
             }}>
-            <div style={{ flex: 1 }}>
-                <audio ref={audioRef} loop>
-                    <source src="./music.mp3" type="audio/mpeg" />
-                </audio>
-                <div style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    width: '100%',
-                    height: '100%',
-                    zIndex: -1,
-                    background: 'transparent'
-                }}>
-                    <Canvas
-                        style={{ width: '100%', height: '100%' }}
-                        camera={{ 
-                            position: [0, 0, 1],
-                            near: 0.1,
-                            far: 1000,
-                            zoom: 1
-                        }}
-                        gl={{ alpha: true }}
-                    >
-                        <ambientLight intensity={1} />
-                        <JuiceShader />
-                    </Canvas>
-                </div>
-                <style>{`
-                    @keyframes blink {
-                        0%, 49% { opacity: 1; }
-                        50%, 100% { opacity: 0; }
-                    }
-                `}</style>
+            <audio ref={audioRef} loop>
+                <source src="./music.mp3" type="audio/mpeg" />
+            </audio>
+            <div style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                width: '100%',
+                height: '100%',
+                zIndex: -1,
+                background: 'transparent'
+            }}>
+                <Canvas
+                    style={{ width: '100%', height: '100%' }}
+                    camera={{ 
+                        position: [0, 0, 1],
+                        near: 0.1,
+                        far: 1000,
+                        zoom: 1
+                    }}
+                    gl={{ alpha: true }}
+                >
+                    <ambientLight intensity={1} />
+                    <JuiceShader />
+                </Canvas>
+            </div>
+            <style>{`
+                @keyframes blink {
+                    0%, 49% { opacity: 1; }
+                    50%, 100% { opacity: 0; }
+                }
+            `}</style>
+            <div style={{ flex: 1, paddingRight: 16 }}>
                 <div style={{
                     margin: -16,
                     marginBottom: 8,
@@ -233,11 +234,11 @@ export default function WelcomeWindow({ position, isDragging, isActive, handleMo
                 src="/juiceboxbuilding.png"
                 alt="Juicebox Building" 
                 style={{ 
-                    width: '95%',
-                    height: '100%', 
+                    width: '100%',
+                    height: '100%',
                     imageRendering: 'pixelated', 
+                    marginLeft: '-50px',
                     objectFit: 'contain',
-                    marginLeft: '-40px'
                 }} 
             />
         </div>
