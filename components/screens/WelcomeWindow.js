@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { JuiceShader } from '../shaders/JuiceShader';
+import { juiceboxBuilding } from '../../public/juiceboxbuilding.png';
 
 export default function WelcomeWindow({ position, isDragging, isActive, handleMouseDown, handleDismiss, handleWindowClick, BASE_Z_INDEX, ACTIVE_Z_INDEX, setOpenWindows, setWindowOrder, openWindows }) {
     const [selectedOption, setSelectedOption] = useState(0);
@@ -110,7 +111,7 @@ export default function WelcomeWindow({ position, isDragging, isActive, handleMo
                 backgroundColor: "transparent", 
                 border: "1px solid #000", 
                 borderRadius: 4,
-                flexDirection: "column",
+                flexDirection: "row",
                 padding: 16,
                 justifyContent: "space-between",
                 transform: `translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px))`,
@@ -120,112 +121,125 @@ export default function WelcomeWindow({ position, isDragging, isActive, handleMo
                 cursor: isDragging ? 'grabbing' : 'grab',
                 overflow: 'hidden'
             }}>
-            <audio ref={audioRef} loop>
-                <source src="./music.mp3" type="audio/mpeg" />
-            </audio>
-            <div style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                width: '100%',
-                height: '100%',
-                zIndex: -1,
-                background: 'transparent'
-            }}>
-                <Canvas
-                    style={{ width: '100%', height: '100%' }}
-                    camera={{ 
-                        position: [0, 0, 1],
-                        near: 0.1,
-                        far: 1000,
-                        zoom: 1
-                    }}
-                    gl={{ alpha: true }}
-                >
-                    <ambientLight intensity={1} />
-                    <JuiceShader />
-                </Canvas>
-            </div>
-            <style>{`
-                @keyframes blink {
-                    0%, 49% { opacity: 1; }
-                    50%, 100% { opacity: 0; }
-                }
-            `}</style>
-            <div style={{
-                margin: -16,
-                marginBottom: 8,
-                padding: 16,
-                paddingBottom: 0,
-                pointerEvents: 'none'
-            }}>
-                <img src="./logo_transparent.svg" alt="Juice" width={180} style={{ pointerEvents: 'none' }} />
-            </div>
-            <p style={{ 
-                pointerEvents: 'none', 
-                margin: '0 0 16px 0',
-                color: '#000',
-                textShadow: `
-                    -1px -1px 0 #FFE135,
-                    1px -1px 0 #FFE135,
-                    -1px 1px 0 #FFE135,
-                    1px 1px 0 #FFE135,
-                    -2px 0 0 #FFE135,
-                    2px 0 0 #FFE135,
-                    0 -2px 0 #FFE135,
-                    0 2px 0 #FFE135`,
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 4,
-                lineHeight: 0.75
-            }}>
-                <span>2 month online game jam</span>
-                <span>then 7 day in-person popup</span>
-                <span>game cafe in China</span>
-                <i>(Flight Stipends Available)</i>
-            </p>
-            <div style={{ display: "flex", flexDirection: "column", gap: 12, fontFamily: "monospace", fontSize: "28px", marginTop: 'auto' }}>
-                {options.map((option, index) => (
-                    <div
-                        key={option}
-                        onClick={() => handleOptionClick(index)}
-                        onMouseEnter={() => setSelectedOption(index)}
-                        style={{
-                            cursor: 'pointer',
-                            fontSize: 24,
-                            color: selectedOption === index ? '#FFE135' : '#000',
-                            textShadow: selectedOption === index ? `
-                                -1px -1px 0 #000,
-                                1px -1px 0 #000,
-                                -1px 1px 0 #000,
-                                1px 1px 0 #000,
-                                -2px 0 0 #000,
-                                2px 0 0 #000,
-                                0 -2px 0 #000,
-                                0 2px 0 #000` : `
-                                -1px -1px 0 #FFE135,
-                                1px -1px 0 #FFE135,
-                                -1px 1px 0 #FFE135,
-                                1px 1px 0 #FFE135,
-                                -2px 0 0 #FFE135,
-                                2px 0 0 #FFE135,
-                                0 -2px 0 #FFE135,
-                                0 2px 0 #FFE135`,
-                            transition: 'all 0.2s',
-                            fontWeight: 'bold',
-                            letterSpacing: '0.2px',
-                            minWidth: '200px'
+            <div style={{ flex: 1 }}>
+                <audio ref={audioRef} loop>
+                    <source src="./music.mp3" type="audio/mpeg" />
+                </audio>
+                <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    width: '100%',
+                    height: '100%',
+                    zIndex: -1,
+                    background: 'transparent'
+                }}>
+                    <Canvas
+                        style={{ width: '100%', height: '100%' }}
+                        camera={{ 
+                            position: [0, 0, 1],
+                            near: 0.1,
+                            far: 1000,
+                            zoom: 1
                         }}
+                        gl={{ alpha: true }}
                     >
-                        <span style={{
-                            animation: selectedOption === index && !executedOptions.has(option) ? 'blink 1s step-end infinite' : 'none',
-                            opacity: selectedOption === index && !executedOptions.has(option) ? 1 : 0
-                        }}>{'>'}</span> {option}
-                    </div>
-                ))}
+                        <ambientLight intensity={1} />
+                        <JuiceShader />
+                    </Canvas>
+                </div>
+                <style>{`
+                    @keyframes blink {
+                        0%, 49% { opacity: 1; }
+                        50%, 100% { opacity: 0; }
+                    }
+                `}</style>
+                <div style={{
+                    margin: -16,
+                    marginBottom: 8,
+                    padding: 16,
+                    paddingBottom: 0,
+                    pointerEvents: 'none'
+                }}>
+                    <img src="./logo_transparent.svg" alt="Juice" width={180} style={{ pointerEvents: 'none' }} />
+                </div>
+                <p style={{ 
+                    pointerEvents: 'none', 
+                    margin: '0 0 16px 0',
+                    color: '#000',
+                    textShadow: `
+                        -1px -1px 0 #FFE135,
+                        1px -1px 0 #FFE135,
+                        -1px 1px 0 #FFE135,
+                        1px 1px 0 #FFE135,
+                        -2px 0 0 #FFE135,
+                        2px 0 0 #FFE135,
+                        0 -2px 0 #FFE135,
+                        0 2px 0 #FFE135`,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 4,
+                    lineHeight: 0.75
+                }}>
+                    <span>build a game in 2 months</span>
+                    <span>then run in-person popup</span>
+                    <span>game cafe in China</span>
+                    <i>(Flight Stipends Available)</i>
+                </p>
+                <div style={{ display: "flex", flexDirection: "column", gap: 12, fontFamily: "monospace", fontSize: "28px", marginTop: 'auto' }}>
+                    {options.map((option, index) => (
+                        <div
+                            key={option}
+                            onClick={() => handleOptionClick(index)}
+                            onMouseEnter={() => setSelectedOption(index)}
+                            style={{
+                                cursor: 'pointer',
+                                fontSize: 24,
+                                color: selectedOption === index ? '#FFE135' : '#000',
+                                textShadow: selectedOption === index ? `
+                                    -1px -1px 0 #000,
+                                    1px -1px 0 #000,
+                                    -1px 1px 0 #000,
+                                    1px 1px 0 #000,
+                                    -2px 0 0 #000,
+                                    2px 0 0 #000,
+                                    0 -2px 0 #000,
+                                    0 2px 0 #000` : `
+                                    -1px -1px 0 #FFE135,
+                                    1px -1px 0 #FFE135,
+                                    -1px 1px 0 #FFE135,
+                                    1px 1px 0 #FFE135,
+                                    -2px 0 0 #FFE135,
+                                    2px 0 0 #FFE135,
+                                    0 -2px 0 #FFE135,
+                                    0 2px 0 #FFE135`,
+                                transition: 'all 0.2s',
+                                fontWeight: 'bold',
+                                letterSpacing: '0.2px',
+                                minWidth: '200px'
+                            }}
+                        >
+                            <span style={{
+                                animation: selectedOption === index && !executedOptions.has(option) ? 'blink 1s step-end infinite' : 'none',
+                                opacity: selectedOption === index && !executedOptions.has(option) ? 1 : 0
+                            }}>{'>'}</span> {option}
+                        </div>
+                    ))}
+                </div>
             </div>
+            <img 
+                src="/juiceboxbuilding.png"
+                alt="Juicebox Building" 
+                style={{ 
+                    width: '95%',
+                    height: '100%', 
+                    imageRendering: 'pixelated', 
+                    objectFit: 'contain',
+                    marginLeft: '-40px'
+                }} 
+            />
         </div>
     );
 } 
