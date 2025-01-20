@@ -49,7 +49,7 @@ Copy this template into your new README.md file:
    - How it interacts with other mechanics:
 
 ### 30-Minute Experience Plan
-[Describe how you'll make the first 30 minutes engaging]
+[Describe how you'll make it to at least 30min of gameplay]
 
 ### References & Inspiration
 - Game 1
@@ -58,8 +58,6 @@ Copy this template into your new README.md file:
 - Game 2
   - Elements to draw from:
   - What we'll do differently:
-
-[Include screenshots of reference games if possible]
 
 Note: Keep the focus on gameplay mechanics and player experience. Avoid detailed descriptions of story, art style, sound design, UI flowcharts, marketing plans, or achievements.
 ```
