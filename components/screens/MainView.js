@@ -5,10 +5,12 @@ import AchievementsWindow from './AchievementsWindow';
 import WutIsThisWindow from './WutIsThisWindow';
 import RegisterWindow from './RegisterWindow';
 import VideoWindow from './VideoWindow';
+import FactionWindow from './FactionWindow';
+import FirstChallengeWindow from './FirstChallengeWindow';
 import Background from '../Background';
 import ShareSuccessPanel from './ShareSuccessPanel';
 
-export default function MainView() {
+export default function MainView({ isLoggedIn, setIsLoggedIn, userData }) {
   const [time, setTime] = React.useState(new Date());
   const [timeRemaining, setTimeRemaining] = React.useState('');
   const [selectedFile, setSelectedFile] = React.useState(null);
@@ -23,7 +25,15 @@ export default function MainView() {
   const [wutIsThisPosition, setWutIsThisPosition] = React.useState({ x: 100, y: 100 });
   const [registerPosition, setRegisterPosition] = React.useState({ x: 150, y: 150 });
   const [videoPosition, setVideoPosition] = React.useState({ x: 200, y: 200 });
-  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  const [factionPosition, setFactionPosition] = React.useState({ x: 250, y: 250 });
+  const [firstChallengePosition, setFirstChallengePosition] = React.useState({ x: 300, y: 300 });
+  const [isShaking, setIsShaking] = React.useState(false);
+  const collectSoundRef = React.useRef(null);
+  const [tickets, setTickets] = React.useState([
+    { id: 'apple', used: false },
+    { id: 'carrot', used: false },
+    { id: 'berry', used: false }
+  ]);
 
   // Constants
   const TOP_BAR_HEIGHT = 36;
@@ -32,7 +42,8 @@ export default function MainView() {
     achievements: 320,
     wutIsThis: 470,
     register: 200,
-    video: 397
+    video: 397,
+    faction: 200
   };
   const BASE_Z_INDEX = 1;
 
@@ -125,6 +136,12 @@ export default function MainView() {
       case 'video':
         position = videoPosition;
         break;
+      case 'faction':
+        position = factionPosition;
+        break;
+      case 'firstChallenge':
+        position = firstChallengePosition;
+        break;
       default:
         position = { x: 0, y: 0 };
     }
@@ -160,6 +177,10 @@ export default function MainView() {
         setRegisterPosition(newPosition);
       } else if (activeWindow === 'video') {
         setVideoPosition(newPosition);
+      } else if (activeWindow === 'faction') {
+        setFactionPosition(newPosition);
+      } else if (activeWindow === 'firstChallenge') {
+        setFirstChallengePosition(newPosition);
       }
     }
   };
@@ -198,6 +219,24 @@ export default function MainView() {
     }
   };
 
+  const handleFactionOpen = () => {
+    if (!openWindows.includes('faction')) {
+      setOpenWindows(prev => [...prev, 'faction']);
+      setWindowOrder(prev => [...prev.filter(w => w !== 'faction'), 'faction']);
+    } else {
+      setWindowOrder(prev => [...prev.filter(w => w !== 'faction'), 'faction']);
+    }
+  };
+
+  const handleFirstChallengeOpen = () => {
+    if (!openWindows.includes('firstChallenge')) {
+      setOpenWindows(prev => [...prev, 'firstChallenge']);
+      setWindowOrder(prev => [...prev.filter(w => w !== 'firstChallenge'), 'firstChallenge']);
+    } else {
+      setWindowOrder(prev => [...prev.filter(w => w !== 'firstChallenge'), 'firstChallenge']);
+    }
+  };
+
   React.useEffect(() => {
     if (isDragging) {
       window.addEventListener('mousemove', handleMouseMove);
@@ -214,8 +253,76 @@ export default function MainView() {
     return BASE_Z_INDEX + index;
   };
 
+  React.useEffect(() => {
+    if (isShaking) {
+      const timer = setTimeout(() => {
+        setIsShaking(false);
+      }, 600); // Duration increased to 0.6s
+      return () => clearTimeout(timer);
+    }
+  }, [isShaking]);
+
+  React.useEffect(() => {
+    collectSoundRef.current = new Audio('./collect.mp3');
+    collectSoundRef.current.volume = 0.5;
+  }, []);
+
   return (
-    <div>
+    <div 
+      data-shake-container="true"
+      style={{
+        animation: isShaking ? 'shake 0.6s cubic-bezier(.36,.07,.19,.97) both' : 'none',
+        transform: 'translate3d(0, 0, 0)',
+        backfaceVisibility: 'hidden',
+        perspective: 1000,
+        position: 'relative'
+    }}>
+      <style jsx global>{`
+        @keyframes shake {
+          10%, 90% {
+            transform: translate3d(-1px, 0, 0) scale(1.01);
+          }
+          20%, 80% {
+            transform: translate3d(2px, 0, 0) scale(1.01);
+          }
+          30%, 50%, 70% {
+            transform: translate3d(-4px, 0, 0) scale(1.01);
+          }
+          40%, 60% {
+            transform: translate3d(4px, 0, 0) scale(1.01);
+          }
+        }
+        @keyframes saturate {
+          0% {
+            backdrop-filter: saturate(100%);
+          }
+          50% {
+            backdrop-filter: saturate(300%);
+          }
+          100% {
+            backdrop-filter: saturate(100%);
+          }
+        }
+      `}</style>
+      <div 
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100vw",
+          height: "100vh",
+          pointerEvents: "none",
+          zIndex: 9999,
+          animation: isShaking ? 'saturate 0.6s cubic-bezier(.36,.07,.19,.97) both' : 'none',
+          mixBlendMode: "saturation"
+        }}
+      />
+      <div style={{
+        position: "relative",
+        width: "100vw",
+        height: "100vh",
+        overflow: "hidden"
+      }}>
         {/* top bar */}
         <div style={{
             position: "absolute", 
@@ -229,10 +336,10 @@ export default function MainView() {
             display: "flex", 
             width: "100vw", 
             margin: 0,
-            backgroundColor: 'rgba(255, 255, 255, 0.7)',
-            backdropFilter: 'blur(10px)',
-            WebkitBackdropFilter: 'blur(10px)',
-            boxShadow: '0 1px 20px rgba(0, 0, 0, 0.1)'
+            backgroundColor: 'rgba(255, 220, 180, 0.8)',
+            backdropFilter: 'blur(8px) saturate(200%) sepia(50%) hue-rotate(-15deg) brightness(1.1)',
+            WebkitBackdropFilter: 'blur(8px) saturate(200%) sepia(50%) hue-rotate(-15deg) brightness(1.1)',
+            boxShadow: '0 1px 25px rgba(255, 160, 60, 0.3)'
         }}>
             <p onClick={handleJuiceClick} style={{
                 cursor: "pointer",
@@ -305,6 +412,8 @@ export default function MainView() {
             handleWindowClick={handleWindowClick}
             BASE_Z_INDEX={getWindowZIndex('register')}
             ACTIVE_Z_INDEX={getWindowZIndex('register')}
+            isLoggedIn={isLoggedIn}
+            setIsLoggedIn={setIsLoggedIn}
           />
         )}
 
@@ -318,6 +427,34 @@ export default function MainView() {
             handleWindowClick={handleWindowClick}
             BASE_Z_INDEX={getWindowZIndex('video')}
             ACTIVE_Z_INDEX={getWindowZIndex('video')}
+          />
+        )}
+
+        {openWindows.includes('faction') && (
+          <FactionWindow 
+            position={factionPosition}
+            isDragging={isDragging}
+            isActive={windowOrder[windowOrder.length - 1] === 'faction'}
+            handleMouseDown={handleMouseDown}
+            handleDismiss={handleDismiss}
+            handleWindowClick={handleWindowClick}
+            BASE_Z_INDEX={getWindowZIndex('faction')}
+            ACTIVE_Z_INDEX={getWindowZIndex('faction')}
+            tickets={tickets}
+            setTickets={setTickets}
+          />
+        )}
+
+        {openWindows.includes('firstChallenge') && (
+          <FirstChallengeWindow 
+            position={firstChallengePosition}
+            isDragging={isDragging}
+            isActive={windowOrder[windowOrder.length - 1] === 'firstChallenge'}
+            handleMouseDown={handleMouseDown}
+            handleDismiss={handleDismiss}
+            handleWindowClick={handleWindowClick}
+            BASE_Z_INDEX={getWindowZIndex('firstChallenge')}
+            ACTIVE_Z_INDEX={getWindowZIndex('firstChallenge')}
           />
         )}
 
@@ -375,17 +512,17 @@ export default function MainView() {
         <div style={{position: "absolute", top: TOP_BAR_HEIGHT + 8, right: 8}}>
             <div style={{
                 width: 332, 
-                backgroundColor: 'rgba(255, 255, 255, 0.7)',
-                backdropFilter: 'blur(10px)',
-                WebkitBackdropFilter: 'blur(10px)',
-                border: "1px solid rgba(255, 255, 255, 0.2)",
+                backgroundColor: 'rgba(255, 220, 180, 0.8)',
+                backdropFilter: 'blur(8px) saturate(200%) sepia(50%) hue-rotate(-15deg) brightness(1.1)',
+                WebkitBackdropFilter: 'blur(8px) saturate(200%) sepia(50%) hue-rotate(-15deg) brightness(1.1)',
+                border: "1px solid rgba(255, 220, 180, 0.4)",
                 borderRadius: 8,
                 padding: 12,
-                boxShadow: '0 1px 20px rgba(0, 0, 0, 0.1)'
+                boxShadow: '0 1px 25px rgba(255, 160, 60, 0.3)'
             }}>
                 <p style={{ color: "rgba(0, 0, 0, 0.8)", margin: "0 0 8px 0" }}>{timeRemaining}</p>
                 <div style={{display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
-                    <p style={{ color: "rgba(0, 0, 0, 0.8)", margin: 0 }}>Kickoff Call (2/1/25)</p>
+                    <p style={{ color: "rgba(0, 0, 0, 0.8)", margin: 0 }}>World Start Call (2/1/25)</p>
                     <p style={{ color: "rgba(0, 0, 0, 0.8)", margin: 0 }}>7:30 PM EST SAT</p>
                 </div>
                 <button 
@@ -399,12 +536,61 @@ export default function MainView() {
                         border: "none",
                         borderRadius: 4,
                         cursor: "pointer"
-                    }}>Register</button>
+                    }}>RSVP for Call</button>
+            </div>
+            <div style={{
+                width: 332,
+                marginTop: 8,
+                backgroundColor: 'rgba(255, 220, 180, 0.8)',
+                backdropFilter: 'blur(8px) saturate(200%) sepia(50%) hue-rotate(-15deg) brightness(1.1)',
+                WebkitBackdropFilter: 'blur(8px) saturate(200%) sepia(50%) hue-rotate(-15deg) brightness(1.1)',
+                border: "1px solid rgba(255, 220, 180, 0.4)",
+                borderRadius: 8,
+                padding: 12,
+                boxShadow: '0 1px 25px rgba(255, 160, 60, 0.3)'
+            }}>
+                <p style={{ color: "rgba(0, 0, 0, 0.8)", margin: "0 0 8px 0" }}>First Challenge Reveals Itself...</p>
+                <button 
+                    onClick={handleFirstChallengeOpen}
+                    style={{
+                        padding: "4px 12px",
+                        backgroundColor: "rgba(0, 0, 0, 0.8)",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: 4,
+                        cursor: "pointer"
+                    }}>Discover Challenge</button>
+            </div>
+            <div style={{
+                width: 332,
+                marginTop: 8,
+                backgroundColor: 'rgba(255, 220, 180, 0.8)',
+                backdropFilter: 'blur(8px) saturate(200%) sepia(50%) hue-rotate(-15deg) brightness(1.1)',
+                WebkitBackdropFilter: 'blur(8px) saturate(200%) sepia(50%) hue-rotate(-15deg) brightness(1.1)',
+                border: "1px solid rgba(255, 220, 180, 0.4)",
+                borderRadius: 8,
+                padding: 12,
+                boxShadow: '0 1px 25px rgba(255, 160, 60, 0.3)'
+            }}>
+                <p style={{ color: "rgba(0, 0, 0, 0.8)", margin: "0 0 8px 0" }}>
+                    You found {tickets.filter(t => !t.used).length} special ticket{tickets.filter(t => !t.used).length !== 1 ? 's' : ''}...
+                </p>
+                <button 
+                    onClick={handleFactionOpen}
+                    style={{
+                        padding: "4px 12px",
+                        backgroundColor: "rgba(0, 0, 0, 0.8)",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: 4,
+                        cursor: "pointer"
+                    }}>Grab Your Tickets</button>
             </div>
             {isLoggedIn && (
               <>
-                <ShareSuccessPanel />
-                <div style={{
+              {userData?.achievements?.length > 1 &&
+                <ShareSuccessPanel />}
+                {/* <div style={{
                     width: 332,
                     marginTop: 8,
                     backgroundColor: 'rgba(255, 255, 255, 0.7)',
@@ -417,7 +603,7 @@ export default function MainView() {
                 }}>
                     <p style={{ color: "rgba(0, 0, 0, 0.8)", margin: "0 0 4px 0" }}>Hackers currently online...</p>
                     <p style={{ color: "rgba(0, 0, 0, 0.6)", margin: 0, fontStyle: "italic" }}>(coming soon)</p>
-                </div>
+                </div> */}
               </>
             )}
         </div>
@@ -428,6 +614,7 @@ export default function MainView() {
             style={{width: "100vw", height: "100vh", display: "flex", margin: 0, cursor: "default"}}>
             <Background />
         </div>
+      </div>
     </div>
   );
 } 

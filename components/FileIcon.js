@@ -22,17 +22,22 @@ export default function FileIcon({ text, icon, isSelected, onClick, delay }) {
                 style={{
                     width: 48,
                     height: 48,
-                    backgroundColor: isSelected ? '#e8e8e8' : (icon ? 'transparent' : '#000'),
+                    backgroundColor: isSelected ? 'rgba(255, 220, 180, 0.4)' : (icon ? 'transparent' : '#000'),
                     backgroundImage: icon ? `url(${icon})` : 'none',
                     backgroundSize: 'contain',
                     backgroundPosition: 'center',
                     backgroundRepeat: 'no-repeat',
                     borderRadius: 4,
-                    filter: icon ? 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))' : 'none'
+                    filter: icon ? 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))' : 'none',
+                    backdropFilter: isSelected ? 'blur(4px) saturate(160%) sepia(30%) hue-rotate(-15deg)' : 'none',
+                    WebkitBackdropFilter: isSelected ? 'blur(4px) saturate(160%) sepia(30%) hue-rotate(-15deg)' : 'none',
+                    boxShadow: isSelected ? '0 0 15px rgba(255, 160, 60, 0.2)' : 'none'
                 }}
             />
             <div style={{
-                backgroundColor: isSelected ? 'rgba(66, 133, 244, 0.12)' : 'transparent',
+                backgroundColor: isSelected ? 'rgba(255, 220, 180, 0.3)' : 'transparent',
+                backdropFilter: isSelected ? 'blur(4px) saturate(160%) sepia(30%) hue-rotate(-15deg)' : 'none',
+                WebkitBackdropFilter: isSelected ? 'blur(4px) saturate(160%) sepia(30%) hue-rotate(-15deg)' : 'none',
                 borderRadius: 4,
                 padding: '2px 8px'
             }}>

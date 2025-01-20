@@ -21,7 +21,7 @@ export default async function handler(req, res) {
     const record = await base(process.env.AIRTABLE_TABLE_NAME).create([
       {
         fields: {
-          Email: email,
+          email: email,
           // Remove SignupDate since it doesn't exist in the table
         }
       }

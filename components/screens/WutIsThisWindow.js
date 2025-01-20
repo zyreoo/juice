@@ -46,9 +46,9 @@ export default function WutIsThisWindow({ position, isDragging, isActive, handle
                 <p>Every week we will get together on call, gain achievements, and play eachother's games. I'll be making my first real video game alongside all of you for these two months, and we'll learn together in the <a href="https://hackclub.slack.com/archives/C088UF12N1Z">#juice</a>.</p>
                 <p>We have travel stipends available to game devs who:</p>
                 <ul style={{marginLeft: 16}}>
-                    <li>spends 100+ hours spent building the game</li>
-                    <li>includes no spoken or written words in their game (languageless)</li>
-                    <li>ships their game to the Steam Store (30min playable content)</li>
+                    <li>spend 100+ hours building their game</li>
+                    <li>include no spoken or written words in their game (languageless)</li>
+                    <li>ship their game to the Steam Store (30min playable content)</li>
                 </ul>
                 <p>Beginners welcome & all of the tools are in your hands to make this adventure happen, so it's up to you. Do you want to make this adventure happen? If <a href="#" onClick={handleRegisterClick}>let's do this together</a></p>
             </div>

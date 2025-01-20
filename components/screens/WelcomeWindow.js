@@ -7,15 +7,41 @@ export default function WelcomeWindow({ position, isDragging, isActive, handleMo
     const [selectedOption, setSelectedOption] = useState(0);
     const [executedOptions, setExecutedOptions] = useState(new Set());
     const audioRef = useRef(null);
+    const fadeOutStartTimeRef = useRef(null);
     const options = ['Join Jam', 'Learn More', 'Exit'];
 
     useEffect(() => {
         // Start playing audio when component mounts
         if (audioRef.current) {
             audioRef.current.volume = 0.5; // Set initial volume to 50%
+            
+            // Add timeupdate listener for fade out
+            const handleTimeUpdate = () => {
+                const audio = audioRef.current;
+                if (!audio) return;
+
+                if (!fadeOutStartTimeRef.current && audio.duration) {
+                    // Start fade out 20 seconds before the end
+                    fadeOutStartTimeRef.current = audio.duration - 20;
+                }
+
+                if (fadeOutStartTimeRef.current && audio.currentTime >= fadeOutStartTimeRef.current) {
+                    const timeLeft = audio.duration - audio.currentTime;
+                    const newVolume = Math.max(0, (timeLeft / 20) * 0.5); // 0.5 is our initial volume
+                    audio.volume = newVolume;
+                }
+            };
+
+            audioRef.current.addEventListener('timeupdate', handleTimeUpdate);
             audioRef.current.play().catch(e => {
                 console.log("Audio autoplay was prevented:", e);
             });
+
+            return () => {
+                if (audioRef.current) {
+                    audioRef.current.removeEventListener('timeupdate', handleTimeUpdate);
+                }
+            };
         }
     }, []);
 
@@ -122,8 +148,8 @@ export default function WelcomeWindow({ position, isDragging, isActive, handleMo
                 cursor: isDragging ? 'grabbing' : 'grab',
                 overflow: 'hidden'
             }}>
-            <audio ref={audioRef} loop>
-                <source src="./music.mp3" type="audio/mpeg" />
+            <audio ref={audioRef}>
+                <source src="./cafe_sounds.mp3" type="audio/mpeg" />
             </audio>
             <div style={{
                 position: 'absolute',
@@ -240,7 +266,14 @@ export default function WelcomeWindow({ position, isDragging, isActive, handleMo
                     marginLeft: '-70px',
                     marginBottom: '50px',
                     objectFit: 'contain',
+                    userSelect: 'none',
+                    WebkitUserSelect: 'none',
+                    MozUserSelect: 'none',
+                    msUserSelect: 'none',
+                    pointerEvents: 'none',
+                    draggable: false
                 }} 
+                draggable="false"
             />
         </div>
     );
