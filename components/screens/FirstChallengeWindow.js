@@ -31,7 +31,7 @@ export default function FirstChallengeWindow({ position, isDragging, isActive, h
                 <div></div>
             </div>
             <div style={{display: "flex", flexDirection: "column", gap: 12, padding: 16}}>
-                <p>Your first challenge, should you choose to accept it, is to come up with your idea & add it to public wall of games.</p>
+                <p>Your first challenge, should you choose to accept it, is to come up with your idea & add it to Juice repo games folder.</p>
                 <ol>
                     <li>write your idea in a markdown file <a href="">(template.md)</a></li>
                     <li>open a PR to the <a href="">Juice repo</a> & add your idea <a href="">(video guide)</a></li>

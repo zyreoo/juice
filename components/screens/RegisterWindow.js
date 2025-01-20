@@ -60,7 +60,7 @@ export default function RegisterWindow({ position, isDragging, isActive, handleM
         try {
             const text = await file.text();
             // Store the token in localStorage
-            localStorage.setItem('authToken', text.trim());
+            localStorage.setItem('token', text.trim());
             setTokenStatus('success');
             setIsLoggedIn(true);
             // Play collect sound

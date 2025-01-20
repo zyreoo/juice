@@ -48,7 +48,7 @@ export default function Home() {
 
   useEffect(() => {
     // Check for auth token on mount
-    const authToken = localStorage.getItem('authToken');
+    const authToken = localStorage.getItem('token');
     if (authToken) {
       setIsLoggedIn(true);
       setStage('computer'); // Skip straight to computer stage

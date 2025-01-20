@@ -538,7 +538,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData }) {
                         cursor: "pointer"
                     }}>RSVP for Call</button>
             </div>
-            <div style={{
+            {isLoggedIn && <div style={{
                 width: 332,
                 marginTop: 8,
                 backgroundColor: 'rgba(255, 220, 180, 0.8)',
@@ -560,8 +560,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData }) {
                         borderRadius: 4,
                         cursor: "pointer"
                     }}>Discover Challenge</button>
-            </div>
-            <div style={{
+            </div>}
+            {isLoggedIn && <div style={{
                 width: 332,
                 marginTop: 8,
                 backgroundColor: 'rgba(255, 220, 180, 0.8)',
@@ -585,7 +585,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData }) {
                         borderRadius: 4,
                         cursor: "pointer"
                     }}>Grab Your Tickets</button>
-            </div>
+            </div>}
             {isLoggedIn && (
               <>
               {userData?.achievements?.length > 1 &&

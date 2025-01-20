@@ -20,16 +20,16 @@ export default async function handler(req, res) {
     }
 
     // First, get the sender's email from their auth token
-    const userRecords = await base(process.env.AIRTABLE_TABLE_NAME).select({
+    const userRecords = await base('signups').select({
       filterByFormula: `{token} = '${authToken}'`,
       maxRecords: 1
     }).firstPage();
 
     if (userRecords.length === 0) {
-      return res.status(404).json({ message: 'Sender not found' });
+      return res.status(404).json({ message: `Sender not found, ${authToken}` });
     }
 
-    const senderEmail = userRecords[0].fields.email;
+    const senderEmail = (userRecords[0]?.fields?.email) || ""
 
     // Create the invite record
     const record = await base('Invites').create([
