@@ -532,11 +532,12 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData }) {
                     style={{
                         marginTop: 8,
                         padding: "4px 12px",
-                        backgroundColor: "rgba(0, 0, 0, 0.8)",
+                        backgroundColor: "#3870FF",
                         color: "#fff",
                         border: "none",
                         borderRadius: 4,
                         cursor: "pointer"
+                        
                     }}>RSVP for Call</button>
             </div>
             {isLoggedIn && <div style={{
@@ -559,8 +560,9 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData }) {
                         color: "#fff",
                         border: "none",
                         borderRadius: 4,
+                        backgroundColor: "#FF4002",
                         cursor: "pointer"
-                    }}>Discover Challenge</button>
+                    }}>Uncover Challenge</button>
             </div>}
             {isLoggedIn && <div style={{
                 width: 332,
@@ -583,6 +585,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData }) {
                         backgroundColor: "rgba(0, 0, 0, 0.8)",
                         color: "#fff",
                         border: "none",
+                        backgroundColor: "#FF6000",
                         borderRadius: 4,
                         cursor: "pointer"
                     }}>Grab Your Tickets</button>
