@@ -1,7 +1,9 @@
 import React from 'react';
 import Image from 'next/image';
 
-export default function AchievementsWindow({ position, isDragging, isActive, handleMouseDown, handleDismiss, handleWindowClick, selectedRank, setSelectedRank, BASE_Z_INDEX, ACTIVE_Z_INDEX }) {
+export default function AchievementsWindow({ position, isDragging, isActive, handleMouseDown, handleDismiss, handleWindowClick, selectedRank, setSelectedRank, BASE_Z_INDEX, ACTIVE_Z_INDEX, userData }) {
+    const hasPRSubmitted = userData?.achievements?.includes('pr_submitted');
+
     return (
         <div 
             onClick={handleWindowClick('achievements')}
@@ -40,7 +42,7 @@ export default function AchievementsWindow({ position, isDragging, isActive, han
                     <div>
                     <div style={{display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
                         <p>Challenge Progress</p>
-                        <p>0/1</p>
+                        <p>{hasPRSubmitted ? "1" : "0"}/1</p>
                     </div>
                     <div style={{width: "100%", backgroundColor: "#000", height: 1, marginTop: 4, marginBottom: 4}}>
                     </div>
@@ -67,23 +69,24 @@ export default function AchievementsWindow({ position, isDragging, isActive, han
                         <p>Gather your team and PR the idea for your game</p>
                     </div>
                     <div 
+                        onClick={() => hasPRSubmitted && setSelectedRank(2)}
                         style={{
                             flex: 1,
                             display: "flex",
                             flexDirection: "column",
                             justifyContent: "center",
                             padding: "0 12px",
-                            border: "none",
+                            border: selectedRank === 2 ? "1px solid #000" : "none",
                             borderRadius: 2,
                             backgroundColor: "transparent",
-                            opacity: 0.5,
-                            cursor: "default"
+                            opacity: hasPRSubmitted ? 1 : 0.5,
+                            cursor: hasPRSubmitted ? "pointer" : "default"
                         }}>
                         <div style={{display: "flex", alignItems: "center", gap: 8}}>
                             <p>Rank 2</p>
-                            <Image src="/lock.svg" width={16} height={16} alt="locked" />
+                            {!hasPRSubmitted && <Image src="/lock.svg" width={16} height={16} alt="locked" />}
                         </div>
-                        <p>Make a proof of concept with no art just the core gameplay loop</p>
+                        <p>{hasPRSubmitted ? "hello world" : "Make a proof of concept with no art just the core gameplay loop"}</p>
                     </div>
                     <div 
                         style={{

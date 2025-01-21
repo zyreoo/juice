@@ -206,8 +206,12 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData }) {
   };
 
   const handleDismiss = (windowName) => {
-    setOpenWindows(openWindows.filter(window => window !== windowName));
+    setOpenWindows(prev => prev.filter(window => window !== windowName));
     setWindowOrder(prev => prev.filter(w => w !== windowName));
+
+    if (windowName === 'register' && isLoggedIn) {
+        // Any additional UI updates can go here
+    }
   };
 
   const handleJuiceClick = () => {
@@ -319,6 +323,38 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData }) {
             backdrop-filter: saturate(100%);
           }
         }
+        @keyframes popIn {
+          0% {
+            transform: scale(0.4);
+            opacity: 0;
+          }
+          60% {
+            transform: scale(1.1);
+          }
+          80% {
+            transform: scale(0.95);
+          }
+          100% {
+            transform: scale(1);
+            opacity: 1;
+          }
+        }
+        @keyframes popOut {
+          0% {
+            transform: scale(1);
+            opacity: 1;
+          }
+          100% {
+            transform: scale(0.4);
+            opacity: 0;
+          }
+        }
+        .panel-pop {
+          animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        .panel-pop-out {
+          animation: popOut 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
       `}</style>
       <div 
         style={{
@@ -403,6 +439,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData }) {
             setSelectedRank={setSelectedRank}
             BASE_Z_INDEX={getWindowZIndex('achievements')}
             ACTIVE_Z_INDEX={getWindowZIndex('achievements')}
+            userData={userData}
           />
         )}
 
@@ -472,6 +509,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData }) {
             handleWindowClick={handleWindowClick}
             BASE_Z_INDEX={getWindowZIndex('firstChallenge')}
             ACTIVE_Z_INDEX={getWindowZIndex('firstChallenge')}
+            userData={userData}
           />
         )}
 
@@ -540,16 +578,18 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData }) {
         </div>
 
         <div style={{position: "absolute", top: TOP_BAR_HEIGHT + 8, right: 8}}>
-            <div style={{
-                width: 332, 
-                backgroundColor: 'rgba(255, 220, 180, 0.8)',
-                backdropFilter: 'blur(8px) saturate(200%) sepia(50%) hue-rotate(-15deg) brightness(1.1)',
-                WebkitBackdropFilter: 'blur(8px) saturate(200%) sepia(50%) hue-rotate(-15deg) brightness(1.1)',
-                border: "1px solid rgba(255, 220, 180, 0.4)",
-                borderRadius: 8,
-                padding: 12,
-                boxShadow: '0 1px 25px rgba(255, 160, 60, 0.3)'
-            }}>
+            <div 
+                className="panel-pop"
+                style={{
+                    width: 332, 
+                    backgroundColor: 'rgba(255, 220, 180, 0.8)',
+                    backdropFilter: 'blur(8px) saturate(200%) sepia(50%) hue-rotate(-15deg) brightness(1.1)',
+                    WebkitBackdropFilter: 'blur(8px) saturate(200%) sepia(50%) hue-rotate(-15deg) brightness(1.1)',
+                    border: "1px solid rgba(255, 220, 180, 0.4)",
+                    borderRadius: 8,
+                    padding: 12,
+                    boxShadow: '0 1px 25px rgba(255, 160, 60, 0.3)'
+                }}>
                 <p style={{ color: "rgba(0, 0, 0, 0.8)", margin: "0 0 8px 0" }}>{timeRemaining}</p>
                 <div style={{display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
                     <p style={{ color: "rgba(0, 0, 0, 0.8)", margin: 0 }}>World Start Call (2/1/25)</p>
@@ -566,44 +606,59 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData }) {
                         border: "none",
                         borderRadius: 4,
                         cursor: "pointer"
-                        
                     }}>RSVP for Call</button>
             </div>
-            {isLoggedIn && <div style={{
-                width: 332,
-                marginTop: 8,
-                backgroundColor: 'rgba(255, 220, 180, 0.8)',
-                backdropFilter: 'blur(8px) saturate(200%) sepia(50%) hue-rotate(-15deg) brightness(1.1)',
-                WebkitBackdropFilter: 'blur(8px) saturate(200%) sepia(50%) hue-rotate(-15deg) brightness(1.1)',
-                border: "1px solid rgba(255, 220, 180, 0.4)",
-                borderRadius: 8,
-                padding: 12,
-                boxShadow: '0 1px 25px rgba(255, 160, 60, 0.3)'
-            }}>
-                <p style={{ color: "rgba(0, 0, 0, 0.8)", margin: "0 0 8px 0" }}>First Challenge Reveals Itself...</p>
-                <button 
-                    onClick={handleFirstChallengeOpen}
+            {(isLoggedIn && !userData?.achievements?.includes("pr_submitted")) && (
+                <div 
+                    className="panel-pop"
                     style={{
-                        padding: "4px 12px",
-                        backgroundColor: "rgba(0, 0, 0, 0.8)",
-                        color: "#fff",
-                        border: "none",
-                        borderRadius: 4,
-                        backgroundColor: "#FF4002",
-                        cursor: "pointer"
-                    }}>Uncover Challenge</button>
-            </div>}
-            {isLoggedIn && <div style={{
-                width: 332,
-                marginTop: 8,
-                backgroundColor: 'rgba(255, 220, 180, 0.8)',
-                backdropFilter: 'blur(8px) saturate(200%) sepia(50%) hue-rotate(-15deg) brightness(1.1)',
-                WebkitBackdropFilter: 'blur(8px) saturate(200%) sepia(50%) hue-rotate(-15deg) brightness(1.1)',
-                border: "1px solid rgba(255, 220, 180, 0.4)",
-                borderRadius: 8,
-                padding: 12,
-                boxShadow: '0 1px 25px rgba(255, 160, 60, 0.3)'
-            }}>
+                        width: 332,
+                        marginTop: 8,
+                        backgroundColor: 'rgba(255, 220, 180, 0.8)',
+                        backdropFilter: 'blur(8px) saturate(200%) sepia(50%) hue-rotate(-15deg) brightness(1.1)',
+                        WebkitBackdropFilter: 'blur(8px) saturate(200%) sepia(50%) hue-rotate(-15deg) brightness(1.1)',
+                        border: "1px solid rgba(255, 220, 180, 0.4)",
+                        borderRadius: 8,
+                        padding: 12,
+                        boxShadow: '0 1px 25px rgba(255, 160, 60, 0.3)'
+                    }}>
+                    <p style={{ color: "rgba(0, 0, 0, 0.8)", margin: "0 0 8px 0" }}>First Challenge Reveals Itself...</p>
+                    <button 
+                        onClick={handleFirstChallengeOpen}
+                        style={{
+                            padding: "4px 12px",
+                            backgroundColor: "rgba(0, 0, 0, 0.8)",
+                            color: "#fff",
+                            border: "none",
+                            borderRadius: 4,
+                            backgroundColor: "#FF4002",
+                            cursor: "pointer"
+                        }}>Uncover Challenge</button>
+                </div>
+            )}
+ 
+            {isLoggedIn && (
+              <>
+              {userData?.achievements?.length > 1 &&
+                <div className="panel-pop">
+                    <ShareSuccessPanel />
+                </div>}
+              </>
+            )}
+
+{isLoggedIn && <div 
+                className="panel-pop"
+                style={{
+                    width: 332,
+                    marginTop: 8,
+                    backgroundColor: 'rgba(255, 220, 180, 0.8)',
+                    backdropFilter: 'blur(8px) saturate(200%) sepia(50%) hue-rotate(-15deg) brightness(1.1)',
+                    WebkitBackdropFilter: 'blur(8px) saturate(200%) sepia(50%) hue-rotate(-15deg) brightness(1.1)',
+                    border: "1px solid rgba(255, 220, 180, 0.4)",
+                    borderRadius: 8,
+                    padding: 12,
+                    boxShadow: '0 1px 25px rgba(255, 160, 60, 0.3)'
+                }}>
                 <p style={{ color: "rgba(0, 0, 0, 0.8)", margin: "0 0 8px 0" }}>
                     You found {tickets.filter(t => !t.used).length} special ticket{tickets.filter(t => !t.used).length !== 1 ? 's' : ''}...
                 </p>
@@ -619,26 +674,6 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData }) {
                         cursor: "pointer"
                     }}>Grab Your Tickets</button>
             </div>}
-            {isLoggedIn && (
-              <>
-              {userData?.achievements?.length > 1 &&
-                <ShareSuccessPanel />}
-                {/* <div style={{
-                    width: 332,
-                    marginTop: 8,
-                    backgroundColor: 'rgba(255, 255, 255, 0.7)',
-                    backdropFilter: 'blur(10px)',
-                    WebkitBackdropFilter: 'blur(10px)',
-                    border: "1px solid rgba(255, 255, 255, 0.2)",
-                    borderRadius: 8,
-                    padding: 12,
-                    boxShadow: '0 1px 20px rgba(0, 0, 0, 0.1)'
-                }}>
-                    <p style={{ color: "rgba(0, 0, 0, 0.8)", margin: "0 0 4px 0" }}>Hackers currently online...</p>
-                    <p style={{ color: "rgba(0, 0, 0, 0.6)", margin: 0, fontStyle: "italic" }}>(coming soon)</p>
-                </div> */}
-              </>
-            )}
         </div>
 
         {/* background goes here */}

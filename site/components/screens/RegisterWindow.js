@@ -9,6 +9,7 @@ export default function RegisterWindow({ position, isDragging, isActive, handleM
     const [isDraggingFile, setIsDraggingFile] = useState(false);
     const [tokenStatus, setTokenStatus] = useState('');
     const [isShaking, setIsShaking] = useState(false);
+    const [pixelCrumble, setPixelCrumble] = useState(false);
 
     useEffect(() => {
         if (inputRef.current && !showTokenUpload) {
@@ -76,13 +77,20 @@ export default function RegisterWindow({ position, isDragging, isActive, handleM
             // Only set token and logged in state if validation succeeds
             localStorage.setItem('token', text.trim());
             setTokenStatus('success');
-            setIsLoggedIn(true);
             // Play collect sound
             audioRef.current?.play();
             // Trigger the shake animation in the parent
             document.querySelector('div[data-shake-container="true"]')?.style.setProperty('animation', 'shake 0.6s cubic-bezier(.36,.07,.19,.97) both');
+            
+            // Start disintegration animation
             setTimeout(() => {
-                document.querySelector('div[data-shake-container="true"]')?.style.setProperty('animation', 'none');
+                setPixelCrumble(true);
+                // Wait for animation to complete before setting logged in
+                setTimeout(() => {
+                    document.querySelector('div[data-shake-container="true"]')?.style.setProperty('animation', 'none');
+                    setIsLoggedIn(true);
+                    handleDismiss('register'); // Dismiss the window after animation
+                }, 1200); // Adjusted to match new animation duration
             }, 600);
         } catch (error) {
             console.error('Error reading token file:', error);
@@ -95,6 +103,7 @@ export default function RegisterWindow({ position, isDragging, isActive, handleM
     return (
         <div 
             onClick={handleWindowClick('register')}
+            className={pixelCrumble ? 'pixel-crumble' : ''}
             style={{
                 display: "flex", 
                 position: "absolute", 
@@ -111,8 +120,76 @@ export default function RegisterWindow({ position, isDragging, isActive, handleM
                 transform: `translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px))`,
                 top: "50%",
                 left: "50%",
-                userSelect: "none"
+                userSelect: "none",
+                transformOrigin: "center center"
             }}>
+            <style jsx>{`
+                @keyframes pixelCrumble {
+                    0% {
+                        -webkit-mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 200' width='400' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.15' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+                        mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 200' width='400' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.15' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+                        -webkit-mask-size: 100% 100%;
+                        mask-size: 100% 100%;
+                        transform: translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px)) scale(1) rotate(0deg);
+                        opacity: 1;
+                        filter: brightness(1);
+                    }
+                    15% {
+                        transform: translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px)) scale(1.1) rotate(-2deg);
+                        opacity: 0.95;
+                        filter: brightness(1.2);
+                    }
+                    40% {
+                        -webkit-mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 200' width='400' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.35' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+                        mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 200' width='400' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.35' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+                        transform: translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px)) scale(0.9) rotate(5deg);
+                        opacity: 0.8;
+                        filter: brightness(1.4);
+                    }
+                    70% {
+                        -webkit-mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 200' width='400' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+                        mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 200' width='400' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+                        transform: translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px)) scale(0.7) rotate(-8deg) translateY(-20px);
+                        opacity: 0.5;
+                        filter: brightness(1.6);
+                    }
+                    100% {
+                        -webkit-mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 200' width='400' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+                        mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 200' width='400' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+                        transform: translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px)) scale(0.4) rotate(12deg) translateY(-40px);
+                        opacity: 0;
+                        filter: brightness(2);
+                    }
+                }
+
+                @keyframes pixelFloat {
+                    0% {
+                        background-position: 50% 50%;
+                    }
+                    100% {
+                        background-position: 51% 51%;
+                    }
+                }
+
+                .pixel-crumble {
+                    animation: pixelCrumble 1.2s cubic-bezier(.22,.68,0,.97) forwards;
+                    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 200' width='400' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.3' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+                    background-size: calc(100% + 20px) calc(100% + 20px);
+                }
+
+                .pixel-crumble::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: inherit;
+                    filter: brightness(1.5);
+                    mix-blend-mode: screen;
+                    pointer-events: none;
+                }
+            `}</style>
             <audio ref={audioRef} src="/collect.mp3" />
             <div 
                 onMouseDown={handleMouseDown('register')}
@@ -141,13 +218,13 @@ export default function RegisterWindow({ position, isDragging, isActive, handleM
                                 onClick={handleSubmit}
                                 disabled={status === 'loading'}
                             >
-                                {status === 'loading' ? 'Sending...' : 'signup'}
+                                {status === 'loading' ? 'Emailing Special Key...' : 'signup'}
                             </button>
                         </div>
                         {status === 'success' && <p style={{color: 'green'}}>Thanks! Check your email soon.</p>}
                         {status === 'error' && <p style={{color: 'red'}}>Oops! Something went wrong. Please try again.</p>}
                         {(!(status === "error" || status === "success")) && (
-                            <p>I will immediately email you a guide & special key to get your game started & start juicing.</p>
+                            <p>I will immediately email you a <b>special key</b> to get your game started & start juicing.</p>
                         )}
                     </>
                 ) : (
@@ -155,6 +232,7 @@ export default function RegisterWindow({ position, isDragging, isActive, handleM
                         onDragOver={handleDragOver}
                         onDragLeave={handleDragLeave}
                         onDrop={handleDrop}
+                        className={pixelCrumble ? 'pixel-crumble' : ''}
                         style={{
                             flex: 1,
                             border: `2px dashed ${isDraggingFile ? '#4a90e2' : '#ccc'}`,
@@ -173,7 +251,13 @@ export default function RegisterWindow({ position, isDragging, isActive, handleM
                         ) : tokenStatus === 'error' ? (
                             <p style={{color: 'red'}}>Error reading the key file. Please try again.</p>
                         ) : (
-                            <p>Drag and drop your special key file here</p>
+                            <p style={{textAlign: "center"}}>Drag and drop your special key file here
+                                <br/>
+                                <i style={{fontSize: 14}}>key not in your inbox? <span style={{fontSize: 14, cursor: "pointer", color: "blue", textDecoration: "underline"}} onClick={() => {
+                                    setShowTokenUpload(false)
+                                    setStatus("")
+                                }}>try again</span></i>
+                            </p>
                         )}
                     </div>
                 )}

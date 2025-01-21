@@ -8,17 +8,18 @@ export default function WelcomeWindow({ position, isDragging, isActive, handleMo
     const [executedOptions, setExecutedOptions] = useState(new Set());
     const audioRef = useRef(null);
     const fadeOutStartTimeRef = useRef(null);
+    const [isMuted, setIsMuted] = useState(isLoggedIn);
     const options = [isLoggedIn ? 'Start Juicing' : 'Join Jam', 'Learn More', 'Exit'];
 
     useEffect(() => {
         // Start playing audio when component mounts
         if (audioRef.current) {
-            audioRef.current.volume = 0.5; // Set initial volume to 50%
+            audioRef.current.volume = isLoggedIn ? 0 : 0.5; // Set initial volume based on login status
             
             // Add timeupdate listener for fade out
             const handleTimeUpdate = () => {
                 const audio = audioRef.current;
-                if (!audio) return;
+                if (!audio || isMuted) return;
 
                 if (!fadeOutStartTimeRef.current && audio.duration) {
                     // Start fade out 20 seconds before the end
@@ -68,6 +69,7 @@ export default function WelcomeWindow({ position, isDragging, isActive, handleMo
         } else if (options[index] === 'Learn More') {
             if (audioRef.current) {
                 audioRef.current.volume = 0;
+                setIsMuted(true);
             }
             setTimeout(() => {
                 setOpenWindows(prev => [...prev, 'wutIsThis']);
@@ -90,6 +92,19 @@ export default function WelcomeWindow({ position, isDragging, isActive, handleMo
                 setOpenWindows(prev => [...prev, 'juiceWindow']);
                 setWindowOrder(prev => [...prev.filter(w => w !== 'juiceWindow'), 'juiceWindow']);
             }, 100);
+        }
+    };
+
+    const handleMuteToggle = () => {
+        setIsMuted(!isMuted);
+        if (audioRef.current) {
+            if (isMuted) {
+                audioRef.current.volume = 0.5;
+                audioRef.current.play();
+            } else {
+                audioRef.current.volume = 0;
+                audioRef.current.pause();
+            }
         }
     };
 
@@ -116,15 +131,23 @@ export default function WelcomeWindow({ position, isDragging, isActive, handleMo
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [selectedOption]);
 
-    // Add new effect to handle video window state
+    // Update video window observer
     useEffect(() => {
         const observer = new MutationObserver((mutations) => {
             mutations.forEach((mutation) => {
                 if (mutation.type === 'childList') {
                     const videoWindow = document.querySelector('[data-window-id="video"]');
                     if (audioRef.current) {
-                        // If video window exists, mute audio, otherwise restore to 50%
-                        audioRef.current.volume = videoWindow ? 0 : 0.5;
+                        // If video window exists, mute audio, otherwise restore to previous state
+                        if (videoWindow) {
+                            audioRef.current.volume = 0;
+                            setIsMuted(true);
+                        } else {
+                            // Only unmute if it wasn't manually muted before
+                            if (!isMuted) {
+                                audioRef.current.volume = 0.5;
+                            }
+                        }
                     }
                 }
             });
@@ -133,7 +156,7 @@ export default function WelcomeWindow({ position, isDragging, isActive, handleMo
         observer.observe(document.body, { childList: true, subtree: true });
 
         return () => observer.disconnect();
-    }, []);
+    }, [isMuted]); // Add isMuted to dependencies
 
     return (
         <div 
@@ -159,6 +182,23 @@ export default function WelcomeWindow({ position, isDragging, isActive, handleMo
                 cursor: isDragging ? 'grabbing' : 'grab',
                 overflow: 'hidden'
             }}>
+            <img 
+                src={isMuted ? "/mute.png" : "/unmute.png"}
+                alt={isMuted ? "Unmute" : "Mute"}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    handleMuteToggle();
+                }}
+                style={{
+                    position: 'absolute',
+                    top: 8,
+                    right: 8,
+                    width: 24,
+                    height: 24,
+                    cursor: 'pointer',
+                    zIndex: 10
+                }}
+            />
             <audio ref={audioRef}>
                 <source src="./cafe_sounds.mp3" type="audio/mpeg" />
             </audio>
