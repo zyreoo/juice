@@ -2,11 +2,6 @@
 
 **Team Members:** [Your names here]
 
-## Game Design Doc
-
-**What's your game about? (Core Vision)**
-[Write 2-3 sentences about your game's core concept]
-
 **How would you pitch this in one line?**
 [example format: "It's like [Game X] meets [Game Y] but with [Unique Element Z]" (doesn't have to follow this format)]
 
