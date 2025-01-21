@@ -22,44 +22,27 @@ Copy this template into your new README.md file:
 ```markdown
 # Game Name
 
-## GAME DESIGN DOCUMENT
+**Team Members:** [Your names here]
 
-### Core Vision
-[2-3 sentences about your game's core concept]
+## Game Design Doc
 
-### One Line Pitch
-"It's like [Game X] meets [Game Y] but with [Unique Element Z]"
+**What's your game about? (Core Vision)**
+[Write 2-3 sentences about your game's core concept]
 
-### Player Experience
-- Target Emotion: [horror/frustration/awe/etc]
-- Unique Selling Point: [What makes this different from other games?]
+**How would you pitch this in one line?**
+[example format: "It's like [Game X] meets [Game Y] but with [Unique Element Z]" (doesn't have to follow this format)]
 
-### Core Gameplay Loop
-[One paragraph describing:]
-- What does the player do moment-to-moment?
-- What are they trying to achieve?
-- What's stopping them?
-- What rewards do they get?
+**How does the game actually play? (Core Game Loop)**
+[Describe what players do, what they're trying to achieve, what challenges they face, and what rewards they get, etc]
 
-### Key Mechanics
-[For each major mechanic, describe:]
-1. Mechanic Name
-   - How it works:
-   - Why it's fun/important:
-   - How it interacts with other mechanics:
+**What is the key mechanic(s) that make it fun?**
+[Describe how the mechanic works, why it's fun/important, how it interacts with other mechanics, etc]
 
-### 30-Minute Experience Plan
-[Describe how you'll make it to at least 30min of gameplay]
+**How will you keep players engaged for 30 minutes?**
+[Describe your plan for sustaining gameplay]
 
-### References & Inspiration
-- Game 1
-  - Elements to draw from:
-  - What we'll do differently:
-- Game 2
-  - Elements to draw from:
-  - What we'll do differently:
-
-Note: Keep the focus on gameplay mechanics and player experience. Avoid detailed descriptions of story, art style, sound design, UI flowcharts, marketing plans, or achievements.
+---
+*Remember: Focus on gameplay mechanics and player experience. Save the details about story, art style, sound design, UI flowcharts, marketing plans, or achievements for later.*
 ```
 
 ### 4. Submit Your Changes 🎉
@@ -73,38 +56,4 @@ Note: Keep the focus on gameplay mechanics and player experience. Avoid detailed
 Welcome to Juice! ✨
 
 ~Thomas
-In life we are always learningGAME DESIGN DOCUMENT.
-Core Vision (2-3 sentences)
-One line pitch ("It's like X meets Y but with Z")
-What emotion should the player feel (horror/frustration/awe etc)
-What is different about this than other games?
-Core gameplay loop (1 paragraph)
-What does the player do moment-to-moment?
-What are they trying to achieve?
-What's stopping them?
-What rewards do they get?
-Key mechanics (1-2 pages)
-For each one:
-Basic description of how it works
-Why it's fun/important
-How it interacts with other mechanics
-What you're going to do to hit the 30 min mark
-References
-Screenshots from related games
-Note what specific elements you want to draw from each + what you'll do differently
-DO NOT INCLUDE:
-Story details beyond setting the scene (literally 1 sentence)
-Art style specifics
-Sound design
-UI flowcharts
-Marketing plans
-Achievements
-
-
-
-
-
-
-
-
-
+In life we are always learning
