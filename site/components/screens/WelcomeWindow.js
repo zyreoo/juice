@@ -3,12 +3,12 @@ import { Canvas } from '@react-three/fiber';
 import { JuiceShader } from '../shaders/JuiceShader';
 import { juiceboxBuilding } from '../../public/juiceboxbuilding.png';
 
-export default function WelcomeWindow({ position, isDragging, isActive, handleMouseDown, handleDismiss, handleWindowClick, BASE_Z_INDEX, ACTIVE_Z_INDEX, setOpenWindows, setWindowOrder, openWindows }) {
+export default function WelcomeWindow({ position, isDragging, isActive, handleMouseDown, handleDismiss, handleWindowClick, BASE_Z_INDEX, ACTIVE_Z_INDEX, setOpenWindows, setWindowOrder, openWindows, isLoggedIn }) {
     const [selectedOption, setSelectedOption] = useState(0);
     const [executedOptions, setExecutedOptions] = useState(new Set());
     const audioRef = useRef(null);
     const fadeOutStartTimeRef = useRef(null);
-    const options = ['Join Jam', 'Learn More', 'Exit'];
+    const options = [isLoggedIn ? 'Start Juicing' : 'Join Jam', 'Learn More', 'Exit'];
 
     useEffect(() => {
         // Start playing audio when component mounts
@@ -46,6 +46,12 @@ export default function WelcomeWindow({ position, isDragging, isActive, handleMo
     }, []);
 
     const handleKeyDown = (e) => {
+        // Skip if focused on an input element
+        if (document.activeElement.tagName === 'INPUT' || 
+            document.activeElement.tagName === 'TEXTAREA') {
+            return;
+        }
+
         if (e.key === 'ArrowUp') {
             setSelectedOption((prev) => (prev > 0 ? prev - 1 : prev));
         } else if (e.key === 'ArrowDown') {
@@ -78,6 +84,11 @@ export default function WelcomeWindow({ position, isDragging, isActive, handleMo
                 if (registerButton) {
                     registerButton.click();
                 }
+            }, 100);
+        } else if (options[index] === 'Start Juicing') {
+            setTimeout(() => {
+                setOpenWindows(prev => [...prev, 'juiceWindow']);
+                setWindowOrder(prev => [...prev.filter(w => w !== 'juiceWindow'), 'juiceWindow']);
             }, 100);
         }
     };

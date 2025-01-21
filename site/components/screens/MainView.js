@@ -7,6 +7,7 @@ import RegisterWindow from './RegisterWindow';
 import VideoWindow from './VideoWindow';
 import FactionWindow from './FactionWindow';
 import FirstChallengeWindow from './FirstChallengeWindow';
+import JuiceWindow from './JuiceWindow';
 import Background from '../Background';
 import ShareSuccessPanel from './ShareSuccessPanel';
 
@@ -27,6 +28,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData }) {
   const [videoPosition, setVideoPosition] = React.useState({ x: 200, y: 200 });
   const [factionPosition, setFactionPosition] = React.useState({ x: 250, y: 250 });
   const [firstChallengePosition, setFirstChallengePosition] = React.useState({ x: 300, y: 300 });
+  const [juiceWindowPosition, setJuiceWindowPosition] = React.useState({ x: 0, y: 0 });
   const [isShaking, setIsShaking] = React.useState(false);
   const collectSoundRef = React.useRef(null);
   const [tickets, setTickets] = React.useState([
@@ -43,7 +45,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData }) {
     wutIsThis: 470,
     register: 200,
     video: 397,
-    faction: 200
+    faction: 200,
+    juiceWindow: 300
   };
   const BASE_Z_INDEX = 1;
 
@@ -100,6 +103,13 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData }) {
         } else {
           setWindowOrder(prev => [...prev.filter(w => w !== 'register'), 'register']);
         }
+      } else if (fileId === "Juicer") {
+        if (!openWindows.includes('juiceWindow')) {
+          setOpenWindows(prev => [...prev, 'juiceWindow']);
+          setWindowOrder(prev => [...prev.filter(w => w !== 'juiceWindow'), 'juiceWindow']);
+        } else {
+          setWindowOrder(prev => [...prev.filter(w => w !== 'juiceWindow'), 'juiceWindow']);
+        }
       } else if (fileId === "video.mp4") {
         if (!openWindows.includes('video')) {
           setOpenWindows(prev => [...prev, 'video']);
@@ -142,6 +152,9 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData }) {
       case 'firstChallenge':
         position = firstChallengePosition;
         break;
+      case 'juiceWindow':
+        position = juiceWindowPosition;
+        break;
       default:
         position = { x: 0, y: 0 };
     }
@@ -181,6 +194,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData }) {
         setFactionPosition(newPosition);
       } else if (activeWindow === 'firstChallenge') {
         setFirstChallengePosition(newPosition);
+      } else if (activeWindow === 'juiceWindow') {
+        setJuiceWindowPosition(newPosition);
       }
     }
   };
@@ -372,6 +387,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData }) {
             setOpenWindows={setOpenWindows}
             setWindowOrder={setWindowOrder}
             openWindows={openWindows}
+            isLoggedIn={isLoggedIn}
           />
         )}
 
@@ -459,6 +475,19 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData }) {
           />
         )}
 
+        {openWindows.includes('juiceWindow') && (
+          <JuiceWindow 
+            position={juiceWindowPosition}
+            isDragging={isDragging}
+            isActive={windowOrder[windowOrder.length - 1] === 'juiceWindow'}
+            handleMouseDown={handleMouseDown}
+            handleDismiss={handleDismiss}
+            handleWindowClick={handleWindowClick}
+            BASE_Z_INDEX={getWindowZIndex('juiceWindow')}
+            ACTIVE_Z_INDEX={getWindowZIndex('juiceWindow')}
+          />
+        )}
+
         <div style={{
             position: "absolute", 
             top: TOP_BAR_HEIGHT, 
@@ -491,12 +520,12 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData }) {
                 </div>
                 <div>
                     <FileIcon 
-                        text="Register" 
-                        icon="registericon.png" 
-                        isSelected={selectedFile === "Register"}
-                        onClick={handleFileClick("Register")}
+                        text={isLoggedIn ? "Juicer" : "Register"}
+                        icon={isLoggedIn ? null : "registericon.png"}
+                        isSelected={selectedFile === (isLoggedIn ? "Juicer" : "Register")}
+                        onClick={handleFileClick(isLoggedIn ? "Juicer" : "Register")}
                         delay={0.2}
-                        data-file-id="Register"
+                        data-file-id={isLoggedIn ? "Juicer" : "Register"}
                     />
                     <FileIcon 
                         text="video.mp4" 
