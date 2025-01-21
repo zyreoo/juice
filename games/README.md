@@ -1,4 +1,4 @@
-# How to Add Your Game to Juice 
+# How to Add Your Game Idea to Juice 
 
 ## Step-by-Step 
 
