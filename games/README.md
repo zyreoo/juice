@@ -50,5 +50,5 @@ Copy this template into your new README.md file:
 
 Welcome to Juice! ✨
 
-~Thomas
+~Thomas Stubblefield
 In life we are always learning
