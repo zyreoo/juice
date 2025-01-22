@@ -3,7 +3,7 @@ _there's  never been anything like this before_
 
 ![background](https://github.com/user-attachments/assets/156b45a9-25bd-4808-9fca-456a66d2cd93)
 
-spend 2 months building a game with your friends, then we will go to Shanghai, China, and then we will run a popup cafe for people from the streets to come in and try our games. 
+spend 2 months building a game with your friends, go to Shanghai, China, and then run a popup cafe for people from the streets to come in and try our games. 
 
 what's the criteria for the games? 
 * languageless (no use of written or spoken word in the game or the game's interface)
