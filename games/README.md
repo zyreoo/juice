@@ -24,7 +24,7 @@ Copy this template into your new README.md file:
 
 **Team Members:** [Your names here]
 
-**How would you pitch this in one line?**
+**How would you pitch your game in one line?**
 [example format: "It's like [Game X] meets [Game Y] but with [Unique Element Z]" (doesn't have to follow this format)]
 
 **What is the key mechanic(s) that make it fun?**
