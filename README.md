@@ -46,3 +46,7 @@ pnpm i
 pnpm run dev
 ```
 & make a PR!
+
+---
+
+note tysm to magic frog (estella) for making the art & some of the magical interactions on this site! 
