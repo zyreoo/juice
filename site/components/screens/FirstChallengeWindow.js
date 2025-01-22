@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-export default function FirstChallengeWindow({ position, isDragging, isActive, handleMouseDown, handleDismiss, handleWindowClick, BASE_Z_INDEX, ACTIVE_Z_INDEX, userData }) {
+export default function FirstChallengeWindow({ position, isDragging, isActive, handleMouseDown, handleDismiss, handleWindowClick, BASE_Z_INDEX, ACTIVE_Z_INDEX, userData, setUserData }) {
     const [prLink, setPrLink] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState('');
@@ -56,6 +56,12 @@ export default function FirstChallengeWindow({ position, isDragging, isActive, h
                 document.querySelector('div[data-shake-container="true"]')?.style.setProperty('animation', 'none');
             }, 600);
 
+            // Update userData with new achievement
+            setUserData({
+                ...userData,
+                achievements: [...(userData?.achievements || []), 'pr_submitted']
+            });
+
             setIsSuccess(true);
             setPrLink(''); // Clear the input
         } catch (err) {
@@ -100,10 +106,10 @@ export default function FirstChallengeWindow({ position, isDragging, isActive, h
             <div style={{display: "flex", flexDirection: "column", gap: 12, padding: 16}}>
                 <p>Your first challenge, should you choose to accept it, is to come up with your idea & add it to Juice repo games folder.</p>
                 <ol>
-                    <li>write your idea in a markdown file <a href="https://github.com/SerenityUX/juice/blob/main/games/template/README.md">(template)</a></li>
-                    <li>open a PR to the <a href="https://github.com/SerenityUX/juice">Juice repo</a> & add your idea <a href="https://github.com/SerenityUX/juice/blob/main/games/README.md">(guide)</a></li>
+                    <li>write your idea in a markdown file <a target="_blank" href="https://github.com/SerenityUX/juice/blob/main/games/template/README.md">(template)</a></li>
+                    <li>open a PR to the <a target="_blank" href="https://github.com/SerenityUX/juice">Juice repo</a> & add your idea <a target="_blank" href="https://github.com/SerenityUX/juice/blob/main/games/README.md">(guide)</a></li>
                 </ol>
-                <p>Here's <a href="">the markdown file that Paolo & I made for our game</a>.</p>
+                <p>Here's <a target="_blank" href="">the markdown file that Paolo & I made for our game</a>.</p>
                 <div>
                 <p>~Thomas</p>
                 <i>In life we are always learning</i>

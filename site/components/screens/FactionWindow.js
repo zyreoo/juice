@@ -14,6 +14,14 @@ const ticketShakeKeyframes = `
 `;
 
 export default function FactionWindow({ position, isDragging, isActive, handleMouseDown, handleDismiss, handleWindowClick, BASE_Z_INDEX, ACTIVE_Z_INDEX, tickets, setTickets }) {
+    const availableTickets = tickets.filter(t => !t.used).length;
+
+    React.useEffect(() => {
+        if (availableTickets === 0) {
+            handleDismiss('faction');
+        }
+    }, [availableTickets]);
+
     const handleSendInvite = async (ticketId) => {
         const email = window.prompt("Enter friend's email address:");
         if (email) {
@@ -32,9 +40,14 @@ export default function FactionWindow({ position, isDragging, isActive, handleMo
                 });
 
                 if (response.ok) {
-                    setTickets(tickets.map(ticket => 
-                        ticket.id === ticketId ? { ...ticket, used: true } : ticket
-                    ));
+                    const data = await response.json();
+                    // Update tickets based on remaining invites from API
+                    const remainingInvites = data.remainingInvites || [];
+                    const allTickets = ['apple', 'carrot', 'berry'];
+                    setTickets(allTickets.map(id => ({ 
+                        id, 
+                        used: !remainingInvites.includes(id)
+                    })));
                 } else {
                     const error = await response.json();
                     console.error('Failed to send invite:', error);
@@ -46,8 +59,6 @@ export default function FactionWindow({ position, isDragging, isActive, handleMo
             }
         }
     };
-
-    const availableTickets = tickets.filter(t => !t.used).length;
 
     return (
         <>

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-export default function RegisterWindow({ position, isDragging, isActive, handleMouseDown, handleDismiss, handleWindowClick, BASE_Z_INDEX, ACTIVE_Z_INDEX, isLoggedIn, setIsLoggedIn }) {
+export default function RegisterWindow({ position, isDragging, isActive, handleMouseDown, handleDismiss, handleWindowClick, BASE_Z_INDEX, ACTIVE_Z_INDEX, isLoggedIn, setIsLoggedIn, setUserData }) {
     const inputRef = useRef(null);
     const audioRef = useRef(null);
     const [email, setEmail] = useState('');
@@ -74,9 +74,16 @@ export default function RegisterWindow({ position, isDragging, isActive, handleM
                 throw new Error('Invalid token');
             }
             
+            // Get user data from response
+            const data = await response.json();
+            
             // Only set token and logged in state if validation succeeds
             localStorage.setItem('token', text.trim());
             setTokenStatus('success');
+            // Update userData in parent component with the correct nested structure
+            if (data.userData) {
+                setUserData(data.userData);
+            }
             // Play collect sound
             audioRef.current?.play();
             // Trigger the shake animation in the parent

@@ -19,7 +19,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ message: 'Email and flavor are required' });
     }
 
-    // First, get the sender's email from their auth token
+    // First, get the sender's record from their auth token
     const userRecords = await base('signups').select({
       filterByFormula: `{token} = '${authToken}'`,
       maxRecords: 1
@@ -29,7 +29,27 @@ export default async function handler(req, res) {
       return res.status(404).json({ message: `Sender not found, ${authToken}` });
     }
 
-    const senderEmail = (userRecords[0]?.fields?.email) || ""
+    const userRecord = userRecords[0];
+    const senderEmail = userRecord.fields.email || "";
+    const invitesAvailable = userRecord.fields.invitesAvailable || [];
+
+    // Check if user has the specified flavor invite available
+    if (!invitesAvailable.includes(flavor)) {
+      return res.status(400).json({ message: 'Invite flavor not available' });
+    }
+
+    // Remove the used invite from available invites
+    const updatedInvites = invitesAvailable.filter(invite => invite !== flavor);
+
+    // Update the user's record with remaining invites
+    await base('signups').update([
+      {
+        id: userRecord.id,
+        fields: {
+          invitesAvailable: updatedInvites
+        }
+      }
+    ]);
 
     // Create the invite record
     const record = await base('Invites').create([
@@ -42,7 +62,11 @@ export default async function handler(req, res) {
       }
     ]);
 
-    return res.status(200).json({ success: true, record });
+    return res.status(200).json({ 
+      success: true, 
+      record,
+      remainingInvites: updatedInvites 
+    });
   } catch (error) {
     console.error('Invite creation error:', error);
     return res.status(500).json({ 

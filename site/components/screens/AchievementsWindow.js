@@ -1,8 +1,16 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Image from 'next/image';
 
 export default function AchievementsWindow({ position, isDragging, isActive, handleMouseDown, handleDismiss, handleWindowClick, selectedRank, setSelectedRank, BASE_Z_INDEX, ACTIVE_Z_INDEX, userData }) {
     const hasPRSubmitted = userData?.achievements?.includes('pr_submitted');
+
+    useEffect(() => {
+        if (hasPRSubmitted) {
+            setSelectedRank(2);
+        } else {
+            setSelectedRank(1);
+        }
+    }, [hasPRSubmitted, setSelectedRank]);
 
     return (
         <div 
@@ -42,11 +50,17 @@ export default function AchievementsWindow({ position, isDragging, isActive, han
                     <div>
                     <div style={{display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
                         <p>Challenge Progress</p>
-                        <p>{hasPRSubmitted ? "1" : "0"}/1</p>
+                        <p>{selectedRank === 2 ? 
+                            `${userData?.totalStretchHours?.toFixed(2) || "0.00"}/15` : 
+                            (hasPRSubmitted ? "1/1" : "0/1")}</p>
                     </div>
                     <div style={{width: "100%", backgroundColor: "#000", height: 1, marginTop: 4, marginBottom: 4}}>
                     </div>
-                    <p>Add your game idea to the<br/> <a href="https://github.com/">Juice repo</a>, here's <a href="https://github.com/">a guide</a></p>
+                    {selectedRank === 2 ? (
+                        <p>Spend 15+ hours building your proof of concept and then <a target="_blank" href="https://hackclub.slack.com/archives/C0M8PUPU6">#ship</a> it</p>
+                    ) : (
+                        <p>Add your game idea to the<br/> <a target="_blank" href="https://github.com/">Juice repo</a>, here's <a target="_blank" href="https://github.com/">a guide</a></p>
+                    )}
                     </div>
                 </div>
                 <div style={{borderLeft: "1px solid #000", width: "100%", display: "flex", flexDirection: "column", height: "100%", padding: "2px", gap: "2px"}}>
@@ -86,7 +100,7 @@ export default function AchievementsWindow({ position, isDragging, isActive, han
                             <p>Rank 2</p>
                             {!hasPRSubmitted && <Image src="/lock.svg" width={16} height={16} alt="locked" />}
                         </div>
-                        <p>{hasPRSubmitted ? "hello world" : "Make a proof of concept with no art just the core gameplay loop"}</p>
+                        <p>Make a proof of concept with no art just the core gameplay loop</p>
                     </div>
                     <div 
                         style={{

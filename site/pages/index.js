@@ -135,6 +135,7 @@ export default function Home() {
             isLoggedIn={isLoggedIn} 
             setIsLoggedIn={setIsLoggedIn} 
             userData={userData}
+            setUserData={setUserData}
             onAuthenticate={handleAuthentication}
           />
         )}

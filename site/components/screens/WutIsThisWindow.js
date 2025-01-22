@@ -41,16 +41,16 @@ export default function WutIsThisWindow({ position, isDragging, isActive, handle
             </div>
             <div style={{display: "flex", flexDirection: "column", gap: 16, padding: 16}}>
                 <p>Hello Hacker, Thomas here</p>
-                <p>Every year, we organize wild adventures at Hack Club (see <a href="https://youtu.be/ufMUJ9D1fi8?feature=shared">Trail</a>, <a href="https://www.youtube.com/watch?v=KLx4NZZPzMc">Epoch</a>, <a href="https://youtu.be/2BID8_pGuqA?feature=shared">Zephyr</a>, etc).</p>
+                <p>Every year, we organize wild adventures at Hack Club (see <a target="_blank" href="https://youtu.be/ufMUJ9D1fi8?feature=shared">Trail</a>, <a target="_blank" href="https://www.youtube.com/watch?v=KLx4NZZPzMc">Epoch</a>, <a target="_blank" href="https://youtu.be/2BID8_pGuqA?feature=shared">Zephyr</a>, etc).</p>
                 <p>This year we're organizing our wildest adventure yet. We're will be working together online for two months making our own games, shipping our games to the steam store, and then getting together in-person in Shanghai, China to run a popup cafe for people to come and play our games.</p>
-                <p>Every week we will get together on call, gain achievements, and play eachother's games. I'll be making my first real video game alongside all of you for these two months, and we'll learn together in the <a href="https://hackclub.slack.com/archives/C088UF12N1Z">#juice</a>.</p>
+                <p>Every week we will get together on call, gain achievements, and play eachother's games. I'll be making my first real video game alongside all of you for these two months, and we'll learn together in the <a target="_blank" href="https://hackclub.slack.com/archives/C088UF12N1Z">#juice</a>.</p>
                 <p>We have travel stipends available to game devs who:</p>
                 <ul style={{marginLeft: 16}}>
                     <li>spend 100+ hours building their game</li>
                     <li>include no spoken or written words in their game (languageless)</li>
                     <li>ship their game to the Steam Store (30min playable content)</li>
                 </ul>
-                <p>Beginners welcome & all of the tools are in your hands to make this adventure happen, so it's up to you. Do you want to make this adventure happen? If <a href="#" onClick={handleRegisterClick}>let's do this together</a></p>
+                <p>Beginners welcome & all of the tools are in your hands to make this adventure happen, so it's up to you. Do you want to make this adventure happen? If <a target="_blank" href="#" onClick={handleRegisterClick}>let's do this together</a></p>
             </div>
         </div>
     );

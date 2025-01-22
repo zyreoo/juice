@@ -24,6 +24,28 @@ export default async function handler(req, res) {
     }
 
     const userData = records[0].fields;
+
+    // Get juiceStretches for this user
+    const stretches = await base('juiceStretches').select({
+      filterByFormula: `{email (from Signups)} = '${userData.email}'`,
+    }).firstPage();
+
+    // Calculate total duration in hours
+    let totalHours = 0;
+    stretches.forEach(record => {
+      const startTime = record.fields.startTime;
+      const endTime = record.fields.endTime;
+      
+      if (startTime && endTime) {
+        const start = new Date(startTime);
+        const end = new Date(endTime);
+        const durationHours = (end - start) / (1000 * 60 * 60); // Convert ms to hours
+        totalHours += durationHours;
+      }
+    });
+
+    userData.totalStretchHours = Math.round(totalHours * 100) / 100; // Round to 2 decimal places
+    
     res.status(200).json({ userData });
   } catch (error) {
     console.error('Error fetching user data:', error);

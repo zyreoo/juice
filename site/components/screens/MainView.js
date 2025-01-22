@@ -11,7 +11,7 @@ import JuiceWindow from './JuiceWindow';
 import Background from '../Background';
 import ShareSuccessPanel from './ShareSuccessPanel';
 
-export default function MainView({ isLoggedIn, setIsLoggedIn, userData }) {
+export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserData }) {
   const [time, setTime] = React.useState(new Date());
   const [timeRemaining, setTimeRemaining] = React.useState('');
   const [selectedFile, setSelectedFile] = React.useState(null);
@@ -31,11 +31,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData }) {
   const [juiceWindowPosition, setJuiceWindowPosition] = React.useState({ x: 0, y: 0 });
   const [isShaking, setIsShaking] = React.useState(false);
   const collectSoundRef = React.useRef(null);
-  const [tickets, setTickets] = React.useState([
-    { id: 'apple', used: false },
-    { id: 'carrot', used: false },
-    { id: 'berry', used: false }
-  ]);
+  const [tickets, setTickets] = React.useState([]);
 
   // Constants
   const TOP_BAR_HEIGHT = 36;
@@ -286,6 +282,16 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData }) {
     collectSoundRef.current.volume = 0.5;
   }, []);
 
+  React.useEffect(() => {
+    if (userData?.invitesAvailable) {
+      const allTickets = ['apple', 'carrot', 'berry'];
+      setTickets(allTickets.map(id => ({ 
+        id, 
+        used: !userData.invitesAvailable.includes(id)
+      })));
+    }
+  }, [userData?.invitesAvailable]);
+
   return (
     <div 
       data-shake-container="true"
@@ -468,6 +474,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData }) {
             ACTIVE_Z_INDEX={getWindowZIndex('register')}
             isLoggedIn={isLoggedIn}
             setIsLoggedIn={setIsLoggedIn}
+            setUserData={setUserData}
           />
         )}
 
@@ -510,19 +517,22 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData }) {
             BASE_Z_INDEX={getWindowZIndex('firstChallenge')}
             ACTIVE_Z_INDEX={getWindowZIndex('firstChallenge')}
             userData={userData}
+            setUserData={setUserData}
           />
         )}
 
         {openWindows.includes('juiceWindow') && (
-          <JuiceWindow 
+          <JuiceWindow
             position={juiceWindowPosition}
-            isDragging={isDragging}
-            isActive={windowOrder[windowOrder.length - 1] === 'juiceWindow'}
+            isDragging={isDragging && activeWindow === 'juiceWindow'}
+            isActive={activeWindow === 'juiceWindow'}
             handleMouseDown={handleMouseDown}
             handleDismiss={handleDismiss}
             handleWindowClick={handleWindowClick}
-            BASE_Z_INDEX={getWindowZIndex('juiceWindow')}
+            BASE_Z_INDEX={BASE_Z_INDEX}
             ACTIVE_Z_INDEX={getWindowZIndex('juiceWindow')}
+            userData={userData}
+            setUserData={setUserData}
           />
         )}
 
@@ -637,16 +647,16 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData }) {
                 </div>
             )}
  
-            {isLoggedIn && (
+            {/* {isLoggedIn && (
               <>
               {userData?.achievements?.length > 1 &&
                 <div className="panel-pop">
                     <ShareSuccessPanel />
                 </div>}
               </>
-            )}
+            )} */}
 
-{isLoggedIn && <div 
+            {isLoggedIn && tickets.some(t => !t.used) && <div 
                 className="panel-pop"
                 style={{
                     width: 332,
