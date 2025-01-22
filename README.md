@@ -33,7 +33,7 @@ how do i spend 100hr making the game?
 3. 45 hours: build your game! you have the gameplay, you know what the style is, now build it. ship it onto itch.io and get people playing it
 4. 15 hours: polish, fix bugs, and get ready to post on steam store
 
-you should log your time working your game on https://juice.hackclub.com/ by tapping "start juicing" and then juicing until you reach an "OMG IT WORKS" moment in your process at which you film a quick demo, share it on the juice site, and can get back to juicing. Your demo will be shared on the "Kudos" app on the site and other Hack Clubbers will see your progress and can interact with it by giving them "Kudos". 
+you should log your time working your game on https://juice.hackclub.com/ by tapping "start juicing" and then juicing until you reach an "OMG IT WORKS" moment in your process at which you film a quick demo, share it on the juice site, and can get back to juicing. Your demo videos you upload throughout the day will be shared on the "Kudos" app on the site and other Hack Clubbers will see your progress and can interact with it by giving them "Kudos". 
 
 to contribute to the site for any reason:
 ```bash
