@@ -40,7 +40,7 @@ export default function WutIsThisWindow({ position, isDragging, isActive, handle
                 <div></div>
             </div>
             <div style={{display: "flex", flexDirection: "column", gap: 16, padding: 16}}>
-                <p>Hello Hacker, Thomas here</p>
+                <p>Hello Hacker, Thomas Stubblefield here</p>
                 <p>Every year, we organize wild adventures at Hack Club (see <a target="_blank" href="https://youtu.be/ufMUJ9D1fi8?feature=shared">Trail</a>, <a target="_blank" href="https://www.youtube.com/watch?v=KLx4NZZPzMc">Epoch</a>, <a target="_blank" href="https://youtu.be/2BID8_pGuqA?feature=shared">Zephyr</a>, etc).</p>
                 <p>This year we're organizing our wildest adventure yet. We're will be working together online for two months making our own games, shipping our games to the steam store, and then getting together in-person in Shanghai, China to run a popup cafe for people to come and play our games.</p>
                 <p>Every week we will get together on call, gain achievements, and play eachother's games. I'll be making my first real video game alongside all of you for these two months, and we'll learn together in the <a target="_blank" href="https://hackclub.slack.com/archives/C088UF12N1Z">#juice</a>.</p>

@@ -10,6 +10,7 @@ import FirstChallengeWindow from './FirstChallengeWindow';
 import JuiceWindow from './JuiceWindow';
 import Background from '../Background';
 import ShareSuccessPanel from './ShareSuccessPanel';
+import FortuneBasket from './FortuneBasket';
 
 export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserData }) {
   const [time, setTime] = React.useState(new Date());
@@ -319,6 +320,17 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
     }
   }, [userData?.invitesAvailable]);
 
+  const handleFortuneCookieOpen = () => {
+    if (!openWindows.includes('fortuneBasket')) {
+      setOpenWindows(prev => [...prev, 'fortuneBasket']);
+    }
+  };
+
+  const handleAchievementsOpen = () => {
+    if (!openWindows.includes('achievements')) {
+      setOpenWindows(prev => [...prev, 'achievements']);
+    }
+  };
   return (
     <div 
       data-shake-container="true"
@@ -588,9 +600,17 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                         text="Achievements" 
                         icon="achievmentsicon.png"
                         isSelected={selectedFile === "Achievements"}
-                        onClick={handleFileClick("Achievements")}
+                        onClick={handleAchievementsOpen}
                         delay={0.1}
                         data-file-id="Achievements"
+                    />
+                    <FileIcon 
+                        text="Fortune Basket" 
+                        icon="./fortunecookieicon.png" 
+                        isSelected={selectedFile === "Fortune Cookie"} 
+                        onClick={handleFortuneCookieOpen} 
+                        delay={0.4} 
+                        data-file-id="Fortune Cookie" 
                     />
                 </div>
                 <div>
@@ -721,6 +741,12 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
             <Background />
         </div>
       </div>
+      {openWindows.includes('fortuneBasket') && (
+        <FortuneBasket 
+          handleDismiss={() => handleDismiss('fortuneBasket')}
+          initialPosition={{ x: window.innerWidth / 2 - 150, y: window.innerHeight / 2 - 100 }}
+        />
+      )}
     </div>
   );
 } 
