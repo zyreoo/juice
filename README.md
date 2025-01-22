@@ -1,10 +1,7 @@
-
 juice! 🧃
+_there's  never been anything like this before_
 
 ![background](https://github.com/user-attachments/assets/156b45a9-25bd-4808-9fca-456a66d2cd93)
-
-
-_there's  never been anything like this before_
 
 spend 2 months building a game with your friends, then we will go to Shanghai, China, and then we will run a popup cafe for people from the streets to come in and try our games. 
 
