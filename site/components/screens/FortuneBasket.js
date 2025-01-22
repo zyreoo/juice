@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import Confetti from 'react-confetti'; // Import a confetti library
-import styles from './FortuneBasket.module.css'; // Import the CSS Module
+import Confetti from 'react-confetti'; 
+import styles from './FortuneBasket.module.css'; 
 
 export default function FortuneBasket({ handleDismiss, initialPosition }) {
   const [position, setPosition] = useState(initialPosition || { x: 100, y: 100 });
@@ -10,8 +10,8 @@ export default function FortuneBasket({ handleDismiss, initialPosition }) {
   const [selectedCookie, setSelectedCookie] = useState(null);
   const [fortuneMessage, setFortuneMessage] = useState('');
   const [showConfetti, setShowConfetti] = useState(false);
-  const [showNewImages, setShowNewImages] = useState(false); // State for new images
-  const [fadeInMessage, setFadeInMessage] = useState(false); // State for fading in the message
+  const [showNewImages, setShowNewImages] = useState(false); 
+  const [fadeInMessage, setFadeInMessage] = useState(false);
 
   const handleMouseDown = (e) => {
     e.stopPropagation();
@@ -52,9 +52,9 @@ export default function FortuneBasket({ handleDismiss, initialPosition }) {
 
   const handleCookieClick = (index) => {
     setSelectedCookie(index);
-    setShowConfetti(true); // Show confetti
-    setShowNewImages(true); // Show new images
-    generateFortuneMessage(); // Generate a random fortune message
+    setShowConfetti(true); 
+    setShowNewImages(true); 
+    generateFortuneMessage(); 
   };
 
   const generateFortuneMessage = () => {
@@ -68,6 +68,7 @@ export default function FortuneBasket({ handleDismiss, initialPosition }) {
     ];
     const randomFortune = fortunes[Math.floor(Math.random() * fortunes.length)];
     setFortuneMessage(randomFortune);
+    console.log("Generated fortune message:", randomFortune);
     
     setTimeout(() => {
       setFadeInMessage(true);
@@ -83,7 +84,7 @@ export default function FortuneBasket({ handleDismiss, initialPosition }) {
         border: '1px solid black',
         backgroundColor: 'white',
         width: '300px',
-        height: '200px',
+        height: '220px',
         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
         cursor: 'move',
       }}
