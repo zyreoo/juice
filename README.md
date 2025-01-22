@@ -45,5 +45,4 @@ pnpm i
 ```bash
 pnpm run dev
 ```
-& make a PR
-Y 
+& make a PR!
