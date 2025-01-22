@@ -215,7 +215,7 @@ export default function RegisterWindow({ position, isDragging, isActive, handleM
                             <input 
                                 ref={inputRef}
                                 style={{height: 24, padding: "2px 4px"}} 
-                                placeholder='marsha@mellow.yum'
+                                placeholder='nevergonna@giveyouup.com'
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
