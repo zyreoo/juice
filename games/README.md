@@ -33,7 +33,7 @@ Copy this template into your new README.md file:
 **How does the game actually play? (Core Game Loop)**
 [Describe what players do, what they're trying to achieve, what challenges they face, and what rewards they get, etc]
 
-**How will you keep players engaged for 30 minutes?**
+How will you keep players engaged for 30 minutes? What's the general scope of your game (will change as you go)?
 [Describe your plan for sustaining gameplay]
 
 ---
