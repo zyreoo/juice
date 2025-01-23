@@ -3,39 +3,40 @@
 *There's never been anything like this before*
 
 ![background](https://github.com/user-attachments/assets/156b45a9-25bd-4808-9fca-456a66d2cd93)
+<img src="https://github.com/hackclub/juice/blob/main/site/public/juicebigimage.png" alt="juiceboxbuilding" width="130" height="130">
 
-Spend 2 months building a game with your friends, go to Shanghai, China, and then run a popup cafe for people from the streets to come in and try our games.
+Spend 2 months building a game with your friends, go to Shanghai, China, and then run a popup cafe for people from the streets to come in and try our games!
 
-## What's the criteria for the games?
+## What's the criteria for the games? 👾
 
 - Languageless (no use of written or spoken word in the game or the game's interface)
 - 30+ minutes of playable content
 - 100+ hours of time spent building
 - Launch onto the Steam store
 
-## Who can come?
+## Who can come? 😄
 
 Everyone that makes a game! (Travel stipends provided.)
 
-## How do I get started?
+## How do I get started? 🗂️
 
 Add your game idea to the games folder to get started!
 
-## When is it happening?
+## When is it happening? 🗓️
 
-April 4th - April 11th
+April 4th - April 11th!
 
-## What's the cafe going to be like?
+## What's the cafe going to be like? ☕️
 
 We'll decide the specifics together in the [#juice](https://hackclub.slack.com/archives/C088UF12N1Z) channel. It will be full of computers running our games where anyone can come in and play!
 
 ------
 
-## New to making games?
+## New to making games? 👾
 
 No problem! Me too.
 
-## How do I spend 100 hours making the game?
+## How do I spend 100 hours making the game? 💻
 
 *(Rough outline)*
 
@@ -48,7 +49,7 @@ You should log your time working on your game on [juice.hackclub.com](https://ju
 
 Your demo videos you upload throughout the day will be shared on the Kudos app on the site. Other Hack Clubbers will see your progress and can interact with it by giving "Kudos."
 
-## Where will I stay while I'm there?
+## Where will I stay while I'm there? 🏠
 
 We'll provide housing! More details to come :)
 
@@ -65,7 +66,7 @@ pnpm run dev
 
 ------
 
-*Note: Tysm to Magic Frog (Estella) for making the art & some of the magical interactions on this site!*
+Tysm to [Magic Frog (Estella)](https://github.com/themagicfrog) for making the art & some of the magical interactions on this site!*
 
 ## ☀️ In Years Past
 
