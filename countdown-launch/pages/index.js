@@ -16,12 +16,9 @@ export default function Home() {
       "https://youtu.be/Fy0aCDmgnxg?feature=shared",
       "https://www.youtube.com/watch?v=ufMUJ9D1fi8",
       "https://www.youtube.com/shorts/Ns-bX2KbBRg",
-      "https://youtu.be/6RMi4KCU5EI?feature=shared",
-      "https://youtu.be/HSGt7miSL7s?feature=shared",
       "https://youtu.be/2sLou4kva1s?feature=shared",
       "https://www.youtube.com/watch?v=m5GH9xyneTg",
       "https://quarter--mile.com/Unconventional-Adventures",
-      "https://youtu.be/amXl7FG7J4c?feature=shared",
       "https://youtu.be/Hv9TyB9jvpM?feature=shared"
     ];
     
