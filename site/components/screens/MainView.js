@@ -30,10 +30,15 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
   const [factionPosition, setFactionPosition] = React.useState({ x: 250, y: 250 });
   const [firstChallengePosition, setFirstChallengePosition] = React.useState({ x: 300, y: 300 });
   const [juiceWindowPosition, setJuiceWindowPosition] = React.useState({ x: 0, y: 0 });
+  const [fortuneBasketPosition, setFortuneBasketPosition] = React.useState({ 
+    x: Math.max(0, window.innerWidth / 2 - 150), 
+    y: Math.max(0, window.innerHeight / 2 - 110)
+  });
   const [isShaking, setIsShaking] = React.useState(false);
   const collectSoundRef = React.useRef(null);
   const [tickets, setTickets] = React.useState([]);
   const [isRsvped, setIsRsvped] = React.useState(false);
+  const [showCookies, setShowCookies] = React.useState(false);
 
   // Constants
   const TOP_BAR_HEIGHT = 36;
@@ -44,7 +49,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
     register: 200,
     video: 397,
     faction: 200,
-    juiceWindow: 300
+    juiceWindow: 300,
+    fortuneBasket: 220
   };
   const BASE_Z_INDEX = 1;
 
@@ -115,16 +121,24 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         } else {
           setWindowOrder(prev => [...prev.filter(w => w !== 'video'), 'video']);
         }
+      } else if (fileId === "Fortune Basket") {
+        if (!openWindows.includes('fortuneBasket')) {
+          setOpenWindows(prev => [...prev, 'fortuneBasket']);
+          setWindowOrder(prev => [...prev.filter(w => w !== 'fortuneBasket'), 'fortuneBasket']);
+        } else {
+          setWindowOrder(prev => [...prev.filter(w => w !== 'fortuneBasket'), 'fortuneBasket']);
+        }
       }
-    } else {
-      setSelectedFile(fileId);
     }
+    setSelectedFile(fileId);
   };
 
   const handleMouseDown = (windowName) => (e) => {
+    console.log('MouseDown triggered for window:', windowName);
     e.stopPropagation();
     setIsDragging(true);
     setActiveWindow(windowName);
+    console.log('Active window set to:', windowName);
     setWindowOrder(prev => [...prev.filter(w => w !== windowName), windowName]);
     
     let position;
@@ -153,7 +167,12 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
       case 'juiceWindow':
         position = juiceWindowPosition;
         break;
+      case 'fortuneBasket':
+        console.log('Fortune Basket position:', fortuneBasketPosition);
+        position = fortuneBasketPosition;
+        break;
       default:
+        console.log('Unknown window name:', windowName);
         position = { x: 0, y: 0 };
     }
 
@@ -161,10 +180,12 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
       x: e.clientX - position.x,
       y: e.clientY - position.y
     });
+    console.log('Drag start set to:', { x: e.clientX - position.x, y: e.clientY - position.y });
   };
 
   const handleMouseMove = (e) => {
     if (isDragging) {
+      console.log('Mouse move with active window:', activeWindow);
       const newY = e.clientY - dragStart.y;
       const actualTopPosition = (window.innerHeight / 2) + newY;
       
@@ -194,11 +215,15 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         setFirstChallengePosition(newPosition);
       } else if (activeWindow === 'juiceWindow') {
         setJuiceWindowPosition(newPosition);
+      } else if (activeWindow === 'fortuneBasket') {
+        console.log('Setting new fortune basket position:', newPosition);
+        setFortuneBasketPosition(newPosition);
       }
     }
   };
 
   const handleMouseUp = () => {
+    console.log('Mouse up, was dragging:', isDragging, 'active window was:', activeWindow);
     setIsDragging(false);
     setActiveWindow(null);
   };
@@ -258,7 +283,11 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
     try {
       const token = localStorage.getItem('token');
       if (!token) {
-        console.error('No auth token found');
+        // Open register window if no token
+        if (!openWindows.includes('register')) {
+          setOpenWindows(prev => [...prev, 'register']);
+          setWindowOrder(prev => [...prev.filter(w => w !== 'register'), 'register']);
+        }
         return;
       }
 
@@ -282,6 +311,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
 
   React.useEffect(() => {
     if (isDragging) {
+      console.log('Adding mouse move/up listeners, active window:', activeWindow);
       window.addEventListener('mousemove', handleMouseMove);
       window.addEventListener('mouseup', handleMouseUp);
     }
@@ -289,7 +319,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isDragging, dragStart]);
+  }, [isDragging, activeWindow, dragStart]);
 
   const getWindowZIndex = (windowName) => {
     const index = windowOrder.indexOf(windowName);
@@ -591,6 +621,22 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
           />
         )}
 
+        {openWindows.includes('fortuneBasket') && (
+          <FortuneBasket 
+            handleDismiss={() => handleDismiss('fortuneBasket')}
+            position={fortuneBasketPosition}
+            handleMouseDown={handleMouseDown}
+            handleWindowClick={handleWindowClick}
+            isDragging={isDragging && activeWindow === 'fortuneBasket'}
+            isActive={windowOrder[windowOrder.length - 1] === 'fortuneBasket'}
+            style={{ 
+              animation: showCookies ? 'fortuneCookiePop 0.4s ease forwards' : 'none',
+              zIndex: getWindowZIndex('fortuneBasket'),
+              transform: `translate(${fortuneBasketPosition.x}px, ${fortuneBasketPosition.y}px)`
+            }}
+          />
+        )}
+
         <div style={{
             position: "absolute", 
             top: TOP_BAR_HEIGHT, 
@@ -616,17 +662,17 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                         text="Achievements" 
                         icon="achievmentsicon.png"
                         isSelected={selectedFile === "Achievements"}
-                        onClick={handleAchievementsOpen}
+                        onClick={handleFileClick("Achievements")}
                         delay={0.1}
                         data-file-id="Achievements"
                     />
                     <FileIcon 
                         text="Fortune Basket" 
                         icon="./fortunecookieicon.png" 
-                        isSelected={selectedFile === "Fortune Cookie"} 
-                        onClick={handleFortuneCookieOpen} 
+                        isSelected={selectedFile === "Fortune Basket"} 
+                        onClick={handleFileClick("Fortune Basket")} 
                         delay={0.4} 
-                        data-file-id="Fortune Cookie" 
+                        data-file-id="Fortune Basket" 
                     />
                 </div>
                 <div>
@@ -758,13 +804,6 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
             <Background />
         </div>
       </div>
-      {openWindows.includes('fortuneBasket') && (
-        <FortuneBasket 
-          handleDismiss={() => handleDismiss('fortuneBasket')}
-          initialPosition={{ x: window.innerWidth / 2 - 150, y: window.innerHeight / 2 - 100 }}
-          style={{ animation: 'fortuneCookiePop 0.4s ease forwards' }}
-        />
-      )}
     </div>
   );
 } 

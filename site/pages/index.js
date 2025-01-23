@@ -20,7 +20,33 @@ export default function Home() {
   const [stage, setStage] = useState('initial'); // 'initial', 'mac', 'loading', or 'computer'
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState(null);
+  const [screenWidth, setScreenWidth] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+  const [mobileEmail, setMobileEmail] = useState('');
+  const [mobileSignupStatus, setMobileSignupStatus] = useState('');
   const progressRef = useRef(0);
+
+  // Handle screen resize and mobile detection
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+      setScreenWidth(width);
+      const mobile = width < 768; // Standard mobile breakpoint
+      setIsMobile(mobile);
+      if (mobile) {
+        console.log('Mobile view detected:', width);
+      }
+    };
+
+    // Set initial values
+    handleResize();
+
+    // Add event listener
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleAuthentication = async (token) => {
     try {
@@ -119,14 +145,41 @@ export default function Home() {
     }
   }, [stage]);
 
+  const handleMobileSignup = async () => {
+    if (!mobileEmail) return;
+    
+    try {
+      setMobileSignupStatus('loading');
+      const response = await fetch('/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: mobileEmail }),
+      });
+      
+      const data = await response.json();
+      if (!data.success) {
+        throw new Error(data.message || 'Registration failed');
+      }
+      
+      setMobileSignupStatus('success');
+      setMobileEmail('');
+    } catch (error) {
+      console.error('Registration error:', error);
+      setMobileSignupStatus('error');
+    }
+  };
+
   return (
     <>
       <Head>
         <title>Juice</title>
-        <meta name="description" content="juice" />
+        <meta name="description" content="2 Month Game Jam Followed by Popup Cafe in Shanghai, China (flight stipends available)" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      {!isMobile ?
       <main className={styles.main}>
         {stage === 'mac' && <ThreeDWorld onDiskInserted={() => setStage('loading')} />}
         {stage === 'loading' && <LoadingScreen />}
@@ -139,7 +192,72 @@ export default function Home() {
             onAuthenticate={handleAuthentication}
           />
         )}
-      </main>
+      </main> : 
+      <main style={{margin: 16, display: "flex", justifyContent: "center", flexDirection: "column", color: "#47251D"}}>
+        <div style={{backgroundColor: "#47251D", color: "#fff", margin: -16, padding: 16}}>
+          <p style={{fontSize: 24, marginBottom: 16}}>You're on the mobile version of the site which is unfortunately quite lame compared to the desktop version! Open juice.hackclub.com on your laptop</p>
+        </div>
+                <img style={{width: "100%", border: "4px solid #fff", imageRendering: "pixelated"}} src="./background.gif"/>
+        <p style={{fontSize: 48}}>Juice</p>
+        <p style={{fontSize: 24}}>2 Month Game Jam Followed by Popup Cafe in Shanghai, China (flight stipends available).</p>
+        <div style={{
+          display: 'flex',
+          gap: '8px',
+          marginTop: '16px',
+          marginBottom: '16px'
+        }}>
+          <input 
+            style={{
+              flex: 1,
+              fontSize: '18px',
+              padding: '12px 16px',
+              border: '2px solid #47251D',
+              borderRadius: '12px',
+              backgroundColor: '#fff',
+              color: '#000',
+              outline: 'none',
+              transition: 'all 0.2s ease',
+              WebkitAppearance: 'none'
+            }}
+            placeholder="Enter your email..."
+            type="email"
+            autoComplete="email"
+            value={mobileEmail}
+            onChange={(e) => setMobileEmail(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                handleMobileSignup();
+              }
+            }}
+          />
+          <button 
+            style={{
+              fontSize: '18px',
+              padding: '12px 24px',
+              backgroundColor: '#47251D',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '12px',
+              fontWeight: 'bold',
+              cursor: mobileSignupStatus === 'loading' ? 'wait' : 'pointer',
+              transition: 'all 0.2s ease',
+              opacity: mobileSignupStatus === 'loading' ? 0.7 : 1
+            }}
+            onClick={handleMobileSignup}
+            disabled={mobileSignupStatus === 'loading'}
+          >
+            {mobileSignupStatus === 'loading' ? 'Signing up...' : 'Sign Up'}
+          </button>
+        </div>
+        {mobileSignupStatus === 'success' && (
+          <p style={{color: 'green', textAlign: 'center', marginTop: 8}}>You're signed up! <br/>Kickoff Call Saturday Feb 1st 7:30 PM EST</p>
+        )}
+        {mobileSignupStatus === 'error' && (
+          <p style={{color: 'red', textAlign: 'center', marginTop: 8}}>Oops! Something went wrong. Please try again.</p>
+        )}
+        <p></p>
+      </main>}
     </>
   );
 }
