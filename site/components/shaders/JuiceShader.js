@@ -1,6 +1,6 @@
-import { useRef, useMemo, useEffect } from "react";
-import { useFrame, useThree } from "@react-three/fiber";
-import * as THREE from "three";
+import { useRef, useMemo, useEffect } from 'react'
+import { useFrame, useThree } from '@react-three/fiber'
+import * as THREE from 'three'
 
 const vertexShader = `
 varying vec2 vUv;
@@ -9,7 +9,7 @@ void main() {
     vUv = uv;
     gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
 }
-`;
+`
 
 const fragmentShader = `
 uniform float iTime;
@@ -95,47 +95,44 @@ varying vec2 vUv;
 void main() {
     mainImage(gl_FragColor, vUv * iResolution);
 }
-`;
+`
 
 export function JuiceShader() {
-  const mesh = useRef();
-  const { size } = useThree();
+    const mesh = useRef()
+    const { size } = useThree()
+    
+    const uniforms = useMemo(
+        () => ({
+            iTime: { value: 0 },
+            iResolution: { value: new THREE.Vector2(size.width, size.height) }
+        }),
+        [size]
+    )
 
-  const uniforms = useMemo(
-    () => ({
-      iTime: { value: 0 },
-      iResolution: { value: new THREE.Vector2(size.width, size.height) },
-    }),
-    [size],
-  );
+    useEffect(() => {
+        if (mesh.current) {
+            mesh.current.material.uniforms.iResolution.value.set(size.width, size.height)
+        }
+    }, [size])
 
-  useEffect(() => {
-    if (mesh.current) {
-      mesh.current.material.uniforms.iResolution.value.set(
-        size.width,
-        size.height,
-      );
-    }
-  }, [size]);
+    useFrame((state) => {
+        const { clock } = state
+        if (mesh.current) {
+            mesh.current.material.uniforms.iTime.value = clock.getElapsedTime()
+        }
+    })
 
-  useFrame((state) => {
-    const { clock } = state;
-    if (mesh.current) {
-      mesh.current.material.uniforms.iTime.value = clock.getElapsedTime();
-    }
-  });
-
-  return (
-    <mesh ref={mesh}>
-      <planeGeometry args={[4, 4]} />
-      <shaderMaterial
-        fragmentShader={fragmentShader}
-        vertexShader={vertexShader}
-        uniforms={uniforms}
-        transparent={true}
-        depthWrite={false}
-        depthTest={false}
-      />
-    </mesh>
-  );
+    return (
+        <mesh ref={mesh}>
+            <planeGeometry args={[4, 4]} />
+            <shaderMaterial
+                fragmentShader={fragmentShader}
+                vertexShader={vertexShader}
+                uniforms={uniforms}
+                transparent={true}
+                depthWrite={false}
+                depthTest={false}
+            />
+        </mesh>
+    )
 }

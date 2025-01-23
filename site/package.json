@@ -6,8 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "prepare": "cd ../ && husky"
+    "lint": "next lint"
   },
   "dependencies": {
     "@react-three/drei": "^9.121.0",
@@ -26,14 +25,5 @@
     "three": "^0.172.0",
     "three-mesh-bvh": "^0.8.0",
     "uuid": "^11.0.5"
-  },
-  "devDependencies": {
-    "eslint-config-prettier": "^10.0.1",
-    "husky": "^9.1.7",
-    "lint-staged": "^15.4.1",
-    "prettier": "3.4.2"
-  },
-  "lint-staged": {
-    "**/*": "prettier --write --ignore-unknown"
   }
 }

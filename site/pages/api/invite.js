@@ -1,38 +1,32 @@
-import Airtable from "airtable";
+import Airtable from 'airtable';
 
-const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(
-  process.env.AIRTABLE_BASE_ID,
-);
+const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(process.env.AIRTABLE_BASE_ID);
 
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ message: "Method not allowed" });
+  if (req.method !== 'POST') {
+    return res.status(405).json({ message: 'Method not allowed' });
   }
 
-  const authToken = req.headers.authorization?.split(" ")[1];
+  const authToken = req.headers.authorization?.split(' ')[1];
   if (!authToken) {
-    return res.status(401).json({ message: "No auth token provided" });
+    return res.status(401).json({ message: 'No auth token provided' });
   }
 
   try {
     const { invitedParticipantEmail, flavor } = req.body;
 
     if (!invitedParticipantEmail || !flavor) {
-      return res.status(400).json({ message: "Email and flavor are required" });
+      return res.status(400).json({ message: 'Email and flavor are required' });
     }
 
     // First, get the sender's record from their auth token
-    const userRecords = await base("signups")
-      .select({
-        filterByFormula: `{token} = '${authToken}'`,
-        maxRecords: 1,
-      })
-      .firstPage();
+    const userRecords = await base('signups').select({
+      filterByFormula: `{token} = '${authToken}'`,
+      maxRecords: 1
+    }).firstPage();
 
     if (userRecords.length === 0) {
-      return res
-        .status(404)
-        .json({ message: `Sender not found, ${authToken}` });
+      return res.status(404).json({ message: `Sender not found, ${authToken}` });
     }
 
     const userRecord = userRecords[0];
@@ -41,45 +35,43 @@ export default async function handler(req, res) {
 
     // Check if user has the specified flavor invite available
     if (!invitesAvailable.includes(flavor)) {
-      return res.status(400).json({ message: "Invite flavor not available" });
+      return res.status(400).json({ message: 'Invite flavor not available' });
     }
 
     // Remove the used invite from available invites
-    const updatedInvites = invitesAvailable.filter(
-      (invite) => invite !== flavor,
-    );
+    const updatedInvites = invitesAvailable.filter(invite => invite !== flavor);
 
     // Update the user's record with remaining invites
-    await base("signups").update([
+    await base('signups').update([
       {
         id: userRecord.id,
         fields: {
-          invitesAvailable: updatedInvites,
-        },
-      },
+          invitesAvailable: updatedInvites
+        }
+      }
     ]);
 
     // Create the invite record
-    const record = await base("Invites").create([
+    const record = await base('Invites').create([
       {
         fields: {
           invitedParticipantEmail,
           sentFrom: senderEmail,
-          flavor,
-        },
-      },
+          flavor
+        }
+      }
     ]);
 
-    return res.status(200).json({
-      success: true,
+    return res.status(200).json({ 
+      success: true, 
       record,
-      remainingInvites: updatedInvites,
+      remainingInvites: updatedInvites 
     });
   } catch (error) {
-    console.error("Invite creation error:", error);
-    return res.status(500).json({
-      message: error.message || "Error creating invite",
-      error: error.error || "UNKNOWN_ERROR",
+    console.error('Invite creation error:', error);
+    return res.status(500).json({ 
+      message: error.message || 'Error creating invite',
+      error: error.error || 'UNKNOWN_ERROR'
     });
   }
-}
+} 

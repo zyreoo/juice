@@ -14,18 +14,18 @@ export default function Cup() {
           map: texture,
           roughness: 0.2,
           metalness: 0.1,
-          envMapIntensity: 0.5,
+          envMapIntensity: 0.5
         });
       }
     });
   }, [obj, texture]);
 
   return (
-    <primitive
-      object={obj}
-      position={[14, -6.2, -3]}
+    <primitive 
+      object={obj} 
+      position={[14, -6.2, -3]} 
       scale={[0.17, 0.17, 0.17]}
       rotation={[0, Math.PI / 6, 0]}
     />
   );
-}
+} 

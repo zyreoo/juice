@@ -4,7 +4,7 @@ import { MeshStandardMaterial } from "three";
 
 export default function Lamp() {
   const lampModel = useLoader(OBJLoader, "/models/desk_lamp1.obj");
-
+  
   const material = new MeshStandardMaterial({
     color: "#666666",
     roughness: 0.7,
@@ -25,4 +25,4 @@ export default function Lamp() {
       <primitive object={lampModel} />
     </group>
   );
-}
+} 
