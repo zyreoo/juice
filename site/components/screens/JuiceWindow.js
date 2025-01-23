@@ -154,12 +154,12 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
                 <div style={{display: "flex", flexDirection: "row", gap: 8}}>
                     <button onClick={(e) => { e.stopPropagation(); handleDismiss('juiceWindow'); }}>x</button>
                 </div>
-                <p>Juicer</p>
+                <p>Juicer (v.0.1)</p>
                 <div></div>
             </div>
             <div style={{flex: 1, padding: 16, display: "flex", flexDirection: "column", gap: 8}}>
-                <h1 style={{fontSize: 32, lineHeight: 1}}>Juicer</h1>
-                <p>Current Challenge: Build something amazing!</p>
+                <h1 style={{fontSize: 32, lineHeight: 1}}>Juicer (v.0.1)</h1>
+                <p>Current Challenge: Build game prototype</p>
                 <div style={{display: "flex", flexDirection: "column", gap: 4}}>
                     <p>Current Session: {timeJuiced}</p>
                     <p>Total Time Juiced: {userData?.totalStretchHours ? 

@@ -16,8 +16,8 @@ export default async function handler(req, res) {
     // Fetch records from the past 24 hours
     const records = await base('omgMoments')
       .select({
-        filterByFormula: `IS_AFTER({createdAt}, '${twentyFourHoursAgo}')`,
-        sort: [{ field: 'createdAt', direction: 'desc' }]
+        filterByFormula: `IS_AFTER({created_at}, '${twentyFourHoursAgo}')`,
+        sort: [{ field: 'created_at', direction: 'desc' }]
       })
       .all();
 
@@ -25,7 +25,7 @@ export default async function handler(req, res) {
       id: record.id,
       description: record.fields.description,
       video: record.fields.video,
-      createdAt: record.fields.createdAt,
+      created_at: record.fields.created_at,
       email: record.fields.email
     }));
 

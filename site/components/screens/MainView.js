@@ -356,7 +356,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
 
   React.useEffect(() => {
     if (userData?.invitesAvailable) {
-      const allTickets = ['apple', 'carrot', 'berry'];
+      const allTickets = ['orange', 'kiwi', 'apple'];
       setTickets(allTickets.map(id => ({ 
         id, 
         used: !userData.invitesAvailable.includes(id)
@@ -593,15 +593,15 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         {openWindows.includes('faction') && (
           <FactionWindow 
             position={factionPosition}
-            isDragging={isDragging}
+            isDragging={isDragging && activeWindow === 'faction'}
             isActive={windowOrder[windowOrder.length - 1] === 'faction'}
             handleMouseDown={handleMouseDown}
             handleDismiss={handleDismiss}
             handleWindowClick={handleWindowClick}
             BASE_Z_INDEX={getWindowZIndex('faction')}
             ACTIVE_Z_INDEX={getWindowZIndex('faction')}
-            tickets={tickets}
-            setTickets={setTickets}
+            userData={userData}
+            setUserData={setUserData}
           />
         )}
 

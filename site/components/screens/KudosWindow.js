@@ -4,6 +4,8 @@ export default function KudosWindow({ position, isDragging, isActive, handleMous
     const [moments, setMoments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [kudosCounts, setKudosCounts] = useState({});
+    const [animatingKudos, setAnimatingKudos] = useState({});
 
     useEffect(() => {
         const fetchMoments = async () => {
@@ -23,6 +25,49 @@ export default function KudosWindow({ position, isDragging, isActive, handleMous
 
         fetchMoments();
     }, []);
+
+    const handleKudos = (momentId) => {
+        // Visual feedback - start animation
+        setAnimatingKudos(prev => ({
+            ...prev,
+            [momentId]: true
+        }));
+        
+        // Reset animation after 150ms
+        setTimeout(() => {
+            setAnimatingKudos(prev => ({
+                ...prev,
+                [momentId]: false
+            }));
+        }, 150);
+
+        // Trigger screen shake
+        const container = document.querySelector('div[data-shake-container="true"]');
+        if (container) {
+            container.style.animation = 'none';
+            container.offsetHeight; // Force reflow
+            container.style.animation = 'shake 0.6s cubic-bezier(.36,.07,.19,.97) both';
+            setTimeout(() => {
+                container.style.animation = 'none';
+            }, 600);
+        }
+
+        setKudosCounts(prev => ({
+            ...prev,
+            [momentId]: (prev[momentId] || 0) + 1
+        }));
+        
+        // Create and play a new audio element for each clap with random pitch
+        const audio = new Audio('/clap.mp3');
+        audio.preservesPitch = false;
+        audio.playbackRate = 0.9 + Math.random() * 0.3;
+        audio.volume = 0.8;
+        audio.play().then(() => {
+            audio.addEventListener('ended', () => {
+                audio.remove();
+            });
+        }).catch(err => console.error('Error playing clap:', err));
+    };
 
     return (
         <div 
@@ -44,6 +89,61 @@ export default function KudosWindow({ position, isDragging, isActive, handleMous
                 left: "50%",
                 userSelect: "none"
             }}>
+            <style jsx>{`
+                @keyframes colorPulse {
+                    0% {
+                        background-color: #3870FF;
+                        transform: scale(0.95);
+                    }
+                    25% {
+                        background-color: #FF3870;
+                        transform: scale(1.05);
+                    }
+                    50% {
+                        background-color: #70FF38;
+                        transform: scale(0.97);
+                    }
+                    75% {
+                        background-color: #FF38F0;
+                        transform: scale(1.02);
+                    }
+                    100% {
+                        background-color: #3870FF;
+                        transform: scale(1);
+                    }
+                }
+                @keyframes glowPulse {
+                    0% {
+                        box-shadow: 0 0 5px rgba(56, 112, 255, 0.5);
+                    }
+                    25% {
+                        box-shadow: 0 0 15px rgba(255, 56, 112, 0.7);
+                    }
+                    50% {
+                        box-shadow: 0 0 25px rgba(112, 255, 56, 0.9);
+                    }
+                    75% {
+                        box-shadow: 0 0 15px rgba(255, 56, 240, 0.7);
+                    }
+                    100% {
+                        box-shadow: 0 0 5px rgba(56, 112, 255, 0.5);
+                    }
+                }
+                @keyframes numberPop {
+                    0% {
+                        transform: scale(1);
+                        filter: hue-rotate(0deg);
+                    }
+                    50% {
+                        transform: scale(1.5);
+                        filter: hue-rotate(180deg) brightness(1.5);
+                    }
+                    100% {
+                        transform: scale(1);
+                        filter: hue-rotate(360deg);
+                    }
+                }
+            `}</style>
             <div 
                 onMouseDown={handleMouseDown('kudos')}
                 style={{display: "flex", borderBottom: "1px solid #000", padding: 8, flexDirection: "row", justifyContent: "space-between", cursor: isDragging ? 'grabbing' : 'grab'}}>
@@ -61,14 +161,14 @@ export default function KudosWindow({ position, isDragging, isActive, handleMous
                 height: "calc(100% - 37px)", // Account for header height
                 overflow: "auto"
             }}>
-                <h2 style={{ margin: 0 }}>"OMG IT WORKS MOMENTS" from Today</h2>
+                <h2 style={{ margin: 0 }}>"OMG IT WORKS MOMENTS"</h2>
                 
                 {loading && <p>Loading moments...</p>}
                 {error && <p style={{ color: 'red' }}>Error: {error}</p>}
                 
                 {!loading && !error && (
                     moments.length === 0 ? (
-                        <p>No moments recorded today yet!</p>
+                        <p>No demos shared today yet! Be the first, I dare u ;)</p>
                     ) : (
                         <div style={{
                             display: "grid",
@@ -98,27 +198,59 @@ export default function KudosWindow({ position, isDragging, isActive, handleMous
                                         <source src={moment.video} type="video/mp4" />
                                         Your browser does not support the video tag.
                                     </video>
-                                    <button
-                                        style={{
-                                            position: "absolute",
-                                            left: 4,
-                                            top: 4,
-                                            padding: "2px 6px",
-                                            backgroundColor: "#3870FF",
+                                    <div style={{
+                                        position: "absolute",
+                                        left: 4,
+                                        top: 4,
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: 8
+                                    }}>
+                                        <button
+                                            style={{
+                                                padding: "2px 6px",
+                                                backgroundColor: "#3870FF",
+                                                color: "#fff",
+                                                border: "none",
+                                                borderRadius: 4,
+                                                cursor: "pointer",
+                                                fontSize: "0.8em",
+                                                transform: animatingKudos[moment.id] ? 'scale(0.95)' : 'scale(1)',
+                                                transition: 'all 0.15s cubic-bezier(0.17, 0.67, 0.83, 0.67)',
+                                                boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                                                animation: animatingKudos[moment.id] ? 'colorPulse 0.6s ease-in-out, glowPulse 0.6s ease-in-out' : 'none',
+                                                ':active': {
+                                                    transform: 'scale(0.95)'
+                                                }
+                                            }}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleKudos(moment.id);
+                                            }}
+                                        >
+                                            give kudos
+                                        </button>
+                                        <span style={{
+                                            backgroundColor: "rgba(0,0,0,0.5)",
                                             color: "#fff",
-                                            border: "none",
+                                            padding: "2px 6px",
                                             borderRadius: 4,
-                                            cursor: "pointer",
                                             fontSize: "0.8em",
-                                        }}
-                                        onClick={(e) => {
+                                            cursor: "pointer",
+                                            transform: animatingKudos[moment.id] ? 'scale(1.2)' : 'scale(1)',
+                                            transition: 'all 0.15s cubic-bezier(0.17, 0.67, 0.83, 0.67)',
+                                            userSelect: 'none',
+                                            fontWeight: 'bold',
+                                            textShadow: animatingKudos[moment.id] ? '0 0 12px rgba(255,255,255,0.8)' : 'none',
+                                            animation: animatingKudos[moment.id] ? 'numberPop 0.6s ease-in-out' : 'none',
+                                            backdropFilter: animatingKudos[moment.id] ? 'hue-rotate(90deg) brightness(1.5)' : 'none'
+                                        }} onClick={(e) => {
                                             e.stopPropagation();
-                                            // TODO: Implement kudos functionality
-                                            console.log("Give kudos for moment:", moment.id);
-                                        }}
-                                    >
-                                        give kudos
-                                    </button>
+                                            handleKudos(moment.id);
+                                        }}>
+                                            {kudosCounts[moment.id] || 0}
+                                        </span>
+                                    </div>
                                     <div style={{
                                         fontSize: "0.9em",
                                         color: "#666"
@@ -135,7 +267,7 @@ export default function KudosWindow({ position, isDragging, isActive, handleMous
                                             }}>{moment.description}</p>
                                         </div>
                                         <p style={{ margin: "4px 0", fontSize: "0.8em" }}>
-                                            {new Date(moment.createdAt).toLocaleTimeString()}
+                                            {new Date(moment.created_at).toLocaleTimeString()}
                                         </p>
                                     </div>
                                 </div>
