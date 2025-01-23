@@ -35,7 +35,10 @@ no problem! me too.
 
 you should log your time working your game on https://juice.hackclub.com/ by tapping "start juicing" and then juicing until you reach an "OMG IT WORKS" moment in your process at which you film a quick demo, share it on the juice site, and can get back to juicing. Your demo videos you upload throughout the day will be shared on the "Kudos" app on the site and other Hack Clubbers will see your progress and can interact with it by giving them "Kudos". 
 
-to contribute to the site for any reason:
+### where will I stay while I'm there?
+We'll provide housing! More details to come :)
+
+### to contribute to the site for any reason:
 ```bash
 cd site
 ```
