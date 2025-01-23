@@ -830,6 +830,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                         cursor: "pointer"
                     }}>Grab Your Tickets</button>
             </div>}
+            
         </div>
 
         {/* background goes here */}

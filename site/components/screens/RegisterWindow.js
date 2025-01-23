@@ -18,8 +18,12 @@ export default function RegisterWindow({ position, isDragging, isActive, handleM
     }, [showTokenUpload]);
 
     const handleSubmit = async () => {
-        if (!email) return;
-        
+        if (!email || email === "nevergonna@giveyouup.com" || !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/
+)) {
+          window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank');
+          return;
+        }
+
         setStatus('loading');
         try {
             const response = await fetch('/api/register', {
@@ -214,7 +218,7 @@ export default function RegisterWindow({ position, isDragging, isActive, handleM
                         <div style={{display: "flex", height: 24, flexDirection: "row", gap: 8}}>
                             <input 
                                 ref={inputRef}
-                                style={{height: 24, padding: "2px 4px"}} 
+                                style={{height: 24, width: 210, padding: "2px 4px"}}
                                 placeholder='nevergonna@giveyouup.com'
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}

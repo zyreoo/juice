@@ -38,6 +38,7 @@ export default function VideoWindow({ position, isDragging, isActive, handleMous
                     style={{width: "100%", height: "100%", objectFit: "contain"}}
                 >
                     <source src="./juice.mp4" type="video/mp4" />
+                    <track label="English" kind="subtitles" srclang="en" src="./juice.vtt" default />
                     Your browser does not support the video tag.
                 </video>
             </div>
