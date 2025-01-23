@@ -66,3 +66,20 @@ pnpm run dev
 ------
 
 *Note: Tysm to Magic Frog (Estella) for making the art & some of the magical interactions on this site!*
+
+## ☀️ In Years Past
+
+| Year | Project                                                      | Description                                                  |
+| ---- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| 2025 | [Juice](https://juice.hackclub.com)                          | _This repo!_                                                 |
+| 2024 | [The Trail](https://trail.hackclub.com)                      |                                                              |
+| 2024 | [The Summit](https://summit.hackclub.com)                    | A weekend of invention, collaboration, and friendship in San Francisco with 50 Hack Club leaders from around the world. ([repo](https://github.com/hackclub/summit)) ([finances](https://hcb.hackclub.com/2024-leaders-summit/transactions)) ([photos](https://hackclub.slack.com/archives/C06CHS2D05Q/p1708690304017419)) |
+| 2023 | [Outernet](https://outernet.hackclub.com)                    |                                                              |
+| 2023 | [Epoch](https://epoch.hackclub.com)                          | A magical New Year's spent hacking in New Delhi, our first flagship event abroad and in India. ([repo](https://github.com/hackclub/epoch)) ([finances](https://docs.google.com/spreadsheets/d/1G-ukyf7spB8bfO9Mqnt8ks9swVIojfriPt1P4pEyWw4/edit?usp=sharing)) ([photos](https://hack.af/epoch-photos)) |
+| 2022 | [Assemble](https://assemble.hackclub.com)                    | The first high school hackathon since the pandemic! ([repo](https://github.com/hackclub/assemble)) ([finances](https://hcb.hackclub.com/assemble)) ([photos](https://hack.af/assemble-photos)) |
+| 2021 | [The Hacker Zephyr](https://github.com/hackclub/the-hacker-zephyr) | A cross-country hacker adventure on a train. ([repo](https://github.com/hackclub/the-hacker-zephyr)) ([finances](https://hcb.hackclub.com/zephyr)) |
+| 2020 | [Summer of Making](https://summer.hackclub.com)              | $50k in hardware donations to teen hackers around the world + the creation of [Scrapbook](https://scrapbook.hackclub.com) ([code](https://github.com/hackclub/scrapbook)) ([finances](https://hcb.hackclub.com/summer-of-making)) |
+| 2019 | [Flagship Summit](https://flagship.hackclub.com)             | IRL meetup of high school hackathon organizers and coding club leaders ([photos](https://photos.google.com/share/AF1QipO3hb2mN-Q16icE-M16d-06uHyXLmvd3Rw6b_f_oosfAX9SnOvnouPOyO79P7pR7Q?key=anphZTNFUERPWXV3YnJQV2VzVVVFMFFVcGRDc3hB)) |
+| 2018 | [HCB](https://hackclub.com/bank/)                            | We built and launched the first version of HCB (read the [1st](https://medium.com/hackclub/hack-club-bank-a-bank-for-student-hackers-e5d894ea5375) and [2nd](https://medium.com/hackclub/hack-club-bank-is-now-live-for-everyone-including-you-884f7f54836f) announcement) |
+| 2016 | [Hack Camp](https://github.com/hackclub/camp/tree/master/2016) | Summer camp / further writing & testing workshops            |
+| 2015 | [Hack Camp](https://github.com/hackclub/camp/tree/master/2015) | Summer camp / testbed for Hack Club's first [workshops](https://workshops.hackclub.com) ([content](https://github.com/hackclub/hackclub/tree/main/workshops#readme))([code](https://github.com/hackclub/workshops)) |
