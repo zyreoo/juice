@@ -400,6 +400,22 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         .panel-pop-out {
           animation: popOut 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
+        @keyframes fortuneCookiePop {
+          0% {
+            transform: scale(0.5) rotate(0deg);
+            opacity: 0;
+          }
+          60% {
+            transform: scale(1.1) rotate(10deg);
+          }
+          80% {
+            transform: scale(0.95) rotate(-5deg);
+          }
+          100% {
+            transform: scale(1) rotate(0deg);
+            opacity: 1;
+          }
+        }
       `}</style>
       <div 
         style={{
@@ -745,6 +761,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         <FortuneBasket 
           handleDismiss={() => handleDismiss('fortuneBasket')}
           initialPosition={{ x: window.innerWidth / 2 - 150, y: window.innerHeight / 2 - 100 }}
+          style={{ animation: 'fortuneCookiePop 0.4s ease forwards' }}
         />
       )}
     </div>
