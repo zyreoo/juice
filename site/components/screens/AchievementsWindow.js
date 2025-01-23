@@ -59,7 +59,7 @@ export default function AchievementsWindow({ position, isDragging, isActive, han
                     {selectedRank === 2 ? (
                         <p>Spend 15+ hours building your proof of concept and then <a target="_blank" href="https://hackclub.slack.com/archives/C0M8PUPU6">#ship</a> it</p>
                     ) : (
-                        <p>Add your game idea to the<br/> <a target="_blank" href="https://github.com/">Juice repo</a>, here's <a target="_blank" href="https://github.com/">a guide</a></p>
+                        <p>Add your game idea to the<br/> <a target="_blank" href="https://github.com/SerenityUX/juice">Juice repo</a>, here's <a target="_blank" href="https://github.com/SerenityUX/juice/blob/main/games/README.md">a guide</a></p>
                     )}
                     </div>
                 </div>

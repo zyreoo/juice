@@ -33,6 +33,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
   const [isShaking, setIsShaking] = React.useState(false);
   const collectSoundRef = React.useRef(null);
   const [tickets, setTickets] = React.useState([]);
+  const [isRsvped, setIsRsvped] = React.useState(false);
 
   // Constants
   const TOP_BAR_HEIGHT = 36;
@@ -250,6 +251,32 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
       setWindowOrder(prev => [...prev.filter(w => w !== 'firstChallenge'), 'firstChallenge']);
     } else {
       setWindowOrder(prev => [...prev.filter(w => w !== 'firstChallenge'), 'firstChallenge']);
+    }
+  };
+
+  const handleRsvp = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error('No auth token found');
+        return;
+      }
+
+      const response = await fetch('/api/rsvp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        setIsRsvped(true);
+      } else {
+        console.error('Failed to RSVP');
+      }
+    } catch (error) {
+      console.error('RSVP error:', error);
     }
   };
 
@@ -641,18 +668,19 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                     <p style={{ color: "rgba(0, 0, 0, 0.8)", margin: 0 }}>World Start Call (2/1/25)</p>
                     <p style={{ color: "rgba(0, 0, 0, 0.8)", margin: 0 }}>7:30 PM EST SAT</p>
                 </div>
+                
                 <button 
                     data-register-button="true"
-                    onClick={handleRegisterOpen}
+                    onClick={isRsvped ? undefined : handleRsvp}
                     style={{
                         marginTop: 8,
                         padding: "4px 12px",
-                        backgroundColor: "#3870FF",
+                        backgroundColor: isRsvped ? "#4CAF50" : "#3870FF",
                         color: "#fff",
                         border: "none",
                         borderRadius: 4,
-                        cursor: "pointer"
-                    }}>RSVP for Call</button>
+                        cursor: isRsvped ? "default" : "pointer"
+                    }}>{isRsvped ? "Sent Google Calendar Invite" : "RSVP for Call"}</button>
             </div>
             {(isLoggedIn && !userData?.achievements?.includes("pr_submitted")) && (
                 <div 

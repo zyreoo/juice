@@ -111,7 +111,7 @@ export default function FirstChallengeWindow({ position, isDragging, isActive, h
                 </ol>
                 <p>Here's <a target="_blank" href="">the markdown file that Paolo & I made for our game</a>.</p>
                 <div>
-                <p>~Thomas</p>
+                <p>~Thomas Stubblefield</p>
                 <i>In life we are always learning</i>
                 </div>
                 <div style={{display: "flex", width: "100%", backgroundColor: "#000", height: 1}}></div>
