@@ -20,7 +20,31 @@ export default function Home() {
   const [stage, setStage] = useState('initial'); // 'initial', 'mac', 'loading', or 'computer'
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState(null);
+  const [screenWidth, setScreenWidth] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
   const progressRef = useRef(0);
+
+  // Handle screen resize and mobile detection
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+      setScreenWidth(width);
+      const mobile = width < 768; // Standard mobile breakpoint
+      setIsMobile(mobile);
+      if (mobile) {
+        console.log('Mobile view detected:', width);
+      }
+    };
+
+    // Set initial values
+    handleResize();
+
+    // Add event listener
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleAuthentication = async (token) => {
     try {
@@ -127,6 +151,7 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      {!isMobile ?
       <main className={styles.main}>
         {stage === 'mac' && <ThreeDWorld onDiskInserted={() => setStage('loading')} />}
         {stage === 'loading' && <LoadingScreen />}
@@ -139,7 +164,51 @@ export default function Home() {
             onAuthenticate={handleAuthentication}
           />
         )}
-      </main>
+      </main> : 
+      <main style={{margin: 16, display: "flex", justifyContent: "center", flexDirection: "column", color: "#47251D"}}>
+        <div style={{backgroundColor: "#47251D", color: "#fff", margin: -16, padding: 16}}>
+          <p style={{fontSize: 24, marginBottom: 16}}>You're on the mobile version of the site which is unfortunately quite lame compared to the desktop version! Open juice.hackclub.com on your laptop</p>
+        </div>
+                <img style={{width: "100%", border: "4px solid #fff", imageRendering: "pixelated"}} src="./background.gif"/>
+        <p style={{fontSize: 48}}>Juice</p>
+        <p style={{fontSize: 24}}>2 Month Game Jam Followed by Popup Cafe in Shanghai, China (flight stipends available).</p>
+        <div style={{
+          display: 'flex',
+          gap: '8px',
+          marginTop: '16px',
+          marginBottom: '16px'
+        }}>
+          <input 
+            style={{
+              flex: 1,
+              fontSize: '18px',
+              padding: '12px 16px',
+              border: '2px solid #47251D',
+              borderRadius: '12px',
+              backgroundColor: '#fff',
+              color: '#000',
+              outline: 'none',
+              transition: 'all 0.2s ease',
+              WebkitAppearance: 'none'
+            }}
+            placeholder="Enter your email..."
+            type="email"
+            autoComplete="email"
+          />
+          <button style={{
+            fontSize: '18px',
+            padding: '12px 24px',
+            backgroundColor: '#47251D',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '12px',
+            fontWeight: 'bold',
+            cursor: 'pointer',
+            transition: 'all 0.2s ease'
+          }}>Sign Up</button>
+        </div>
+        <p></p>
+      </main>}
     </>
   );
 }
