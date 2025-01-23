@@ -106,8 +106,8 @@ export default function FirstChallengeWindow({ position, isDragging, isActive, h
             <div style={{display: "flex", flexDirection: "column", gap: 12, padding: 16}}>
                 <p>Your first challenge, should you choose to accept it, is to come up with your idea & add it to Juice repo games folder.</p>
                 <ol>
-                    <li>write your idea in a markdown file <a target="_blank" href="https://github.com/SerenityUX/juice/blob/main/games/template/README.md">(template)</a></li>
-                    <li>open a PR to the <a target="_blank" href="https://github.com/SerenityUX/juice">Juice repo</a> & add your idea <a target="_blank" href="https://github.com/SerenityUX/juice/blob/main/games/README.md">(guide)</a></li>
+                    <li>write your idea in a markdown file <a target="_blank" href="https://github.com/hackclub/juice/blob/main/games/template/README.md">(template)</a></li>
+                    <li>open a PR to the <a target="_blank" href="https://github.com/hackclub/juice">Juice repo</a> & add your idea <a target="_blank" href="https://github.com/hackclub/juice/blob/main/games/README.md">(guide)</a></li>
                 </ol>
                 <p>Here's <a target="_blank" href="">the markdown file that Paolo & I made for our game</a>.</p>
                 <div>
