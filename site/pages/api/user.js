@@ -45,6 +45,18 @@ export default async function handler(req, res) {
     });
 
     userData.totalStretchHours = Math.round(totalHours * 100) / 100; // Round to 2 decimal places
+
+    // Get all OMG moments for this user and sum up kudos
+    const omgMoments = await base('omgMoments').select({
+      filterByFormula: `{email} = '${userData.email}'`
+    }).all();
+
+    let totalKudos = 0;
+    omgMoments.forEach(moment => {
+      totalKudos += moment.fields.kudos || 0;
+    });
+
+    userData.totalKudos = totalKudos;
     
     res.status(200).json({ userData });
   } catch (error) {

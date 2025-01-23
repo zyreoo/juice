@@ -6,6 +6,8 @@ export default function KudosWindow({ position, isDragging, isActive, handleMous
     const [error, setError] = useState(null);
     const [kudosCounts, setKudosCounts] = useState({});
     const [animatingKudos, setAnimatingKudos] = useState({});
+    const [clickIntensity, setClickIntensity] = useState({});
+    const [limitReached, setLimitReached] = useState({});
 
     useEffect(() => {
         const fetchMoments = async () => {
@@ -16,6 +18,16 @@ export default function KudosWindow({ position, isDragging, isActive, handleMous
                 }
                 const data = await response.json();
                 setMoments(data);
+                
+                // Initialize kudos counts and check for limit reached
+                const initialKudos = {};
+                const initialLimitReached = {};
+                data.forEach(moment => {
+                    initialKudos[moment.id] = moment.kudos;
+                    initialLimitReached[moment.id] = moment.kudos >= 100;
+                });
+                setKudosCounts(initialKudos);
+                setLimitReached(initialLimitReached);
             } catch (err) {
                 setError(err.message);
             } finally {
@@ -26,7 +38,37 @@ export default function KudosWindow({ position, isDragging, isActive, handleMous
         fetchMoments();
     }, []);
 
-    const handleKudos = (momentId) => {
+    const handleKudos = async (momentId) => {
+        // Don't process if limit is reached
+        if (limitReached[momentId]) {
+            // Play a special "limit reached" animation
+            setAnimatingKudos(prev => ({
+                ...prev,
+                [momentId]: true
+            }));
+            setTimeout(() => {
+                setAnimatingKudos(prev => ({
+                    ...prev,
+                    [momentId]: false
+                }));
+            }, 150);
+            return;
+        }
+
+        // Track click intensity for this moment
+        setClickIntensity(prev => ({
+            ...prev,
+            [momentId]: (prev[momentId] || 0) + 1
+        }));
+
+        // Reset click intensity after a delay
+        setTimeout(() => {
+            setClickIntensity(prev => ({
+                ...prev,
+                [momentId]: Math.max(0, (prev[momentId] || 0) - 1)
+            }));
+        }, 300);
+
         // Visual feedback - start animation
         setAnimatingKudos(prev => ({
             ...prev,
@@ -41,32 +83,73 @@ export default function KudosWindow({ position, isDragging, isActive, handleMous
             }));
         }, 150);
 
-        // Trigger screen shake
+        // Trigger screen shake with intensity based on recent clicks
         const container = document.querySelector('div[data-shake-container="true"]');
         if (container) {
+            const intensity = Math.min(1.5, 0.6 + (clickIntensity[momentId] || 0) * 0.1);
             container.style.animation = 'none';
             container.offsetHeight; // Force reflow
-            container.style.animation = 'shake 0.6s cubic-bezier(.36,.07,.19,.97) both';
+            container.style.animation = `shake ${0.6/intensity}s cubic-bezier(.36,.07,.19,.97) both`;
             setTimeout(() => {
                 container.style.animation = 'none';
-            }, 600);
+            }, 600/intensity);
         }
 
+        // Optimistically update the UI
         setKudosCounts(prev => ({
             ...prev,
             [momentId]: (prev[momentId] || 0) + 1
         }));
         
-        // Create and play a new audio element for each clap with random pitch
+        // Play clap sound with varying pitch based on click intensity
         const audio = new Audio('/clap.mp3');
         audio.preservesPitch = false;
-        audio.playbackRate = 0.9 + Math.random() * 0.3;
-        audio.volume = 0.8;
+        const intensity = clickIntensity[momentId] || 0;
+        audio.playbackRate = 0.9 + Math.random() * 0.3 + (intensity * 0.05);
+        audio.volume = Math.min(0.8 + (intensity * 0.02), 1);
         audio.play().then(() => {
             audio.addEventListener('ended', () => {
                 audio.remove();
             });
         }).catch(err => console.error('Error playing clap:', err));
+
+        try {
+            // Call API to persist the kudos
+            const response = await fetch('/api/give-kudos', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ momentId })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to update kudos');
+            }
+
+            const data = await response.json();
+            
+            // Update with the real count from the server
+            setKudosCounts(prev => ({
+                ...prev,
+                [momentId]: data.kudos
+            }));
+
+            // Update limit reached status
+            if (data.limitReached) {
+                setLimitReached(prev => ({
+                    ...prev,
+                    [momentId]: true
+                }));
+            }
+        } catch (error) {
+            console.error('Error updating kudos:', error);
+            // Revert the optimistic update on error
+            setKudosCounts(prev => ({
+                ...prev,
+                [momentId]: (prev[momentId] || 0) - 1
+            }));
+        }
     };
 
     return (
@@ -94,22 +177,27 @@ export default function KudosWindow({ position, isDragging, isActive, handleMous
                     0% {
                         background-color: #3870FF;
                         transform: scale(0.95);
+                        filter: brightness(1);
                     }
                     25% {
                         background-color: #FF3870;
                         transform: scale(1.05);
+                        filter: brightness(1.3);
                     }
                     50% {
                         background-color: #70FF38;
                         transform: scale(0.97);
+                        filter: brightness(1.5);
                     }
                     75% {
                         background-color: #FF38F0;
                         transform: scale(1.02);
+                        filter: brightness(1.3);
                     }
                     100% {
                         background-color: #3870FF;
                         transform: scale(1);
+                        filter: brightness(1);
                     }
                 }
                 @keyframes glowPulse {
@@ -117,13 +205,13 @@ export default function KudosWindow({ position, isDragging, isActive, handleMous
                         box-shadow: 0 0 5px rgba(56, 112, 255, 0.5);
                     }
                     25% {
-                        box-shadow: 0 0 15px rgba(255, 56, 112, 0.7);
+                        box-shadow: 0 0 20px rgba(255, 56, 112, 0.8);
                     }
                     50% {
-                        box-shadow: 0 0 25px rgba(112, 255, 56, 0.9);
+                        box-shadow: 0 0 35px rgba(112, 255, 56, 1);
                     }
                     75% {
-                        box-shadow: 0 0 15px rgba(255, 56, 240, 0.7);
+                        box-shadow: 0 0 20px rgba(255, 56, 240, 0.8);
                     }
                     100% {
                         box-shadow: 0 0 5px rgba(56, 112, 255, 0.5);
@@ -132,15 +220,15 @@ export default function KudosWindow({ position, isDragging, isActive, handleMous
                 @keyframes numberPop {
                     0% {
                         transform: scale(1);
-                        filter: hue-rotate(0deg);
+                        filter: hue-rotate(0deg) brightness(1);
                     }
                     50% {
                         transform: scale(1.5);
-                        filter: hue-rotate(180deg) brightness(1.5);
+                        filter: hue-rotate(180deg) brightness(2);
                     }
                     100% {
                         transform: scale(1);
-                        filter: hue-rotate(360deg);
+                        filter: hue-rotate(360deg) brightness(1);
                     }
                 }
             `}</style>
@@ -209,16 +297,18 @@ export default function KudosWindow({ position, isDragging, isActive, handleMous
                                         <button
                                             style={{
                                                 padding: "2px 6px",
-                                                backgroundColor: "#3870FF",
+                                                backgroundColor: limitReached[moment.id] ? "#FF3870" : "#3870FF",
                                                 color: "#fff",
                                                 border: "none",
                                                 borderRadius: 4,
-                                                cursor: "pointer",
+                                                cursor: limitReached[moment.id] ? "not-allowed" : "pointer",
                                                 fontSize: "0.8em",
-                                                transform: animatingKudos[moment.id] ? 'scale(0.95)' : 'scale(1)',
+                                                transform: `scale(${animatingKudos[moment.id] ? 0.95 : 1}) rotate(${(clickIntensity[moment.id] || 0) * 2}deg)`,
                                                 transition: 'all 0.15s cubic-bezier(0.17, 0.67, 0.83, 0.67)',
                                                 boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
                                                 animation: animatingKudos[moment.id] ? 'colorPulse 0.6s ease-in-out, glowPulse 0.6s ease-in-out' : 'none',
+                                                filter: `brightness(${1 + ((clickIntensity[moment.id] || 0) * 0.1)})`,
+                                                opacity: limitReached[moment.id] ? 0.8 : 1,
                                                 ':active': {
                                                     transform: 'scale(0.95)'
                                                 }
@@ -228,22 +318,22 @@ export default function KudosWindow({ position, isDragging, isActive, handleMous
                                                 handleKudos(moment.id);
                                             }}
                                         >
-                                            give kudos
+                                            {limitReached[moment.id] ? "max kudos!" : "give kudos"}
                                         </button>
                                         <span style={{
-                                            backgroundColor: "rgba(0,0,0,0.5)",
+                                            backgroundColor: limitReached[moment.id] ? "rgba(255,56,112,0.5)" : "rgba(0,0,0,0.5)",
                                             color: "#fff",
                                             padding: "2px 6px",
                                             borderRadius: 4,
                                             fontSize: "0.8em",
-                                            cursor: "pointer",
-                                            transform: animatingKudos[moment.id] ? 'scale(1.2)' : 'scale(1)',
+                                            cursor: limitReached[moment.id] ? "not-allowed" : "pointer",
+                                            transform: `scale(${animatingKudos[moment.id] ? 1.2 : 1}) rotate(${-(clickIntensity[moment.id] || 0) * 3}deg)`,
                                             transition: 'all 0.15s cubic-bezier(0.17, 0.67, 0.83, 0.67)',
                                             userSelect: 'none',
                                             fontWeight: 'bold',
-                                            textShadow: animatingKudos[moment.id] ? '0 0 12px rgba(255,255,255,0.8)' : 'none',
+                                            textShadow: animatingKudos[moment.id] ? `0 0 ${12 + (clickIntensity[moment.id] || 0) * 2}px rgba(255,255,255,0.8)` : 'none',
                                             animation: animatingKudos[moment.id] ? 'numberPop 0.6s ease-in-out' : 'none',
-                                            backdropFilter: animatingKudos[moment.id] ? 'hue-rotate(90deg) brightness(1.5)' : 'none'
+                                            backdropFilter: animatingKudos[moment.id] ? `hue-rotate(${90 + (clickIntensity[moment.id] || 0) * 30}deg) brightness(${1.5 + (clickIntensity[moment.id] || 0) * 0.1})` : 'none'
                                         }} onClick={(e) => {
                                             e.stopPropagation();
                                             handleKudos(moment.id);

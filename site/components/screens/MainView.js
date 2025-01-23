@@ -41,6 +41,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
   const [isRsvped, setIsRsvped] = React.useState(false);
   const [showCookies, setShowCookies] = React.useState(false);
   const [kudosPosition, setKudosPosition] = React.useState({ x: 350, y: 350 });
+  const [isJuicing, setIsJuicing] = React.useState(false);
+  const juicerSoundRef = React.useRef(null);
 
   // Constants
   const TOP_BAR_HEIGHT = 36;
@@ -350,6 +352,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
   }, [isShaking]);
 
   React.useEffect(() => {
+    juicerSoundRef.current = new Audio('./juicer.mp3');
+    juicerSoundRef.current.volume = 0.5;
     collectSoundRef.current = new Audio('./collect.mp3');
     collectSoundRef.current.volume = 0.5;
   }, []);
@@ -375,12 +379,36 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
       setOpenWindows(prev => [...prev, 'achievements']);
     }
   };
+
+  const startJuicing = () => {
+    setIsJuicing(true);
+    const juicerAudio = document.getElementById('juicerAudio');
+    if (juicerAudio) {
+      juicerAudio.currentTime = 0;
+      juicerAudio.play();
+    }
+    
+    // Stop after 7 seconds
+    setTimeout(() => {
+      setIsJuicing(false);
+    }, 7000);
+  };
+
+  const playCollectSound = () => {
+    const collectAudio = document.getElementById('collectAudio');
+    if (collectAudio) {
+      collectAudio.currentTime = 0;
+      collectAudio.play();
+    }
+  };
+
   return (
     <div 
       data-shake-container="true"
       style={{
-        animation: isShaking ? 'shake 0.6s cubic-bezier(.36,.07,.19,.97) both' : 'none',
-        transform: 'translate3d(0, 0, 0)',
+        animation: isJuicing ? 'juicerShake 1s ease-in-out infinite' : 'none',
+        transform: `scale(${isJuicing ? 1.1 : 1})`,
+        transition: 'transform 1s cubic-bezier(0.34, 1.56, 0.64, 1)',
         backfaceVisibility: 'hidden',
         perspective: 1000,
         overflow: "hidden",
@@ -460,6 +488,36 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
             opacity: 1;
           }
         }
+        @keyframes juicerShake {
+          0% {
+            transform: translate3d(0, 0, 0) scale(1.1);
+          }
+          25% {
+            transform: translate3d(2px, 2px, 0) scale(1.1);
+          }
+          50% {
+            transform: translate3d(-2px, -2px, 0) scale(1.1);
+          }
+          75% {
+            transform: translate3d(-2px, 2px, 0) scale(1.1);
+          }
+          100% {
+            transform: translate3d(0, 0, 0) scale(1.1);
+          }
+        }
+        
+        .juicing-enter {
+          animation: juicingEnter 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        @keyframes juicingEnter {
+          0% {
+            transform: scale(1);
+          }
+          100% {
+            transform: scale(1.1);
+          }
+        }
       `}</style>
       <div 
         style={{
@@ -504,14 +562,30 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                 fontWeight: 500
             }}>Juice</p>
             <div style={{display: "flex", flexDirection: "row", gap: 16}}>
-            <div style={{display: "flex", border: "1px solid #000", alignItems: "center", justifyContent: "space-around", borderRadius: 4, width: 32}}>  
-                <img style={{width: 14, height: 14}} src={"./kudos.svg"}/>
-                <p style={{fontSize: 16}}>0</p>
-            </div>
-            <p style={{
-                color: "rgba(0, 0, 0, 0.8)",
-                fontWeight: 500
-            }}>{formattedTime}</p>
+                <div style={{
+                    display: "flex", 
+                    border: "1px solid #000", 
+                    alignItems: "center", 
+                    justifyContent: "space-around", 
+                    borderRadius: 4, 
+                    padding: "2px 4px",
+                    minWidth: 42,
+                    gap: 6,
+                    transition: 'all 0.3s ease',
+                    backgroundColor: 'rgba(0, 0, 0, 0.05)',
+                    borderColor: '#000'
+                }}>  
+                    <img style={{width: 14, height: 14}} src={"./kudos.svg"}/>
+                    <p style={{
+                        fontSize: 16,
+                        color: '#000',
+                        fontWeight: userData?.totalKudos > 0 ? 'bold' : 'normal'
+                    }}>{userData?.totalKudos || 0}</p>
+                </div>
+                <p style={{
+                    color: "rgba(0, 0, 0, 0.8)",
+                    fontWeight: 500
+                }}>{formattedTime}</p>
             </div>
         </div>
 
@@ -632,6 +706,9 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
             ACTIVE_Z_INDEX={getWindowZIndex('juiceWindow')}
             userData={userData}
             setUserData={setUserData}
+            startJuicing={startJuicing}
+            playCollectSound={playCollectSound}
+            isJuicing={isJuicing}
           />
         )}
 
@@ -839,6 +916,10 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
             style={{width: "100vw", height: "100vh", overflow: "hidden", display: "flex", margin: 0, cursor: "default"}}>
             <Background />
         </div>
+
+        {/* Add audio elements */}
+        <audio id="juicerAudio" src="./juicer.mp3" preload="auto"></audio>
+        <audio id="collectAudio" src="./collect.mp3" preload="auto"></audio>
       </div>
     </div>
   );

@@ -229,7 +229,7 @@ export default function RegisterWindow({ position, isDragging, isActive, handleM
                                 onClick={handleSubmit}
                                 disabled={status === 'loading'}
                             >
-                                {status === 'loading' ? 'Emailing Special Key...' : 'signup'}
+                                {status === 'loading' ? 'Emailing Key...' : 'signup'}
                             </button>
                         </div>
                         {status === 'success' && <p style={{color: 'green'}}>Thanks! Check your email soon.</p>}

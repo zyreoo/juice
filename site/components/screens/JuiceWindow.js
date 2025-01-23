@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-export default function JuiceWindow({ position, isDragging, isActive, handleMouseDown, handleDismiss, handleWindowClick, BASE_Z_INDEX, ACTIVE_Z_INDEX, userData, setUserData }) {
-    const [isJuicing, setIsJuicing] = useState(false);
+export default function JuiceWindow({ position, isDragging, isActive, handleMouseDown, handleDismiss, handleWindowClick, BASE_Z_INDEX, ACTIVE_Z_INDEX, userData, setUserData, startJuicing, playCollectSound, isJuicing }) {
+    const [isJuicingLocal, setIsJuicingLocal] = useState(false);
     const [currentStretchId, setCurrentStretchId] = useState(null);
     const [timeJuiced, setTimeJuiced] = useState('0:00');
     const [startTime, setStartTime] = useState(null);
@@ -11,9 +11,13 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
     const [stopTime, setStopTime] = useState(null);
     const fileInputRef = useRef(null);
 
+    // Add these refs to access parent component audio elements
+    const juicerSoundRef = useRef(document.querySelector('audio[src="./juicer.mp3"]'));
+    const collectSoundRef = useRef(document.querySelector('audio[src="./collect.mp3"]'));
+
     useEffect(() => {
         let interval;
-        if (isJuicing && startTime && !stopTime) {
+        if (isJuicingLocal && startTime && !stopTime) {
             interval = setInterval(() => {
                 const now = new Date();
                 const diff = Math.floor((now - startTime) / 1000);
@@ -23,7 +27,7 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
             }, 1000);
         }
         return () => clearInterval(interval);
-    }, [isJuicing, startTime, stopTime]);
+    }, [isJuicingLocal, startTime, stopTime]);
 
     const handleStartJuicing = async () => {
         try {
@@ -43,11 +47,15 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
 
             const data = await response.json();
             setCurrentStretchId(data.stretchId);
-            setIsJuicing(true);
+            setIsJuicingLocal(true);
             setStartTime(new Date());
             setStopTime(null);
             setSelectedVideo(null);
             setDescription('');
+
+            // Start juicing animation and sound
+            startJuicing();
+
         } catch (error) {
             console.error('Error starting juice stretch:', error);
         }
@@ -105,7 +113,10 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
                 setUserData(updatedUserData);
             }
 
-            setIsJuicing(false);
+            // Play collect sound when successful
+            playCollectSound();
+
+            setIsJuicingLocal(false);
             setCurrentStretchId(null);
             setStartTime(null);
             setStopTime(null);
@@ -166,11 +177,11 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
                         `${Math.floor(userData.totalStretchHours)} hours ${Math.round((userData.totalStretchHours % 1) * 60)} min` : 
                         "0 hours 0 min"}</p>
                 </div>
-                {!isJuicing &&
+                {!isJuicingLocal &&
                 <button onClick={handleStartJuicing}>
                     Start Juicing
                 </button>}
-                {isJuicing &&
+                {isJuicingLocal &&
                 <div style={{padding: 8, display: 'flex', gap: 4, flexDirection: "column", border: "1px solid #000"}}>
                     <input 
                         type="file" 
