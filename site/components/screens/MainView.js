@@ -283,7 +283,11 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
     try {
       const token = localStorage.getItem('token');
       if (!token) {
-        console.error('No auth token found');
+        // Open register window if no token
+        if (!openWindows.includes('register')) {
+          setOpenWindows(prev => [...prev, 'register']);
+          setWindowOrder(prev => [...prev.filter(w => w !== 'register'), 'register']);
+        }
         return;
       }
 
