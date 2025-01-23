@@ -22,6 +22,8 @@ export default function Home() {
   const [userData, setUserData] = useState(null);
   const [screenWidth, setScreenWidth] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+  const [mobileEmail, setMobileEmail] = useState('');
+  const [mobileSignupStatus, setMobileSignupStatus] = useState('');
   const progressRef = useRef(0);
 
   // Handle screen resize and mobile detection
@@ -143,11 +145,37 @@ export default function Home() {
     }
   }, [stage]);
 
+  const handleMobileSignup = async () => {
+    if (!mobileEmail) return;
+    
+    try {
+      setMobileSignupStatus('loading');
+      const response = await fetch('/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: mobileEmail }),
+      });
+      
+      const data = await response.json();
+      if (!data.success) {
+        throw new Error(data.message || 'Registration failed');
+      }
+      
+      setMobileSignupStatus('success');
+      setMobileEmail('');
+    } catch (error) {
+      console.error('Registration error:', error);
+      setMobileSignupStatus('error');
+    }
+  };
+
   return (
     <>
       <Head>
         <title>Juice</title>
-        <meta name="description" content="juice" />
+        <meta name="description" content="2 Month Game Jam Followed by Popup Cafe in Shanghai, China (flight stipends available)" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -194,19 +222,40 @@ export default function Home() {
             placeholder="Enter your email..."
             type="email"
             autoComplete="email"
+            value={mobileEmail}
+            onChange={(e) => setMobileEmail(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                handleMobileSignup();
+              }
+            }}
           />
-          <button style={{
-            fontSize: '18px',
-            padding: '12px 24px',
-            backgroundColor: '#47251D',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '12px',
-            fontWeight: 'bold',
-            cursor: 'pointer',
-            transition: 'all 0.2s ease'
-          }}>Sign Up</button>
+          <button 
+            style={{
+              fontSize: '18px',
+              padding: '12px 24px',
+              backgroundColor: '#47251D',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '12px',
+              fontWeight: 'bold',
+              cursor: mobileSignupStatus === 'loading' ? 'wait' : 'pointer',
+              transition: 'all 0.2s ease',
+              opacity: mobileSignupStatus === 'loading' ? 0.7 : 1
+            }}
+            onClick={handleMobileSignup}
+            disabled={mobileSignupStatus === 'loading'}
+          >
+            {mobileSignupStatus === 'loading' ? 'Signing up...' : 'Sign Up'}
+          </button>
         </div>
+        {mobileSignupStatus === 'success' && (
+          <p style={{color: 'green', textAlign: 'center', marginTop: 8}}>You're signed up! <br/>Kickoff Call Saturday Feb 1st 7:30 PM EST</p>
+        )}
+        {mobileSignupStatus === 'error' && (
+          <p style={{color: 'red', textAlign: 'center', marginTop: 8}}>Oops! Something went wrong. Please try again.</p>
+        )}
         <p></p>
       </main>}
     </>
