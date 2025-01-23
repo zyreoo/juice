@@ -18,7 +18,7 @@ everyone that makes a game (travel stipends provided)
 add your game idea to the games folder to get started! 
 
 ### when is it happening? 
-it's happening April 11th - April 18th
+it's happening April 4th - April 11th
 
 ### what's the cafe going to be like?
 we'll decide the specifics together in the [#juice](https://hackclub.slack.com/archives/C088UF12N1Z) channel, but it will be full of computers running our games where anyone can come in and play :)
