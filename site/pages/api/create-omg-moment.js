@@ -83,7 +83,8 @@ export default async function handler(req, res) {
         fields: {
           description: description,
           email: signupRecord.fields.email,
-          video: s3Upload.Location
+          video: s3Upload.Location,
+          createdAt: new Date().toISOString()
         }
       }
     ]);

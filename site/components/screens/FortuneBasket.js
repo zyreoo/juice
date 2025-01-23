@@ -83,10 +83,10 @@ export default function FortuneBasket({
           color: 'black',
           justifyContent: "flex-start",
           alignItems: "center",
-          top: 0,
-          left: 0,
-          userSelect: "none",
-          ...style
+          transform: `translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px))`,
+          top: "50%",
+          left: "50%",
+          userSelect: "none"
         }}>
         <div 
           onMouseDown={(e) => {

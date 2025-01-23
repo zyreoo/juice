@@ -8,6 +8,7 @@ import VideoWindow from './VideoWindow';
 import FactionWindow from './FactionWindow';
 import FirstChallengeWindow from './FirstChallengeWindow';
 import JuiceWindow from './JuiceWindow';
+import KudosWindow from './KudosWindow';
 import Background from '../Background';
 import ShareSuccessPanel from './ShareSuccessPanel';
 import FortuneBasket from './FortuneBasket';
@@ -39,6 +40,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
   const [tickets, setTickets] = React.useState([]);
   const [isRsvped, setIsRsvped] = React.useState(false);
   const [showCookies, setShowCookies] = React.useState(false);
+  const [kudosPosition, setKudosPosition] = React.useState({ x: 350, y: 350 });
 
   // Constants
   const TOP_BAR_HEIGHT = 36;
@@ -128,6 +130,13 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         } else {
           setWindowOrder(prev => [...prev.filter(w => w !== 'fortuneBasket'), 'fortuneBasket']);
         }
+      } else if (fileId === "Kudos") {
+        if (!openWindows.includes('kudos')) {
+          setOpenWindows(prev => [...prev, 'kudos']);
+          setWindowOrder(prev => [...prev.filter(w => w !== 'kudos'), 'kudos']);
+        } else {
+          setWindowOrder(prev => [...prev.filter(w => w !== 'kudos'), 'kudos']);
+        }
       }
     }
     setSelectedFile(fileId);
@@ -170,6 +179,9 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
       case 'fortuneBasket':
         console.log('Fortune Basket position:', fortuneBasketPosition);
         position = fortuneBasketPosition;
+        break;
+      case 'kudos':
+        position = kudosPosition;
         break;
       default:
         console.log('Unknown window name:', windowName);
@@ -218,6 +230,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
       } else if (activeWindow === 'fortuneBasket') {
         console.log('Setting new fortune basket position:', newPosition);
         setFortuneBasketPosition(newPosition);
+      } else if (activeWindow === 'kudos') {
+        setKudosPosition(newPosition);
       }
     }
   };
@@ -610,11 +624,11 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
           <JuiceWindow
             position={juiceWindowPosition}
             isDragging={isDragging && activeWindow === 'juiceWindow'}
-            isActive={activeWindow === 'juiceWindow'}
+            isActive={windowOrder[windowOrder.length - 1] === 'juiceWindow'}
             handleMouseDown={handleMouseDown}
             handleDismiss={handleDismiss}
             handleWindowClick={handleWindowClick}
-            BASE_Z_INDEX={BASE_Z_INDEX}
+            BASE_Z_INDEX={getWindowZIndex('juiceWindow')}
             ACTIVE_Z_INDEX={getWindowZIndex('juiceWindow')}
             userData={userData}
             setUserData={setUserData}
@@ -634,6 +648,19 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
               zIndex: getWindowZIndex('fortuneBasket'),
               transform: `translate(${fortuneBasketPosition.x}px, ${fortuneBasketPosition.y}px)`
             }}
+          />
+        )}
+
+        {openWindows.includes('kudos') && (
+          <KudosWindow 
+            position={kudosPosition}
+            isDragging={isDragging && activeWindow === 'kudos'}
+            isActive={windowOrder[windowOrder.length - 1] === 'kudos'}
+            handleMouseDown={handleMouseDown}
+            handleDismiss={handleDismiss}
+            handleWindowClick={handleWindowClick}
+            BASE_Z_INDEX={getWindowZIndex('kudos')}
+            ACTIVE_Z_INDEX={getWindowZIndex('kudos')}
           />
         )}
 
@@ -692,6 +719,15 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                         delay={0.3}
                         data-file-id="video.mp4"
                     />
+                    {isLoggedIn &&
+                    <FileIcon 
+                        text="Kudos"
+                        style={{ backgroundColor: "#000", color: "#fff" }}
+                        isSelected={selectedFile === "Kudos"}
+                        onClick={handleFileClick("Kudos")}
+                        delay={0.5}
+                        data-file-id="Kudos"
+                    />}
                 </div>
             </div>
         </div>
