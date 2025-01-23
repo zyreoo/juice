@@ -10,7 +10,7 @@ export default function SummitScroll() {
       {/* Main scroll paper */}
       <mesh>
         <planeGeometry args={[6, 7.5]} />
-        <meshStandardMaterial 
+        <meshStandardMaterial
           map={scrollTexture}
           transparent={true}
           roughness={0.1}
@@ -18,11 +18,10 @@ export default function SummitScroll() {
         />
       </mesh>
 
-
       {/* Top cylinder */}
       <mesh position={[0, 3.85, 0]} rotation={[0, 0, Math.PI / 2]}>
         <cylinderGeometry args={[0.15, 0.15, 6, 32]} />
-        <meshStandardMaterial 
+        <meshStandardMaterial
           map={woodTexture}
           color="#9b4e32"
           colorWrite={true}
@@ -32,7 +31,7 @@ export default function SummitScroll() {
       {/* Bottom cylinder */}
       <mesh position={[0, -3.85, 0]} rotation={[0, 0, Math.PI / 2]}>
         <cylinderGeometry args={[0.15, 0.15, 6, 32]} />
-        <meshStandardMaterial 
+        <meshStandardMaterial
           map={woodTexture}
           color="#9b4e32"
           colorWrite={true}
@@ -40,4 +39,4 @@ export default function SummitScroll() {
       </mesh>
     </group>
   );
-} 
+}

@@ -5,8 +5,11 @@ import { MeshStandardMaterial } from "three";
 
 export default function Bonsai() {
   const bonsaiModel = useLoader(OBJLoader, "/models/Bonsai.obj");
-  const bonsaiTexture = useLoader(TextureLoader, "/textures/Zanthoxylum-Texture-8k.jpg");
-  
+  const bonsaiTexture = useLoader(
+    TextureLoader,
+    "/textures/Zanthoxylum-Texture-8k.jpg",
+  );
+
   const material = new MeshStandardMaterial({
     map: bonsaiTexture,
     roughness: 0.8,
@@ -27,4 +30,4 @@ export default function Bonsai() {
       <primitive object={bonsaiModel} />
     </group>
   );
-} 
+}

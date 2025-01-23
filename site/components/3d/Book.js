@@ -3,7 +3,7 @@ import { TextureLoader, LinearFilter, LinearMipmapLinearFilter } from "three";
 
 export default function Book() {
   const coverTexture = useLoader(TextureLoader, "/tomorrow.jpg");
-  
+
   // Enhance texture quality
   coverTexture.minFilter = LinearMipmapLinearFilter;
   coverTexture.magFilter = LinearFilter;
@@ -14,21 +14,21 @@ export default function Book() {
     <group position={[10, -6.1, 5]} rotation={[0, -0.5, 0]} scale={0.5}>
       <mesh>
         <boxGeometry args={[4.8, 0.6, 6.3]} />
-        <meshStandardMaterial 
+        <meshStandardMaterial
           color="#8B4513"
           roughness={1}
           metalness={0}
           emissive="#000000"
           attach="material-0"
         />
-        <meshStandardMaterial 
+        <meshStandardMaterial
           color="#8B4513"
           roughness={1}
           metalness={0}
           emissive="#000000"
           attach="material-1"
         />
-        <meshStandardMaterial 
+        <meshStandardMaterial
           map={coverTexture}
           roughness={0.5}
           metalness={0.1}
@@ -36,21 +36,21 @@ export default function Book() {
           emissiveIntensity={0.1}
           attach="material-2"
         />
-        <meshStandardMaterial 
+        <meshStandardMaterial
           color="#8B4513"
           roughness={1}
           metalness={0}
           emissive="#000000"
           attach="material-3"
         />
-        <meshStandardMaterial 
+        <meshStandardMaterial
           color="#8B4513"
           roughness={1}
           metalness={0}
           emissive="#000000"
           attach="material-4"
         />
-        <meshStandardMaterial 
+        <meshStandardMaterial
           color="#8B4513"
           roughness={1}
           metalness={0}
@@ -60,4 +60,4 @@ export default function Book() {
       </mesh>
     </group>
   );
-} 
+}
