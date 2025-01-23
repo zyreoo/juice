@@ -575,7 +575,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                     backgroundColor: 'rgba(0, 0, 0, 0.05)',
                     borderColor: '#000'
                 }}>  
-                    <img style={{width: 14, height: 14}} src={"./kudos.svg"}/>
+                    <img style={{width: 14, height: 14}} src={"./kudos.png"}/>
                     <p style={{
                         fontSize: 16,
                         color: '#000',
@@ -782,7 +782,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                 <div>
                     <FileIcon 
                         text={isLoggedIn ? "Juicer" : "Register"}
-                        icon={isLoggedIn ? null : "registericon.png"}
+                        icon={isLoggedIn ? "./juicer.png" : "registericon.png"}
                         isSelected={selectedFile === (isLoggedIn ? "Juicer" : "Register")}
                         onClick={handleFileClick(isLoggedIn ? "Juicer" : "Register")}
                         delay={0.2}
@@ -799,6 +799,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                     {isLoggedIn &&
                     <FileIcon 
                         text="Kudos"
+                        icon="./kudos.png" 
                         style={{ backgroundColor: "#000", color: "#fff" }}
                         isSelected={selectedFile === "Kudos"}
                         onClick={handleFileClick("Kudos")}
