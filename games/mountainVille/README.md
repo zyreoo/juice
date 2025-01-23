@@ -1,6 +1,6 @@
 # mountainVille
 
-**Team Members:** Paolo & Thomas
+**Team Members:** Paolo & Thomas Stubblefield
 
 **How would you pitch your game in one line?**
 It's like Celeste meets Farmville but local tied-together co-op multiplayer
