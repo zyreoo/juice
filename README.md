@@ -65,10 +65,10 @@ pnpm run dev
 & make a PR!
 
 ## some folks helping us make this :)
-Thomas Stubblefield (@SerenityUX)
-Thomas Wu (@TakumiBC)
-Paolo Carino 
-Estella Gu (@themagicfrog) (credit for all the art on the site)
+Thomas Stubblefield (@SerenityUX),
+Thomas Wu (@TakumiBC),
+Paolo Carino, & 
+Estella Gu (@themagicfrog) (credit to her for making all the epic art on the site)
 
 *+ YOU if you'd like (we would love more help)!!! *
 
