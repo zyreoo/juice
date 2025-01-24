@@ -64,9 +64,13 @@ pnpm run dev
 
 & make a PR!
 
-------
+## 👥 Team
+Thomas Stubblefield (@SerenityUX): Main Organzier
+Thomas Wu (@TakumiBC): ???
+Paolo Carino (@???): ???
+Estella Gu (@themagicfrog): Art & Interactions on the site
+Acon Lin (@acornitum): ???
 
-Tysm to [Magic Frog (Estella)](https://github.com/themagicfrog) for making the art & some of the magical interactions on this site!*
 
 ## ☀️ In Years Past
 
