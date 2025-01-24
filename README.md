@@ -64,13 +64,13 @@ pnpm run dev
 
 & make a PR!
 
-## 👥 Team
-Thomas Stubblefield (@SerenityUX): Main Organzier
-Thomas Wu (@TakumiBC): ???
-Paolo Carino (@???): ???
-Estella Gu (@themagicfrog): Art & Interactions on the site
-Acon Lin (@acornitum): ???
+## some folks helping us make this :)
+Thomas Stubblefield (@SerenityUX),
+Thomas Wu (@TakumiBC),
+Paolo Carino, & 
+Estella Gu (@themagicfrog) (credit to her for making all the epic art on the site)
 
++ YOU if you'd like (we would love more help)!!!
 
 ## ☀️ In Years Past
 
