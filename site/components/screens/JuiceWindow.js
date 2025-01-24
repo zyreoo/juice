@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 
 export default function JuiceWindow({ position, isDragging, isActive, handleMouseDown, handleDismiss, handleWindowClick, BASE_Z_INDEX, ACTIVE_Z_INDEX, userData, setUserData, startJuicing, playCollectSound, isJuicing }) {
     const [isJuicingLocal, setIsJuicingLocal] = useState(false);
+    const [showExplanation, setShowExplanation] = useState(false);
     const [currentStretchId, setCurrentStretchId] = useState(null);
     const [timeJuiced, setTimeJuiced] = useState('0:00');
     const [startTime, setStartTime] = useState(null);
@@ -10,10 +11,24 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [stopTime, setStopTime] = useState(null);
     const fileInputRef = useRef(null);
+    const clickSoundRef = useRef(null);
+    const expSoundRef = useRef(null);
 
-    // Add these refs to access parent component audio elements
-    const juicerSoundRef = useRef(document.querySelector('audio[src="./juicer.mp3"]'));
-    const collectSoundRef = useRef(document.querySelector('audio[src="./collect.mp3"]'));
+    // Add play click function
+    const playClick = () => {
+        if (clickSoundRef.current) {
+            clickSoundRef.current.currentTime = 0;
+            clickSoundRef.current.play().catch(e => console.error('Error playing click:', e));
+        }
+    };
+
+    const playExp = () => {
+        if (expSoundRef.current) {
+            expSoundRef.current.volume = 0.5;
+            expSoundRef.current.currentTime = 0;
+            expSoundRef.current.play().catch(e => console.error('Error playing exp:', e));
+        }
+    };
 
     useEffect(() => {
         let interval;
@@ -30,6 +45,10 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
     }, [isJuicingLocal, startTime, stopTime]);
 
     const handleStartJuicing = async () => {
+        if (!confirm("Just to confirm, you have your game editor ready and you're ready to start working on your game? also sorry but pls keep demo clip at 4mb or less, will fix this soon ~Thomas")) {
+            return;
+        }
+
         try {
             const response = await fetch('/api/start-juice-stretch', {
                 method: 'POST',
@@ -52,9 +71,7 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
             setStopTime(null);
             setSelectedVideo(null);
             setDescription('');
-
-            // Start juicing animation and sound
-            startJuicing();
+            playExp();
 
         } catch (error) {
             console.error('Error starting juice stretch:', error);
@@ -68,12 +85,19 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         if (file) {
-            if (file.type.startsWith('video/')) {
-                setSelectedVideo(file);
-                setStopTime(new Date());
-            } else {
+            if (!file.type.startsWith('video/')) {
                 alert('Please select a video file');
+                return;
             }
+            
+            // Check file size (4MB = 4 * 1024 * 1024 bytes)
+            if (file.size > 4 * 1024 * 1024) {
+                alert("I'm sorry, we have a 4mb limit on file uploads rn. I am fixing this! ~Thomas");
+                return;
+            }
+            
+            setSelectedVideo(file);
+            setStopTime(new Date());
         }
     };
 
@@ -131,94 +155,154 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
         }
     };
 
+    const handleCancelStretch = () => {
+        if (!confirm("Are you sure you want to cancel this juice stretch? Your time won't be logged.")) {
+            return;
+        }
+        setIsJuicingLocal(false);
+        setCurrentStretchId(null);
+        setStartTime(null);
+        setStopTime(null);
+        setSelectedVideo(null);
+        setDescription('');
+        setTimeJuiced('0:00');
+    };
+
     return (
-        <div 
-            onClick={handleWindowClick('juiceWindow')}
-            style={{
-                display: "flex", 
-                position: "absolute", 
-                zIndex: isActive ? ACTIVE_Z_INDEX : BASE_Z_INDEX, 
-                width: 400,
-                height: 300,
-                color: 'black',
-                backgroundColor: "#fff", 
-                border: "1px solid #000", 
-                borderRadius: 4,
-                flexDirection: "column",
-                padding: 0,
-                justifyContent: "space-between",
-                transform: `translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px))`,
-                top: "50%",
-                left: "50%",
-                userSelect: "none"
-            }}>
+        <>
+            <audio ref={clickSoundRef} src="./click.mp3" />
+            <audio ref={expSoundRef} src="./expSound.mp3" volume="0.5" />
             <div 
-                onMouseDown={handleMouseDown('juiceWindow')}
+                onClick={handleWindowClick('juiceWindow')}
                 style={{
                     display: "flex", 
-                    borderBottom: "1px solid #000", 
-                    padding: 8, 
-                    flexDirection: "row", 
-                    justifyContent: "space-between", 
-                    cursor: isDragging ? 'grabbing' : 'grab'
+                    position: "absolute", 
+                    zIndex: isActive ? ACTIVE_Z_INDEX : BASE_Z_INDEX, 
+                    width: 400,
+                    height: 300,
+                    color: 'black',
+                    backgroundColor: "#fff", 
+                    border: "1px solid #000", 
+                    borderRadius: 4,
+                    flexDirection: "column",
+                    padding: 0,
+                    justifyContent: "space-between",
+                    transform: `translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px))`,
+                    top: "50%",
+                    left: "50%",
+                    userSelect: "none"
                 }}>
-                <div style={{display: "flex", flexDirection: "row", gap: 8}}>
-                    <button onClick={(e) => { e.stopPropagation(); handleDismiss('juiceWindow'); }}>x</button>
+                <div 
+                    onMouseDown={handleMouseDown('juiceWindow')}
+                    style={{
+                        display: "flex", 
+                        borderBottom: "1px solid #000", 
+                        padding: 8, 
+                        flexDirection: "row", 
+                        justifyContent: "space-between", 
+                        cursor: isDragging ? 'grabbing' : 'grab'
+                    }}>
+                    <div style={{display: "flex", flexDirection: "row", gap: 8}}>
+                        <button onClick={(e) => { 
+                            e.stopPropagation(); 
+                            playClick();
+                            handleDismiss('juiceWindow'); 
+                        }}>x</button>
+                    </div>
+                    <p>Juicer (v.0.1)</p>
+                    <div></div>
                 </div>
-                <p>Juicer (v.0.1)</p>
-                <div></div>
+                <div style={{flex: 1, padding: 16, display: "flex", flexDirection: "column", gap: 8}}>
+                    {!showExplanation ? (
+                        <>
+                            <h1 style={{fontSize: 32, lineHeight: 1}}>Juicer (v.0.1)</h1>
+                            {isJuicing &&
+                            <p>Log your time working on a feature then share "OMG IT WORKS" moment when you make it work</p>
+                            }
+                            <div style={{display: "flex", flexDirection: "column", gap: 4}}>
+                                <p>Current Session: {timeJuiced}</p>
+                                <p>Total Time Juiced: {userData?.totalStretchHours ? 
+                                    `${Math.floor(userData.totalStretchHours)} hours ${Math.round((userData.totalStretchHours % 1) * 60)} min` : 
+                                    "0 hours 0 min"}</p>
+                            </div>
+                            {!isJuicingLocal &&
+                            <div style={{display: "flex", flexDirection: "column", gap: 8}}>
+                                <button onClick={() => {
+                                    playClick();
+                                    handleStartJuicing();
+                                }}>
+                                    Start Juicing
+                                </button>
+                                <button onClick={() => {
+                                    playClick();
+                                    setShowExplanation(true);
+                                }}>
+                                    What is this?
+                                </button>
+                            </div>}
+                            {isJuicingLocal &&
+                            <div style={{padding: 8, display: 'flex', gap: 4, flexDirection: "column", border: "1px solid #000"}}>
+                                <input 
+                                    type="file" 
+                                    ref={fileInputRef}
+                                    onChange={handleFileChange}
+                                    accept="video/*"
+                                    style={{ display: 'none' }}
+                                />
+                                <p 
+                                    onClick={handleUploadClick}
+                                    style={{
+                                        cursor: 'pointer', 
+                                        textAlign: "center", 
+                                        width: "100%", 
+                                        padding: 4, 
+                                        border: "1px solid #000", 
+                                        textDecoration: 'underline'
+                                    }}
+                                >
+                                    {selectedVideo ? selectedVideo.name : 'Upload Video'}
+                                </p>
+                                <textarea 
+                                    style={{width: "100%", padding: 2}} 
+                                    placeholder="wut works?"
+                                    value={description}
+                                    onChange={(e) => setDescription(e.target.value)}
+                                />
+                                <button 
+                                    onClick={() => {
+                                        playClick();
+                                        handleEndStretch();
+                                    }}
+                                    disabled={isSubmitting}
+                                    style={{width: "100%"}}
+                                >
+                                    {isSubmitting ? 'Juicing...' : 'End Stretch with your "OMG IT WORKS" moment'}
+                                </button>
+                                <button 
+                                    onClick={() => {
+                                        playClick();
+                                        handleCancelStretch();
+                                    }}
+                                    style={{width: "100%", backgroundColor: "#ffebee", color: "#d32f2f"}}
+                                >
+                                    Cancel Juice Stretch
+                                </button>
+                            </div>
+                            }
+                        </>
+                    ) : (
+                        <div style={{display: "flex", flexDirection: "column", gap: 16}}>
+                            <p>Juicer is a way to gamify your process making mini-ships for your game & to log the time you spend making them. When you start working on your game, open the Juicer and "Start Juicing". Once you have an "OMG IT WORKS MOMENT" capture that beautiful moment & share it with the Juice community. We'll come and give kudos to congratulate you & you'll get credit for that time :) <br/><br/>The Juicer is how you will log your time to hit the 100 hour game achievement.</p>
+                            <button onClick={() => {
+                                playClick();
+                                setShowExplanation(false);
+                            }}>
+                                Return to Juicer
+                            </button>
+                        </div>
+                    )}
+                </div>
             </div>
-            <div style={{flex: 1, padding: 16, display: "flex", flexDirection: "column", gap: 8}}>
-                <h1 style={{fontSize: 32, lineHeight: 1}}>Juicer (v.0.1)</h1>
-                <p>Current Challenge: Build game prototype</p>
-                <div style={{display: "flex", flexDirection: "column", gap: 4}}>
-                    <p>Current Session: {timeJuiced}</p>
-                    <p>Total Time Juiced: {userData?.totalStretchHours ? 
-                        `${Math.floor(userData.totalStretchHours)} hours ${Math.round((userData.totalStretchHours % 1) * 60)} min` : 
-                        "0 hours 0 min"}</p>
-                </div>
-                {!isJuicingLocal &&
-                <button onClick={handleStartJuicing}>
-                    Start Juicing
-                </button>}
-                {isJuicingLocal &&
-                <div style={{padding: 8, display: 'flex', gap: 4, flexDirection: "column", border: "1px solid #000"}}>
-                    <input 
-                        type="file" 
-                        ref={fileInputRef}
-                        onChange={handleFileChange}
-                        accept="video/*"
-                        style={{ display: 'none' }}
-                    />
-                    <p 
-                        onClick={handleUploadClick}
-                        style={{
-                            cursor: 'pointer', 
-                            textAlign: "center", 
-                            width: "100%", 
-                            padding: 4, 
-                            border: "1px solid #000", 
-                            textDecoration: 'underline'
-                        }}
-                    >
-                        {selectedVideo ? selectedVideo.name : 'Upload Video'}
-                    </p>
-                    <textarea 
-                        style={{width: "100%", padding: 2}} 
-                        placeholder="wut works?"
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                    />
-                    <button 
-                        onClick={handleEndStretch}
-                        disabled={isSubmitting}
-                        style={{width: "100%"}}
-                    >
-                        {isSubmitting ? 'Juicing...' : 'End Stretch with your "OMG IT WORKS" moment'}
-                    </button>
-                </div>
-                }
-            </div>
-        </div>
+        </>
     );
 } 

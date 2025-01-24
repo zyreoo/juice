@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Confetti from 'react-confetti'; 
 import styles from './FortuneBasket.module.css'; 
 
@@ -22,7 +22,9 @@ export default function FortuneBasket({
   handleMouseDown,
   handleWindowClick,
   isDragging,
-  isActive
+  isActive,
+  BASE_Z_INDEX,
+  ACTIVE_Z_INDEX
 }) {
   const [showCookies, setShowCookies] = useState(false);
   const [selectedCookie, setSelectedCookie] = useState(null);
@@ -30,6 +32,7 @@ export default function FortuneBasket({
   const [showConfetti, setShowConfetti] = useState(false);
   const [showNewImages, setShowNewImages] = useState(false); 
   const [fadeInMessage, setFadeInMessage] = useState(false);
+  const fortuneSoundRef = useRef(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -43,6 +46,11 @@ export default function FortuneBasket({
     setShowConfetti(true); 
     setShowNewImages(true); 
     generateFortuneMessage(); 
+    // Play fortune sound
+    if (fortuneSoundRef.current) {
+      fortuneSoundRef.current.currentTime = 0;
+      fortuneSoundRef.current.play();
+    }
   };
 
   const generateFortuneMessage = () => {
@@ -65,6 +73,7 @@ export default function FortuneBasket({
   return (
     <>
       <style>{cookieShakeKeyframes}</style>
+      <audio ref={fortuneSoundRef} src="./fortune.mp3" />
       <div 
         onClick={(e) => {
           console.log('Fortune basket clicked');
@@ -86,7 +95,8 @@ export default function FortuneBasket({
           transform: `translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px))`,
           top: "50%",
           left: "50%",
-          userSelect: "none"
+          userSelect: "none",
+          zIndex: isActive ? ACTIVE_Z_INDEX : BASE_Z_INDEX
         }}>
         <div 
           onMouseDown={(e) => {

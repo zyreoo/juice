@@ -109,7 +109,7 @@ export default function FirstChallengeWindow({ position, isDragging, isActive, h
                     <li>write your idea in a markdown file <a target="_blank" href="https://github.com/hackclub/juice/blob/main/games/template/README.md">(template)</a></li>
                     <li>open a PR to the <a target="_blank" href="https://github.com/hackclub/juice">Juice repo</a> & add your idea <a target="_blank" href="https://github.com/hackclub/juice/blob/main/games/README.md">(guide)</a></li>
                 </ol>
-                <p>Here's <a target="_blank" href="">the markdown file that Paolo & I made for our game</a>.</p>
+                <p>Here's <a target="_blank" href="https://github.com/hackclub/juice/tree/main/games/mountainVille">the markdown file that Paolo & I made for our game</a>.</p>
                 <div>
                 <p>~Thomas Stubblefield</p>
                 <i>In life we are always learning</i>
