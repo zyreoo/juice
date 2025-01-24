@@ -70,7 +70,7 @@ Thomas Wu (@TakumiBC),
 Paolo Carino, & 
 Estella Gu (@themagicfrog) (credit to her for making all the epic art on the site)
 
-*+ YOU if you'd like (we would love more help)!!! *
++ YOU if you'd like (we would love more help)!!!
 
 ## ☀️ In Years Past
 
