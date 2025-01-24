@@ -1,6 +1,6 @@
 # VENDING MACHINE 
 
-**Team Members:** Estella
+**Team Members:** Estella (@magicfrog)
 
 **How would you pitch your game in one line?**
 You got stuck in vending machine and you must escape!!
