@@ -70,7 +70,7 @@ export default function FortuneBasket({
       "I'm stuck in a fortune cookie factory, please send help.",
       "You will soon discover just how #$%@ gamedev is.",
       "You will develop a fear of waffle cones.",
-      "You will soon start a new douolingo course.",
+      "You will soon start a new duolingo course.",
       "If a mint is offered, please take it.",
     ];
     let fortunes = []
