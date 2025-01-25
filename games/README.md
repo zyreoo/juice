@@ -2,7 +2,7 @@
 
 ## Step-by-Step 
 
-### 1. Create Your Branch
+### 1. Fork the repo!
 1. Go to the Juice repository on GitHub
 2. Fork the repo
    
