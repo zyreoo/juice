@@ -16,7 +16,7 @@ Spend 2 months building a game with your friends, go to Shanghai, China, and the
 
 ## Who can come? 😄
 
-Everyone that makes a game! (Travel stipends provided.)
+Any high schooler that makes a game! (Travel stipends provided.)
 
 ## How do I get started? 🗂️
 
@@ -34,7 +34,7 @@ We'll decide the specifics together in the [#juice](https://hackclub.slack.com/a
 
 ## New to making games? 👾
 
-No problem! Me too.
+No problem! Me too. Try learning 
 
 ## How do I spend 100 hours making the game? 💻
 
@@ -65,10 +65,11 @@ pnpm run dev
 & make a PR!
 
 ## some folks helping us make this :)
-Thomas Stubblefield (@SerenityUX),
-Thomas Wu (@TakumiBC),
-Paolo Carino, & 
-Estella Gu (@themagicfrog) (credit to her for making all the epic art on the site)
+Thomas Stubblefield ([@SerenityUX](https://github.con/SerenityUX)),
+Thomas Wu ([@TakumiBC](https://github.con/TakumiBC)),
+Paolo Carino ([paoloaverycarino.com](https://www.paoloaverycarino.com)),
+Estella Gu ([@themagicfrog](https://github.com/themagicfrog)) (credit to her for making all the epic art on the site), &
+Lily Ding ([@Lily-D-coder](https://github.com/Lily-D-coder))
 
 + YOU if you'd like (we would love more help)!!!
 
