@@ -58,6 +58,7 @@ export default function FortuneBasket({
       "Your high score in life is about to get a new personal best.",
       "Your lucky numbers are 2/1/25.",
       "You will soon discover that the best games are the ones you make for others.",
+      "If someone offers you a side quest, take it.",
     ];
     const weirdFortunes = [
       "Get the rest of your fortune by mail in rebate.",
