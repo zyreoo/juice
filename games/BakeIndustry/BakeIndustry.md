@@ -1,4 +1,4 @@
-# Game Name
+# BakeIndustry
 
 **Team Members:** spc
 
