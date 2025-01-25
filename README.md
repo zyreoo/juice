@@ -16,7 +16,7 @@ Spend 2 months building a game with your friends, go to Shanghai, China, and the
 
 ## Who can come? 😄
 
-Everyone that makes a game! (Travel stipends provided.)
+Any high schooler that makes a game! (Travel stipends provided.)
 
 ## How do I get started? 🗂️
 
