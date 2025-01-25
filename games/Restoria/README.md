@@ -1,9 +1,9 @@
 # Restoria ✨
 
-**Team Members:** [Priscilla Ye]
+**Team Members:** Priscilla Ye
 
 **How would you pitch your game in one line?**
-[A game based on sustainability where the player picks up trash and goes through a mission to save the birds and restore the forest from pollution]
+A game based on sustainability where the player picks up trash and goes through a mission to save the birds and restore the forest from pollution
 
 **What is the key mechanic(s) that make it fun?**
 [Describe how the mechanic works, why it's fun/important, how it interacts with other mechanics, etc]
