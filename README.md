@@ -34,7 +34,7 @@ We'll decide the specifics together in the [#juice](https://hackclub.slack.com/a
 
 ## New to making games? 👾
 
-No problem! Me too. Try learning 
+No problem! Me too. Try using Unity or Godot! 
 
 ## How do I spend 100 hours making the game? 💻
 
@@ -65,8 +65,8 @@ pnpm run dev
 & make a PR!
 
 ## some folks helping us make this :)
-Thomas Stubblefield ([@SerenityUX](https://github.con/SerenityUX)),
-Thomas Wu ([@TakumiBC](https://github.con/TakumiBC)),
+Thomas Stubblefield ([@SerenityUX](https://github.com/SerenityUX)),
+Thomas Wu ([@TakumiBC](https://github.com/TakumiBC)),
 Paolo Carino ([paoloaverycarino.com](https://www.paoloaverycarino.com)),
 Estella Gu ([@themagicfrog](https://github.com/themagicfrog)) (credit to her for making all the epic art on the site), &
 Lily Ding ([@Lily-D-coder](https://github.com/Lily-D-coder))
