@@ -34,7 +34,7 @@ We'll decide the specifics together in the [#juice](https://hackclub.slack.com/a
 
 ## New to making games? 👾
 
-No problem! Me too. Try learning 
+No problem! Me too. Try using Unity or Godot! 
 
 ## How do I spend 100 hours making the game? 💻
 
