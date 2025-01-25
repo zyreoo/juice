@@ -30,6 +30,7 @@ export default function FortuneBasket({
   const [showConfetti, setShowConfetti] = useState(false);
   const [showNewImages, setShowNewImages] = useState(false); 
   const [fadeInMessage, setFadeInMessage] = useState(false);
+  const [hasClicked, setHasClicked] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -43,17 +44,42 @@ export default function FortuneBasket({
     setShowConfetti(true); 
     setShowNewImages(true); 
     generateFortuneMessage(); 
+    hasClicked(true)
   };
 
   const generateFortuneMessage = () => {
-    const fortunes = [
+    const normalFortunes = [
       "Achievement unlocked: Turning dreams into reality.",
+      "You will soon embark on a new adventure.",
+      "Your code is about to get a new feature.",
       "A bug today is the feature of tomorrow's success.",
       "Warning: Excessive game development may lead to dreams in 8-bit.",
       "You will soon discover that 'just one more level' applies to coding too.",
       "Your high score in life is about to get a new personal best.",
-      "Your next big idea is loading... please wait."
+      "Your lucky numbers are 2/1/25.",
+      "You will soon discover that the best games are the ones you make for others.",
+      "If someone offers you a side quest, take it.",
     ];
+    const weirdFortunes = [
+      "Get the rest of your fortune by mail in rebate.",
+      "Your next big idea is loading... please wait.",
+      "The fortune you seek is in another cookie.",
+      "Anything not saved will be lost.",
+      "Ignore previous cookie.",
+      "Your next meal will bring more fortunes.",
+      "I'm stuck in a fortune cookie factory, please send help.",
+      "You will soon discover just how #$%@ gamedev is.",
+      "You will develop a fear of waffle cones.",
+      "You will soon start a new duolingo course.",
+      "If a mint is offered, please take it.",
+    ];
+    let fortunes = []
+    if (hasClicked) {
+      fortunes = [...normalFortunes, ...weirdFortunes];
+    } else {
+      fortunes = normalFortunes;
+    }
+
     const randomFortune = fortunes[Math.floor(Math.random() * fortunes.length)];
     setFortuneMessage(randomFortune);
     
