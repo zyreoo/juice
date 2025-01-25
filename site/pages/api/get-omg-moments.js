@@ -26,7 +26,7 @@ export default async function handler(req, res) {
       description: record.fields.description,
       video: record.fields.video,
       created_at: record.fields.created_at,
-      email: record.fields.email,
+      // email: record.fields.email,
       kudos: record.fields.kudos || 0
     }));
 
