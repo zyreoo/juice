@@ -14,4 +14,3 @@ The core gameplay revolves around the player taking on the role of a researcher 
 How will you keep players engaged for 30 minutes? What's the general scope of your game (will change as you go)?
 
 The player gradually unlocks new levels of the simulation by exploring diverse biomes, solving puzzles, and gathering resources needed to progress. Each unlocked biome introduces new challenges and pieces of the story, revealing the mysteries behind the simulation. Step by step, the player gets closer to escaping the simulation.
-
