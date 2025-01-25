@@ -4,10 +4,8 @@
 
 ### 1. Create Your Branch
 1. Go to the Juice repository on GitHub
-2. Click the `main` branch dropdown 
-3. Type a new branch name like `game/your-game-name`
-4. Click "Create branch: game/your-game-name"
-
+2. Fork the repo
+   
 ### 2. Create Your Game Folder 📁
 1. Navigate to the `games` folder
 2. Click the "Add file" dropdown
