@@ -1,6 +1,6 @@
 # Pizza Panic
 
-**Team Members:** [Rishabh]
+**Team Members:** Rishabh
 
 **How would you pitch your game in one line?**
 We have to make pizzas from ingrdients and then be the fastest to eat them.
