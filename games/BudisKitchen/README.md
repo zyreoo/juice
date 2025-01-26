@@ -1,6 +1,6 @@
 Team Members: dev_
 
-How would you pitch your game in one line? Its like overcooked but with monkeys
+How would you pitch your game in one line? Its like overcooked but with monkeys meets work at a pizza place
 
 What is the key mechanic(s) that make it fun? You can upgrade to make your cooking go better and quicker while trying to make the best restraunt while customers give you reviews that determines how much money
 you get
