@@ -60,15 +60,9 @@ export default function FortuneBasket({
   }, []);
 
   const playFortuneSound = () => {
-    try {
-      if (fortuneSoundRef.current && audioLoaded) {
-        fortuneSoundRef.current.currentTime = 0;
-        fortuneSoundRef.current.play().catch(e => {
-          console.log('Audio play failed (expected on first click):', e);
-        });
-      }
-    } catch (e) {
-      console.log('Audio play error (non-critical):', e);
+    if (fortuneSoundRef.current) {
+      fortuneSoundRef.current.currentTime = 0;
+      fortuneSoundRef.current.play().catch(e => console.error('Error playing fortune sound:', e));
     }
   };
 
