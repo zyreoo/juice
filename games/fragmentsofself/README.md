@@ -1,4 +1,4 @@
-# Game Name
+# Fragments Of Self
 
 **Team Members:** Karnx(karna), Scattercat(atharv), Lucifero(naitik)
 
