@@ -26,6 +26,7 @@ export default function FortuneBasket({
   BASE_Z_INDEX,
   ACTIVE_Z_INDEX
 }) {
+  const [error, setError] = useState(null);
   const [showCookies, setShowCookies] = useState(false);
   const [selectedCookie, setSelectedCookie] = useState(null);
   const [fortuneMessage, setFortuneMessage] = useState('');
@@ -59,12 +60,17 @@ export default function FortuneBasket({
   };
 
   const handleCookieClick = (index) => {
-    setSelectedCookie(index);
-    setShowConfetti(true); 
-    setShowNewImages(true); 
-    generateFortuneMessage(); 
-    setHasClicked(true);
-    playSound();
+    try {
+      setSelectedCookie(index);
+      setShowConfetti(true); 
+      setShowNewImages(true); 
+      generateFortuneMessage(); 
+      setHasClicked(true);
+      playSound();
+    } catch (err) {
+      console.error('Error in cookie click:', err);
+      setError(err);
+    }
   };
 
   const generateFortuneMessage = () => {
@@ -105,6 +111,38 @@ export default function FortuneBasket({
       setFadeInMessage(true);
     }, 1000);
   };
+
+  if (error) {
+    return (
+      <div style={{
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        backgroundColor: '#fff',
+        padding: '20px',
+        border: '1px solid #000',
+        borderRadius: '4px',
+        textAlign: 'center'
+      }}>
+        <p>Something went wrong with the fortune cookie!</p>
+        <button 
+          onClick={() => {
+            setError(null);
+            setShowNewImages(false);
+            setSelectedCookie(null);
+          }}
+          style={{
+            padding: '5px 10px',
+            marginTop: '10px',
+            cursor: 'pointer'
+          }}
+        >
+          Try Again
+        </button>
+      </div>
+    );
+  }
 
   return (
     <>
