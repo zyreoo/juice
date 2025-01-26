@@ -43,19 +43,10 @@ export default function FortuneBasket({
     return () => clearTimeout(timer);
   }, []);
 
-  const playSound = async () => {
-    try {
-      if (fortuneSoundRef.current) {
-        const playPromise = fortuneSoundRef.current.play();
-        
-        if (playPromise !== undefined) {
-          playPromise.catch(error => {
-            console.log("Audio play failed:", error);
-          });
-        }
-      }
-    } catch (error) {
-      console.log("Audio play error:", error);
+  const playFortuneSound = () => {
+    if (fortuneSoundRef.current) {
+      fortuneSoundRef.current.currentTime = 0;
+      fortuneSoundRef.current.play().catch(e => console.error('Error playing fortune sound:', e));
     }
   };
 
@@ -66,7 +57,7 @@ export default function FortuneBasket({
       setShowNewImages(true); 
       generateFortuneMessage(); 
       setHasClicked(true);
-      playSound();
+      playFortuneSound();
     } catch (err) {
       console.error('Error in cookie click:', err);
       setError(err);
@@ -147,11 +138,7 @@ export default function FortuneBasket({
   return (
     <>
       <style>{cookieShakeKeyframes}</style>
-      <audio 
-        ref={fortuneSoundRef} 
-        src="/fortune.mp3" 
-        preload="auto"
-      />
+      <audio ref={fortuneSoundRef} src="/fortune.mp3" />
       <div 
         onClick={(e) => {
           e.stopPropagation();
