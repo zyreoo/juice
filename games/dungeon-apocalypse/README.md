@@ -1,4 +1,4 @@
-# idle-dungeon-master
+# dungeon-apocalypse
 
 **Team Members:** Sahil Dasari @sahil
 
