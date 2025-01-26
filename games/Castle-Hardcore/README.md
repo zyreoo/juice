@@ -1,4 +1,4 @@
-# Game Name
+# Castle Hardcore 
 
 **Team Members:** Mohd Faizal
 
