@@ -1,5 +1,4 @@
-# Game Name
-**Mystic Adventure**
+# Mystic Adventure
 
 **Team Members:** Shyaka Chaste & Munyarigoga Caleb Tola
 
