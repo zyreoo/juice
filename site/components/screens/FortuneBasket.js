@@ -33,6 +33,7 @@ export default function FortuneBasket({
   const [showNewImages, setShowNewImages] = useState(false); 
   const [fadeInMessage, setFadeInMessage] = useState(false);
   const [hasClicked, setHasClicked] = useState(false);
+  const fortuneSoundRef = useRef(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -46,7 +47,10 @@ export default function FortuneBasket({
     setShowConfetti(true); 
     setShowNewImages(true); 
     generateFortuneMessage(); 
-    hasClicked(true)
+    setHasClicked(true);
+    if (fortuneSoundRef.current) {
+        fortuneSoundRef.current.play();
+    }
   };
 
   const generateFortuneMessage = () => {
@@ -75,12 +79,10 @@ export default function FortuneBasket({
       "You will soon start a new duolingo course.",
       "If a mint is offered, please take it.",
     ];
-    let fortunes = []
-    if (hasClicked) {
-      fortunes = [...normalFortunes, ...weirdFortunes];
-    } else {
-      fortunes = normalFortunes;
-    }
+
+    const fortunes = hasClicked ? 
+      [...normalFortunes, ...weirdFortunes] : 
+      normalFortunes;
 
     const randomFortune = fortunes[Math.floor(Math.random() * fortunes.length)];
     setFortuneMessage(randomFortune);
@@ -93,11 +95,13 @@ export default function FortuneBasket({
   return (
     <>
       <style>{cookieShakeKeyframes}</style>
-      <audio ref={fortuneSoundRef} src="./fortune.mp3" />
+      <audio ref={fortuneSoundRef} src="/fortune.mp3" />
       <div 
         onClick={(e) => {
-          console.log('Fortune basket clicked');
-          handleWindowClick('fortuneBasket')(e);
+          e.stopPropagation();
+          if (handleWindowClick) {
+            handleWindowClick('fortuneBasket');
+          }
         }}
         style={{
           display: "flex", 
@@ -120,8 +124,10 @@ export default function FortuneBasket({
         }}>
         <div 
           onMouseDown={(e) => {
-            console.log('Fortune basket title bar mouse down');
-            handleMouseDown('fortuneBasket')(e);
+            e.stopPropagation();
+            if (handleMouseDown) {
+              handleMouseDown('fortuneBasket')(e);
+            }
           }}
           style={{
             display: "flex", 
@@ -134,13 +140,17 @@ export default function FortuneBasket({
             cursor: isDragging ? 'grabbing' : 'grab'
           }}>
           <div style={{display: "flex", flexDirection: "row", gap: 8}}>
-            <button onClick={(e) => { 
-              console.log('Fortune basket dismiss clicked');
-              e.stopPropagation(); 
-              handleDismiss('fortuneBasket'); 
-            }}>x</button>
+            <button 
+              onClick={(e) => { 
+                e.preventDefault();
+                e.stopPropagation(); 
+                if (handleDismiss) {
+                  handleDismiss('fortuneBasket');
+                }
+              }}
+            >x</button>
           </div>
-          <p style={{ margin: 0 }}>FORTUNE BASKET</p>
+          <p style={{ margin: 0 }}>Fortune Basket</p>
           <div></div>
         </div>
         <div style={{ 
