@@ -13,7 +13,7 @@ Occasionally, players will ascend to mountain peaks or scenic vistas, where they
 
 **How does the game actually play? (Core Game Loop)**
 
-Players explore, leap, and battle their way through vibrant pixel-art environments. Each level challenges them to overcome tricky platforming obstacles and defeat enemies seamlessly integrated into the terrain. The ultimate objective is to reach a glowing exit or achieve a specific goal, such as retrieving a key item or unlocking a door. Along the way, players can uncover hidden food and supplies tucked away in shelves, barrels, or other secret spots, rewarding curiosity and exploration.
+**Players explore, leap, and battle their way through vibrant pixel-art environments. Each level challenges them to overcome tricky platforming obstacles and defeat enemies seamlessly integrated into the terrain. The ultimate objective is to reach a glowing exit or achieve a specific goal, such as retrieving a key item or unlocking a door. Along the way, players can uncover hidden food and supplies tucked away in shelves, barrels, or other secret spots, rewarding curiosity and exploration.
 
 How will you keep players engaged for 30 minutes? What's the general scope of your game (will change as you go)?
 
