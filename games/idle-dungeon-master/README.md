@@ -3,7 +3,7 @@
 **Team Members:** Sahil Dasari @sahil
 
 **How would you pitch your game in one line?**
-"It's like ***Monkey Mart*** meets ***dungeon games***, where you manage a business (not really but you get the idea), battle monsters, and upgrade your heroes and resources."
+"It's like ***Monkey Mart*** meets ***Gimkit Apocalypse***, where you manage a business (not really but you get the idea), battle monsters, and upgrade your heroes and resources."
 
 **What is the key mechanic(s) that make it fun?**
 Players manage a dungeon, assigning workers to generate resources while sending heroes to battle enemies. The game has idle mechanics, so progress continues even when you're not playing. Players use loot to upgrade both the dungeon and heroes.
