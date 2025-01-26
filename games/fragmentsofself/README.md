@@ -6,7 +6,7 @@
 "You are a broken entity trapped in a dream, collecting soul shards to restore your memories and rebuild yourself into your true form.
 
 **What is the key mechanic(s) that make it fun?**
-Collecting soul shards to restore memories, solve surreal puzzles, and gradually transform into your true self creates a deeply emotional and engaging progression experience
+what makes it fun is that the okayer collects soul shards to restore memories, and gradually transform into his true self creates a deeply emotional and engaging progression experience
 
 **How does the game actually play? (Core Game Loop)**
 thrs a character that is in a dream, he wakes up as a broken entity and collects soul shards to fix itself, everytime it collects a shard, he expiriences a memory as a real life self and fills a part of himself. after collecting the last shard, he becomes the real person
