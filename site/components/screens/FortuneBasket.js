@@ -42,15 +42,29 @@ export default function FortuneBasket({
     return () => clearTimeout(timer);
   }, []);
 
+  const playSound = async () => {
+    try {
+      if (fortuneSoundRef.current) {
+        const playPromise = fortuneSoundRef.current.play();
+        
+        if (playPromise !== undefined) {
+          playPromise.catch(error => {
+            console.log("Audio play failed:", error);
+          });
+        }
+      }
+    } catch (error) {
+      console.log("Audio play error:", error);
+    }
+  };
+
   const handleCookieClick = (index) => {
     setSelectedCookie(index);
     setShowConfetti(true); 
     setShowNewImages(true); 
     generateFortuneMessage(); 
     setHasClicked(true);
-    if (fortuneSoundRef.current) {
-        fortuneSoundRef.current.play();
-    }
+    playSound();
   };
 
   const generateFortuneMessage = () => {
@@ -95,7 +109,11 @@ export default function FortuneBasket({
   return (
     <>
       <style>{cookieShakeKeyframes}</style>
-      <audio ref={fortuneSoundRef} src="/fortune.mp3" />
+      <audio 
+        ref={fortuneSoundRef} 
+        src="/fortune.mp3" 
+        preload="auto"
+      />
       <div 
         onClick={(e) => {
           e.stopPropagation();
