@@ -34,6 +34,7 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
 
     useEffect(() => {
         let interval;
+        let saveInterval;
         if (isJuicingLocal && startTime && !stopTime && !isPaused) {
             interval = setInterval(() => {
                 const now = new Date();
@@ -42,8 +43,34 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
                 const seconds = diff % 60;
                 setTimeJuiced(`${minutes}:${seconds.toString().padStart(2, '0')}`);
             }, 1000);
+            // Update pausedTimeStart without actually pausing so if the broswer closes unexpectedly you can resume your progress
+        if (isJuicingLocal && startTime && !stopTime && !isPaused){
+            saveInterval = setInterval(async () => {
+                try {
+                    const response = await fetch('/api/pause-juice-stretch', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            token: userData.token,
+                            stretchId: currentStretchId
+                        }),
+                    });
+        
+                    if (!response.ok) {
+                        throw new Error('Failed to pause juice stretch');
+                    }
+                } catch (error) {
+                    console.error('Error pausing juice stretch:', error);
+                }
+            }, 10000)
         }
-        return () => clearInterval(interval);
+        }
+        return () => {
+            clearInterval(interval)
+            clearInterval(saveInterval)
+        };
     }, [isJuicingLocal, startTime, stopTime, isPaused]);
 
     // Load data
