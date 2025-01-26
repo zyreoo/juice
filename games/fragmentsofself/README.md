@@ -11,8 +11,8 @@ Collecting soul shards to restore memories, solve surreal puzzles, and gradually
 **How does the game actually play? (Core Game Loop)**
 thrs a character that is in a dream, he wakes up as a broken entity and collects soul shards to fix itself, everytime it collects a shard, he expiriences a memory as a real life self and fills a part of himself. after collecting the last shard, he becomes the real person
 
-How will you keep players engaged for 30 minutes? What's the general scope of your game (will change as you go)?
-the storyline tells stuff and smtn like that. 
+**How will you keep players engaged for 30 minutes? What's the general scope of your game (will change as you go)?**
+the storyline tells stuff and smtn like that. thrs multiple memories, and it keeps the player engaged.
 
 ---
 *Remember: Focus on gameplay mechanics and player experience. Save the details about story, art style, sound design, UI flowcharts, marketing plans, or achievements for later.*
