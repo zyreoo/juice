@@ -276,18 +276,18 @@ export default function VideoWindow({ position, isDragging, isActive, handleMous
     );
 
     return (
-        <div 
+        <div
             ref={containerRef}
             onClick={handleWindowClick('video')}
             data-window-id="video"
             tabIndex={0}
             style={{
-                display: "flex", 
-                position: "absolute", 
-                zIndex: isActive ? ACTIVE_Z_INDEX : BASE_Z_INDEX, 
+                display: "flex",
+                position: "absolute",
+                zIndex: isActive ? ACTIVE_Z_INDEX : BASE_Z_INDEX,
                 width: 640,
                 height: 460,
-                backgroundColor: "#232325", 
+                backgroundColor: "#232325",
                 borderRadius: 4,
                 border: "1px solid #000",
                 flexDirection: "column",
@@ -310,7 +310,7 @@ export default function VideoWindow({ position, isDragging, isActive, handleMous
                     }
                 `}
             </style>
-            
+
             {/* Title Bar */}
             <div style={{
                 display: "flex",
@@ -318,10 +318,10 @@ export default function VideoWindow({ position, isDragging, isActive, handleMous
                 borderBottom: "1px solid #000",
                 backgroundColor: "#fff",
                 borderRadius: "4px 4px 0 0",
-                overflow: "hidden"
+                overflow: "visible"
             }}>
                 {/* Window Controls */}
-                <div 
+                <div
                     onMouseDown={handleMouseDown('video')}
                     style={{
                         display: "flex",
@@ -332,7 +332,7 @@ export default function VideoWindow({ position, isDragging, isActive, handleMous
                         cursor: isDragging ? 'grabbing' : 'grab',
                         borderBottom: "1px solid #000"
                     }}>
-                    <button 
+                    <button
                         onClick={(e) => { e.stopPropagation(); handleDismiss('video'); }}
                         style={{
                             padding: 0,
@@ -355,15 +355,15 @@ export default function VideoWindow({ position, isDragging, isActive, handleMous
                     display: "flex",
                     padding: 0,
                     borderBottom: "1px solid #000",
-                    position: "relative"
+                    position: "relative",
                 }}>
-                    <button 
+                    <button
                         onClick={() => {
                             setShowPlaybackMenu(!showPlaybackMenu);
                             setShowSubtitlesMenu(false);
                         }}
-                        style={{ 
-                            fontSize: "12px", 
+                        style={{
+                            fontSize: "12px",
                             fontFamily: "'Jersey 25', Arial, Helvetica, sans-serif",
                             cursor: "pointer",
                             background: "#fff",
@@ -372,12 +372,13 @@ export default function VideoWindow({ position, isDragging, isActive, handleMous
                             padding: "4px 12px",
                             color: "#000",
                             margin: 0,
-                            position: "relative"
+                            position: "relative",
+                            hidden: "false"
                         }}>
                         Playback
                         {showPlaybackMenu && (
-                            <MenuDropdown 
-                                show={showPlaybackMenu} 
+                            <MenuDropdown
+                                show={showPlaybackMenu}
                                 onClose={() => setShowPlaybackMenu(false)}
                                 style={{
                                     position: 'absolute',
@@ -385,7 +386,7 @@ export default function VideoWindow({ position, isDragging, isActive, handleMous
                                     left: 0,
                                     border: '1px solid #000',
                                     borderTop: 'none',
-                                    zIndex: 1001
+                                    zIndex: 999999999999999999999999
                                 }}
                             >
                                 <MenuItem onClick={() => handlePlaybackSpeed(0.25)} checked={playbackSpeed === 0.25}>
@@ -406,13 +407,13 @@ export default function VideoWindow({ position, isDragging, isActive, handleMous
                             </MenuDropdown>
                         )}
                     </button>
-                    <button 
+                    <button
                         onClick={() => {
                             setShowSubtitlesMenu(!showSubtitlesMenu);
                             setShowPlaybackMenu(false);
                         }}
-                        style={{ 
-                            fontSize: "12px", 
+                        style={{
+                            fontSize: "12px",
                             fontFamily: "'Jersey 25', Arial, Helvetica, sans-serif",
                             cursor: "pointer",
                             background: "#fff",
@@ -425,8 +426,8 @@ export default function VideoWindow({ position, isDragging, isActive, handleMous
                         }}>
                         Subtitles
                         {showSubtitlesMenu && (
-                            <MenuDropdown 
-                                show={showSubtitlesMenu} 
+                            <MenuDropdown
+                                show={showSubtitlesMenu}
                                 onClose={() => setShowSubtitlesMenu(false)}
                                 style={{
                                     position: 'absolute',
@@ -448,19 +449,19 @@ export default function VideoWindow({ position, isDragging, isActive, handleMous
 
             {/* Video Container */}
             <div style={{
-                flex: 1, 
-                display: "flex", 
+                flex: 1,
+                display: "flex",
                 flexDirection: "column",
                 backgroundColor: "#000",
                 borderRadius: "0 0 4px 4px",
-                overflow: "hidden"
+                overflow: "visible"
             }}>
                 <div style={{ flex: 1, position: "relative" }}>
-                    <video 
+                    <video
                         ref={videoRef}
                         style={{
-                            width: "100%", 
-                            height: "100%", 
+                            width: "100%",
+                            height: "100%",
                             objectFit: "contain",
                         }}
                         autoPlay
@@ -496,7 +497,7 @@ export default function VideoWindow({ position, isDragging, isActive, handleMous
                         </div>
                     )}
                 </div>
-                
+
                 {/* Control Bar */}
                 <div style={{
                     backgroundColor: "#fff",
@@ -504,7 +505,7 @@ export default function VideoWindow({ position, isDragging, isActive, handleMous
                     padding: "4px",
                 }}>
                     {/* Timeline */}
-                    <div 
+                    <div
                         onClick={handleSeek}
                         style={{
                             height: "8px",
@@ -521,7 +522,7 @@ export default function VideoWindow({ position, isDragging, isActive, handleMous
                             width: `${(currentTime / duration) * 100}%`,
                         }} />
                     </div>
-                    
+
                     {/* Controls */}
                     <div style={{
                         display: "flex",
@@ -589,15 +590,15 @@ export default function VideoWindow({ position, isDragging, isActive, handleMous
                             10→
                         </button>
 
-                        <div style={{ 
-                            color: "#000", 
+                        <div style={{
+                            color: "#000",
                             fontSize: "12px",
                             fontFamily: "'Jersey 25', Arial, Helvetica, sans-serif",
                             marginLeft: "8px"
                         }}>
                             {formatTime(currentTime)} / {formatTime(duration)}
                         </div>
-                        
+
                         <div style={{ flex: 1 }} />
 
                         <div style={{ position: "relative" }}>
@@ -620,7 +621,7 @@ export default function VideoWindow({ position, isDragging, isActive, handleMous
                             >
                                 {volume === 0 ? '×♪' : volume < 0.5 ? '♪' : '♪♪'}
                             </button>
-                            
+
                             {(showVolume || isDraggingVolume) && (
                                 <div
                                     style={{
@@ -682,7 +683,7 @@ export default function VideoWindow({ position, isDragging, isActive, handleMous
                             )}
                         </div>
 
-                        <button 
+                        <button
                             onClick={toggleFullscreen}
                             style={{
                                 background: "none",
