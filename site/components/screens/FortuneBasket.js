@@ -68,12 +68,21 @@ export default function FortuneBasket({
 
   const handleCookieClick = (index) => {
     try {
+      console.log('Cookie clicked, attempting to play sound');
+      if (fortuneSoundRef.current) {
+        console.log('Sound ref exists');
+        fortuneSoundRef.current.currentTime = 0;
+        fortuneSoundRef.current.play()
+          .then(() => console.log('Sound played successfully'))
+          .catch(e => console.error('Sound play failed:', e));
+      } else {
+        console.log('Sound ref missing');
+      }
       setSelectedCookie(index);
       setShowConfetti(true); 
       setShowNewImages(true); 
       generateFortuneMessage(); 
       setHasClicked(true);
-      playFortuneSound();
     } catch (err) {
       console.error('Error in cookie click:', err);
       setError(err);
