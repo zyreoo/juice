@@ -34,6 +34,7 @@ export default function FortuneBasket({
   const [showNewImages, setShowNewImages] = useState(false); 
   const [fadeInMessage, setFadeInMessage] = useState(false);
   const [hasClicked, setHasClicked] = useState(false);
+  const [audioLoaded, setAudioLoaded] = useState(false);
   const fortuneSoundRef = useRef(null);
 
   useEffect(() => {
@@ -43,10 +44,31 @@ export default function FortuneBasket({
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    const audio = new Audio('/fortune.mp3');
+    audio.addEventListener('canplaythrough', () => {
+      setAudioLoaded(true);
+    });
+    fortuneSoundRef.current = audio;
+    
+    return () => {
+      if (fortuneSoundRef.current) {
+        fortuneSoundRef.current.pause();
+        fortuneSoundRef.current = null;
+      }
+    };
+  }, []);
+
   const playFortuneSound = () => {
-    if (fortuneSoundRef.current) {
-      fortuneSoundRef.current.currentTime = 0;
-      fortuneSoundRef.current.play().catch(e => console.error('Error playing fortune sound:', e));
+    try {
+      if (fortuneSoundRef.current && audioLoaded) {
+        fortuneSoundRef.current.currentTime = 0;
+        fortuneSoundRef.current.play().catch(e => {
+          console.log('Audio play failed (expected on first click):', e);
+        });
+      }
+    } catch (e) {
+      console.log('Audio play error (non-critical):', e);
     }
   };
 
@@ -138,7 +160,6 @@ export default function FortuneBasket({
   return (
     <>
       <style>{cookieShakeKeyframes}</style>
-      <audio ref={fortuneSoundRef} src="/fortune.mp3" />
       <div 
         onClick={(e) => {
           e.stopPropagation();
