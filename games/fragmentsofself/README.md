@@ -13,6 +13,6 @@ thrs a character that is in a dream, he wakes up as a broken entity and collects
 
 How will you keep players engaged for 30 minutes? What's the general scope of your game (will change as you go)?
 the storyline tells stuff and smtn like that. 
-(btw i generated the desc from gpt cuz my english is trash)
+
 ---
 *Remember: Focus on gameplay mechanics and player experience. Save the details about story, art style, sound design, UI flowcharts, marketing plans, or achievements for later.*
