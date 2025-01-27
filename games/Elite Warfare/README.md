@@ -1,6 +1,6 @@
 # Elite Warfare
 
-**Team Members:** Shrey Mehra, Praveen Kumar, Dev Tripathi, Hriday Kadam
+**Team Members:** Shrey Mehra, Praveen Kumar, Dev Tripathi, Hriday Kadam.
 
 **How would you pitch your game in one line?**
 It's like a run-and-gun game full of different characters with epic skills. It's Inspired by Game Leauge of Legends and Super Mario Bros
