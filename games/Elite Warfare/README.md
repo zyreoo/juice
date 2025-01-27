@@ -6,7 +6,7 @@
 It's like a run-and-gun game full of different characters with epic skills. It's Inspired by Game Leauge of Legends and Super Mario Bros
 
 **What is the key mechanic(s) that make it fun?**
-It's Fast Paced Multi-Player Platformer Game with Different Character Mechanics
+It's Fast Paced Multi-Player Platformer Game with Different Character Mechanics with a Trophie System
 
 **How does the game actually play? (Core Game Loop)**
 Players choose from multiple characters and trying to achieve  New Achievements. As many Achievements and Trophies they get by winning the game through learning character mechanics they unlock Different types of weapons, Costumes, etc for themselves.
