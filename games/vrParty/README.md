@@ -26,5 +26,5 @@ The scope of the game includes:
 - Colorful, minimalist visuals for clear gameplay.
 - Modular design, allowing easy addition of new minigames over time.
 
----
-*Remember: Focus on the player's sense of fun, competition, and the unique advantage of VR multiplayer.*
+### Personal Note
+I don't know yet how I'm going to public it to Steam/SteamVr but i will try to figuere something out.
