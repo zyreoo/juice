@@ -73,7 +73,7 @@ Lily Ding ([@Lily-D-coder](https://github.com/Lily-D-coder))
 
 + YOU if you'd like (we would love more help)!!!
 
-Thanks to [AdventureX](adventure-x.org), the partner of Juice in China, for assisting with venue and marketing.
+Thanks to [AdventureX](adventure-x.org)
 <img src="https://github.com/hackclub/juice/blob/main/AdventureX.png" height="50">
 ## ☀️ In Years Past
 
