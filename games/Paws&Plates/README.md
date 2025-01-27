@@ -3,7 +3,7 @@
 **Team Member:** Jeslyn Chang
 
 **How would you pitch your game in one line?**
-It's like the games "Cooking Fever" and "Papa Pizzeria" except Paws & Plates will have sushi dim sum dishes!
+It's like the games "Cooking Fever" and "Papa Pizzeria" except Paws & Plates will have sushi and dim sum dishes! There will also be more intimate interactions with these "cat customers", and more customization.
 
 **What is the key mechanic(s) that make it fun?**
 - Smooth interface! It will have nice vfx that feel satisfying to click and drag items of food.
