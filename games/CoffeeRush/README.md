@@ -2,7 +2,7 @@
 
 **Team Members:** 
 Evan Barbisan (jelatynn (https://github.com/jelatynn) on GitHub, Evan Barbisan on Slack)
-Dumitru Copăceanu (N0TM3-1 (https://github.com/N0TM3-1) on GitHub, Dumi on Slack)
+Echo (3kh0 (https://github.com/3kh0) on GitHub, 3kh0 on Slack)
 Linqi Liu (Stwikeyy on GitHub (https://github.com/Stwikeyy), e on Slack)
 Josh (asleepynerd (https://github.com/asleepynerd) on GitHub, Josh on Slack)
 
