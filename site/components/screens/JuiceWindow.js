@@ -140,6 +140,7 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
             setDescription('');
             playExp();
             setIsPaused(false);
+            setTotalPauseTimeSeconds(0);
 
         } catch (error) {
             console.error('Error starting juice stretch:', error);
@@ -353,13 +354,13 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
                             handleDismiss('juiceWindow'); 
                         }}>x</button>
                     </div>
-                    <p>Juicer (v.0.1)</p>
+                    <p>Juicer (v.0.11)</p>
                     <div></div>
                 </div>
                 <div style={{flex: 1, padding: 16, display: "flex", flexDirection: "column", gap: 8}}>
                     {!showExplanation ? (
                         <>
-                            <h1 style={{fontSize: 32, lineHeight: 1}}>Juicer (v.0.1)</h1>
+                            <h1 style={{fontSize: 32, lineHeight: 1}}>Juicer (v.0.11)</h1>
                             {isJuicing &&
                             <p>Log your time working on a feature then share "OMG IT WORKS" moment when you make it work</p>
                             }
