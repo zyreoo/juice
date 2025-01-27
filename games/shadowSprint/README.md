@@ -2,7 +2,7 @@
 
 # **Game Name: Shadow Sprint**  
 
-**Team Members: Jesus
+**Team Members:** Jesus
 
 **How would you pitch your game in one line?**  
 "It's like *Temple Run* meets *Mirror's Edge* but with *time-bending shadow clones*."  
