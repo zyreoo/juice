@@ -1,6 +1,6 @@
 # Icarus and Daedalus
 
-**Team Members:** Bence Szalai, Kincső Dávid, Ádám Simon, Roni Pintér
+**Team Members:** [@simonadamgyula](https://github.com/simonadamgyula) [@Aron717](https://github.com/Aron717) [@lucbuur](https://github.com/lucbuur)
 
 **How would you pitch your game in one line?**
 Experience a mythological adventure where Icarus and Daedalus swap between worlds to overcome epic boss battles, navigate deadly parkour.
