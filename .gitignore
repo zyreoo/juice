@@ -21,7 +21,7 @@ site/out/
 site/build
 
 # misc
-site/.DS_Store
+**/.DS_Store
 site/*.pem
 
 # debug

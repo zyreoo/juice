@@ -603,6 +603,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
             setWindowOrder={setWindowOrder}
             openWindows={openWindows}
             isLoggedIn={isLoggedIn}
+            isVideoOpen={openWindows.includes('video')}
           />
         )}
 
@@ -720,6 +721,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
             handleWindowClick={handleWindowClick}
             isDragging={isDragging && activeWindow === 'fortuneBasket'}
             isActive={windowOrder[windowOrder.length - 1] === 'fortuneBasket'}
+            BASE_Z_INDEX={getWindowZIndex('fortuneBasket')}
+            ACTIVE_Z_INDEX={getWindowZIndex('fortuneBasket')}
             style={{ 
               animation: showCookies ? 'fortuneCookiePop 0.4s ease forwards' : 'none',
               zIndex: getWindowZIndex('fortuneBasket'),

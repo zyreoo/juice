@@ -18,11 +18,13 @@ uniform float iTime;
 uniform vec2 iResolution;
 
 #define PIXEL_SIZE_FAC 400.0
-#define SPIN_EASE .1
-#define colour_2 vec4(1.0, 0.2, 0.0, 1.0)
-#define colour_1 vec4(1.0, 0.7, 0.0, 1.0)
-#define colour_3 vec4(0.9, 0.1, 0.0, 1.0)
-#define spin_amount 1.5
+#define SPIN_EASE .15
+#define colour_1 vec4(1.0, 0.0, 0.3, 1.0)  // Pink
+#define colour_2 vec4(0.0, 1.0, 0.5, 1.0)  // Green
+#define colour_3 vec4(0.3, 0.2, 1.0, 1.0)  // Blue
+#define colour_4 vec4(1.0, 0.7, 0.0, 1.0)  // Yellow
+#define colour_5 vec4(0.8, 0.0, 1.0, 1.0)  // Purple
+#define spin_amount 2.0
 #define contrast 0.9
 
 float rand(vec2 n) { 
@@ -46,8 +48,8 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
     
     float time = iTime * SPIN_EASE * 2.0;
     vec2 p = uv;
-    float nx = noise(p * 3.0 + time);
-    float ny = noise(p * 3.0 - time);
+    float nx = noise(p * 4.0 + time);
+    float ny = noise(p * 4.0 - time);
     
     float angle = atan(p.y, p.x) + time;
     float rad = length(p);
@@ -58,26 +60,32 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
     ) * rad * spin_amount;
     
     vec2 flow = vec2(
-        noise(p * 4.0 + distort + time),
-        noise(p * 4.0 + distort - time)
+        noise(p * 5.0 + distort + time),
+        noise(p * 5.0 + distort - time)
     );
     
-    float pattern = noise(p * 2.0 + flow + time * 0.4) *
-                   noise(p * 4.0 - flow - time * 0.2) *
-                   noise(p * 8.0 + distort);
+    float pattern = noise(p * 3.0 + flow + time * 0.5) *
+                   noise(p * 6.0 - flow - time * 0.3) *
+                   noise(p * 10.0 + distort);
     
-    pattern = floor(pattern * 8.0) / 8.0;
+    pattern = floor(pattern * 12.0) / 12.0;
+    
+    // Rainbow color mixing
+    float colorPhase = time * 0.2;
+    vec4 rainbow1 = mix(colour_1, colour_2, (sin(colorPhase) + 1.0) * 0.5);
+    vec4 rainbow2 = mix(colour_3, colour_4, (cos(colorPhase + 1.5) + 1.0) * 0.5);
+    vec4 rainbow3 = mix(rainbow1, colour_5, (sin(colorPhase * 0.7) + 1.0) * 0.5);
     
     vec4 ret_col = mix(
-        colour_1,
-        mix(colour_2, colour_3, pattern),
-        noise(p * 3.0 + time * 0.1)
+        rainbow1,
+        mix(rainbow2, rainbow3, pattern),
+        noise(p * 4.0 + time * 0.2)
     );
     
-    float highlight = step(0.7, noise(p * 5.0 + flow));
-    ret_col += highlight * 0.2;
+    float highlight = step(0.65, noise(p * 6.0 + flow));
+    ret_col += highlight * 0.3;
     
-    ret_col = floor(ret_col * 8.0) / 8.0;
+    ret_col = floor(ret_col * 10.0) / 10.0;
     
     fragColor = ret_col;
 }
@@ -140,6 +148,7 @@ export default function Home() {
   const [faviconHref, setFaviconHref] = useState("");
   const [timeLeft, setTimeLeft] = useState("");
   const [isPlaying, setIsPlaying] = useState(false);
+  const [loginInput, setLoginInput] = useState("");
   const audioRef = useRef(null);
   const playSoundRef = useRef(null);
   const juicyFruits = ["🍎", "🍐", "🍊", "🍋", "🍇", "🫐", "🍑", "🍓", "🍒", "🍍", "🥭", "🍎"];
@@ -147,13 +156,7 @@ export default function Home() {
   // Add this new useEffect at the top with other effects
   useEffect(() => {
     const links = [
-      "https://youtu.be/Fy0aCDmgnxg?feature=shared",
-      "https://www.youtube.com/watch?v=ufMUJ9D1fi8",
-      "https://www.youtube.com/shorts/Ns-bX2KbBRg",
-      "https://youtu.be/2sLou4kva1s?feature=shared",
-      "https://www.youtube.com/watch?v=m5GH9xyneTg",
-      "https://quarter--mile.com/Unconventional-Adventures",
-      "https://youtu.be/Hv9TyB9jvpM?feature=shared"
+      ""
     ];
     
     const randomLink = links[Math.floor(Math.random() * links.length)];
@@ -261,6 +264,7 @@ export default function Home() {
         }}
       >
         <p style={{fontSize: 8}}>
+          
           <a 
             href="https://support.google.com/chrome/answer/95314#:~:text=Choose%20your%20homepage" 
             target="_blank" 
@@ -270,6 +274,15 @@ export default function Home() {
             make this home
           </a>
         </p>
+        <img style={{border: "1px solid #000", width: 32, height: 32, borderRadius:1}} src="./raccoon.png"/>
+        <div style={{marginTop: 12, marginBottom: 12}}>
+        <input 
+          placeholder="password" 
+          value={loginInput}
+          onChange={(e) => setLoginInput(e.target.value)}
+        /> 
+        <button onClick={() => alert("files not found. please insert drive")}>login</button>
+        </div>
         <p style={{ color: 'white' }}>{timeLeft}</p>
         <audio ref={audioRef} src="./tick.mp3" />
         <audio ref={playSoundRef} src="./play_sound.mp3" />

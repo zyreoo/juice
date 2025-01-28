@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Confetti from 'react-confetti'; 
 import styles from './FortuneBasket.module.css'; 
 
@@ -22,8 +22,11 @@ export default function FortuneBasket({
   handleMouseDown,
   handleWindowClick,
   isDragging,
-  isActive
+  isActive,
+  BASE_Z_INDEX,
+  ACTIVE_Z_INDEX
 }) {
+  const [error, setError] = useState(null);
   const [showCookies, setShowCookies] = useState(false);
   const [selectedCookie, setSelectedCookie] = useState(null);
   const [fortuneMessage, setFortuneMessage] = useState('');
@@ -31,6 +34,8 @@ export default function FortuneBasket({
   const [showNewImages, setShowNewImages] = useState(false); 
   const [fadeInMessage, setFadeInMessage] = useState(false);
   const [hasClicked, setHasClicked] = useState(false);
+  const [audioLoaded, setAudioLoaded] = useState(false);
+  const fortuneSoundRef = useRef(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -39,12 +44,49 @@ export default function FortuneBasket({
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    const audio = new Audio('/fortune.mp3');
+    audio.addEventListener('canplaythrough', () => {
+      setAudioLoaded(true);
+    });
+    fortuneSoundRef.current = audio;
+    
+    return () => {
+      if (fortuneSoundRef.current) {
+        fortuneSoundRef.current.pause();
+        fortuneSoundRef.current = null;
+      }
+    };
+  }, []);
+
+  const playFortuneSound = () => {
+    if (fortuneSoundRef.current) {
+      fortuneSoundRef.current.currentTime = 0;
+      fortuneSoundRef.current.play().catch(e => console.error('Error playing fortune sound:', e));
+    }
+  };
+
   const handleCookieClick = (index) => {
-    setSelectedCookie(index);
-    setShowConfetti(true); 
-    setShowNewImages(true); 
-    generateFortuneMessage(); 
-    hasClicked(true)
+    try {
+      console.log('Cookie clicked, attempting to play sound');
+      if (fortuneSoundRef.current) {
+        console.log('Sound ref exists');
+        fortuneSoundRef.current.currentTime = 0;
+        fortuneSoundRef.current.play()
+          .then(() => console.log('Sound played successfully'))
+          .catch(e => console.error('Sound play failed:', e));
+      } else {
+        console.log('Sound ref missing');
+      }
+      setSelectedCookie(index);
+      setShowConfetti(true); 
+      setShowNewImages(true); 
+      generateFortuneMessage(); 
+      setHasClicked(true);
+    } catch (err) {
+      console.error('Error in cookie click:', err);
+      setError(err);
+    }
   };
 
   const generateFortuneMessage = () => {
@@ -73,12 +115,10 @@ export default function FortuneBasket({
       "You will soon start a new duolingo course.",
       "If a mint is offered, please take it.",
     ];
-    let fortunes = []
-    if (hasClicked) {
-      fortunes = [...normalFortunes, ...weirdFortunes];
-    } else {
-      fortunes = normalFortunes;
-    }
+
+    const fortunes = hasClicked ? 
+      [...normalFortunes, ...weirdFortunes] : 
+      normalFortunes;
 
     const randomFortune = fortunes[Math.floor(Math.random() * fortunes.length)];
     setFortuneMessage(randomFortune);
@@ -88,13 +128,47 @@ export default function FortuneBasket({
     }, 1000);
   };
 
+  if (error) {
+    return (
+      <div style={{
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        backgroundColor: '#fff',
+        padding: '20px',
+        border: '1px solid #000',
+        borderRadius: '4px',
+        textAlign: 'center'
+      }}>
+        <p>Something went wrong with the fortune cookie!</p>
+        <button 
+          onClick={() => {
+            setError(null);
+            setShowNewImages(false);
+            setSelectedCookie(null);
+          }}
+          style={{
+            padding: '5px 10px',
+            marginTop: '10px',
+            cursor: 'pointer'
+          }}
+        >
+          Try Again
+        </button>
+      </div>
+    );
+  }
+
   return (
     <>
       <style>{cookieShakeKeyframes}</style>
       <div 
         onClick={(e) => {
-          console.log('Fortune basket clicked');
-          handleWindowClick('fortuneBasket')(e);
+          e.stopPropagation();
+          if (handleWindowClick) {
+            handleWindowClick('fortuneBasket');
+          }
         }}
         style={{
           display: "flex", 
@@ -112,12 +186,15 @@ export default function FortuneBasket({
           transform: `translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px))`,
           top: "50%",
           left: "50%",
-          userSelect: "none"
+          userSelect: "none",
+          zIndex: isActive ? ACTIVE_Z_INDEX : BASE_Z_INDEX
         }}>
         <div 
           onMouseDown={(e) => {
-            console.log('Fortune basket title bar mouse down');
-            handleMouseDown('fortuneBasket')(e);
+            e.stopPropagation();
+            if (handleMouseDown) {
+              handleMouseDown('fortuneBasket')(e);
+            }
           }}
           style={{
             display: "flex", 
@@ -130,13 +207,17 @@ export default function FortuneBasket({
             cursor: isDragging ? 'grabbing' : 'grab'
           }}>
           <div style={{display: "flex", flexDirection: "row", gap: 8}}>
-            <button onClick={(e) => { 
-              console.log('Fortune basket dismiss clicked');
-              e.stopPropagation(); 
-              handleDismiss('fortuneBasket'); 
-            }}>x</button>
+            <button 
+              onClick={(e) => { 
+                e.preventDefault();
+                e.stopPropagation(); 
+                if (handleDismiss) {
+                  handleDismiss('fortuneBasket');
+                }
+              }}
+            >x</button>
           </div>
-          <p style={{ margin: 0 }}>FORTUNE BASKET</p>
+          <p style={{ margin: 0 }}>Fortune Basket</p>
           <div></div>
         </div>
         <div style={{ 
