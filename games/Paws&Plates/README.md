@@ -1,6 +1,6 @@
 # Paws & Plates
 
-**Team Member:** Jeslyn Chang
+**Team Members:** Jeslyn Chang and Tan Pham
 
 **How would you pitch your game in one line?**
 It's like the games "Cooking Fever" and "Papa Pizzeria" except Paws & Plates will have sushi and dim sum dishes! There will also be more intimate interactions with these "cat customers", and more customization.
