@@ -15,6 +15,6 @@ by fighting the enemy and various objects with some puzzles! the player light up
 
 How will you keep players engaged for 30 minutes? What's the general scope of your game (will change as you go)?
 long map with lot of fighting and storytelling in such way to keep player engaged without taking too much of time! with additional puzzles, it 
-will be more hard and long puzzles will keep player engaged without keeping in mind to make it smooth and easy. 
+will be more hard and long puzzles will keep player engaged with keeping in mind to make it smooth and easy. 
 
 ---
