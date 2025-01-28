@@ -1,4 +1,4 @@
-# Game Name
+# Stykman
 
 **Team Members:** Just me! Rin galagali
 
