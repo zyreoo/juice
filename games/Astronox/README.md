@@ -3,7 +3,7 @@
 **Team Members:** Talen Mudaly
 
 **How would you pitch your game in one line?**
-It's like a pixel art version of no mans sky with dungeon crawler features.
+It's like a pixel art version of no man's sky with dungeon crawler features.
 
 **What is the key mechanic(s) that make it fun?**
 The ability to explore different planets that each have a different environment, entities and resources. 
