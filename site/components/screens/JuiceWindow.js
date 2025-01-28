@@ -185,6 +185,29 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
             formData.append('stretchId', currentStretchId);
             formData.append('stopTime', stopTime.toISOString());
 
+            try {
+                const response = await fetch('/api/resume-juice-stretch', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        token: userData.token,
+                        stretchId: currentStretchId
+                    }),
+                });
+    
+                if (!response.ok) {
+                    throw new Error('Failed to resume juice stretch');
+                }
+                const data = await response.json();
+                console.log(data.newPauseTime)
+                setTotalPauseTimeSeconds(data.newPauseTime)
+                setIsPaused(false);
+            } catch (error) {
+                console.error('Error resuming juice stretch:', error);
+            }
+
             const response = await fetch('/api/create-omg-moment', {
                 method: 'POST',
                 body: formData,
