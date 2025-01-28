@@ -1,4 +1,4 @@
-# Game Name
+# Cathos
 
 **Team Members:** [Wajeeh Alam, Raiyan Islam, Qazi Ayan]
 
