@@ -1,6 +1,6 @@
 # Fragments Of Self
 
-**Team Members:** Karnx(karna), Scattercat(atharv), Lucifero(naitik)
+**Team Members:** Karnx(karna), Scattercat(atharv), Lucifero(naitik), Amir(Adhurusht)
 
 **How would you pitch your game in one line?**
 "You are a broken entity trapped in a dream, collecting soul shards to restore your memories and rebuild yourself into your true form.
