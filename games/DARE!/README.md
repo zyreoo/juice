@@ -1,6 +1,6 @@
 # Game Name
 
-**Team Members:** [Madhav Garg, Tony Jin. Joey Wang, Leo Wilson]
+**Team Members:** [Madhav Garg, Ziyu Jin. Joey Wang, Leo Wilson]
 
 **How would you pitch your game in one line?**
 [example format: "It's like [Game X] meets [Game Y] but with [Unique Element Z]" (doesn't have to follow this format)] **tbd**
