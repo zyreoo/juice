@@ -1,54 +1,62 @@
-# Game Name
-**Harmony Chronicles**
 
-**Team Members:** ![GlassyBridge](href=https://github.com/KaivalyaVanguri)
+---
+# Game Name  
+**Cataclysm**  
+
+**Team Members:** ![Samuel Girma](href=https://github.com/samuelgirmametaferia)  
+![Leul Adane](href=https://github.com/GlassyBridge)  
 
 ---
 
-### How would you pitch your game in one line?
+### How would you pitch your game in one line?  
 
-"It's like **Duolingo** meets **Clash of Clans** but with a **language-less, interconnected AR treasure hunt, Zen Garden, and Tower Defense twist!"
-
----
-
-### What is the key mechanic(s) that make it fun?
-
-**1. Interconnected Mini-Games:** Each of the three games (Zen Garden, Tower Strategist, Treasure Hunt) is interconnected, creating a larger village-building narrative. Success in one game directly impacts the others by adding resources, harmony, or defense.
-
-**2. Freedom of Choice:** Players can follow the guided progression trail or use earned coins to replay their favorite mini-games and customize their journey.
-
-**3. Visual Progression and Feedback:** A glowing trail shows advancement, while the evolving village reflects the player's success, creating a tangible sense of achievement.
+"A third-person action-adventure where you play as a time-traveling cat, rewriting history and fighting ancient enemies in a **language-less**, historically inspired world."  
 
 ---
 
-### How does the game actually play? (Core Game Loop)
+### What are the key mechanics that make it fun?  
 
-1. **Start at the Trailhead:** Players embark on a path representing their kingdom's journey, with levels unlocked by completing mini-games.
+**1. Time Travel & Historical Impact:** The cat’s actions in different time periods alter history, leading to unique consequences in later levels.  
 
-2. **Mini-Games:**
-   - **Zen Garden:** Players arrange objects (stones, plants, water) to restore harmony and earn coins for successful placements.
-   - **Tower Strategist:** Players defend their kingdom by placing towers to stop waves of enemies trying to steal resources.
-   - **Treasure Hunt:** Players explore a grid to uncover treasures and avoid traps, earning prosperity points for their kingdom.
+**2. Fast-Paced Combat & Animal Enemies:** The cat battles various animals—including birds, rats, and snakes—who have evolved over centuries to fight it.  
 
-3. **Build and Upgrade Village:** Coins earned from mini-games are used to develop and protect the kingdom’s resources.
+**3. Environmental Storytelling:** The game is language-free, meaning players must interpret events through visual storytelling, gestures, and animations.  
 
-4. **Repeat and Explore:** Players choose between following the trail’s main progression or replaying their favorite games for extra rewards.
+**4. Cat-Like Movement & Abilities:** Players can climb, leap, and sneak, using their feline agility to navigate the world and evade enemies.  
+
+**5. Power Progression & Amulet Abilities:** As the cat progresses, it unlocks mystical abilities tied to the amulet, including enhanced attacks and time manipulation.  
 
 ---
 
-### How will you keep players engaged for 30 minutes? What's the general scope of your game (will change as you go)?
+### How does the game actually play? (Core Game Loop)  
 
-1. **Diverse Gameplay:** The combination of three mini-games keeps the experience fresh and dynamic.
+1. **Explore & Adapt:** The player moves through historical settings, interacting with the environment to learn new mechanics.  
 
-2. **Progression System:** A visible trail and unlockable village upgrades encourage continued play.
+2. **Engage in Combat & Challenges:** Battles feature fast-paced, skill-based combat against historically inspired animal and human foes.  
 
-3. **Replayability:** Players can replay mini-games to maximize rewards and customize their journey.
+3. **Time Travel & Cause-Effect Changes:** Completing major events triggers a time jump, altering history in ways that affect later gameplay.  
 
-4. **Intuitive Design:** The language-less mechanics (drag-and-drop, tapping, path-building) make it easy to understand and engage with immediately.
+4. **Unlock Powers & Solve Mysteries:** Discovering artifacts and interacting with ancient beings grant the cat new powers and insights into its origins.  
 
-**Scope:** The initial game will feature:
-- 5-7 levels for each mini-game with increasing complexity.
-- A single-player mode with a visual tutorial.
-- A basic village-building system.
+5. **Culminate in a High-Stakes Finale:** The final confrontation tests the player's mastery of time-based mechanics and combat in a futuristic setting.  
 
-Expansion plans include a multiplayer mode and additional levels post-launch!
+---
+
+### How will you keep players engaged for 30 minutes? What's the general scope of your game (will change as you go)?  
+
+1. **Dynamic Combat & Movement:** The mix of fast-paced combat, stealth, and platforming keeps gameplay fresh.  
+
+2. **Engaging Historical Settings:** Each time period offers unique visuals, mechanics, and story-driven challenges.  
+
+3. **Progression & Mystery:** Unlocking new abilities and uncovering the cat’s purpose creates a strong sense of discovery.  
+
+4. **Replayability & Branching Choices:** The ability to shape history and decide the cat’s fate offers multiple endings and replay value.  
+
+**Scope:**  
+- A single-player, story-driven adventure with 4-5 historical locations.  
+- A progression system where the cat gains new abilities.  
+- A fully animated, language-less narrative.  
+
+Future expansions could explore additional time periods, cat customization, or multiplayer challenges.  
+
+---
