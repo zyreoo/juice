@@ -24,7 +24,7 @@ The legendary story of Heracles in a platformer style with unique minigames, awa
 
 1. **Animatics:** Game includes a few short animatics / cut scenes to tell the basic background story as well as ending.
 
-2. **Home / Caste:** The place to rest will be the castle with the kind and many doors, each being an entrance to the new labour with next unlocking when you finish the previous one.
+2. **Home / Caste:** The place to rest will be the castle with the king and many doors, each being an entrance to the new labour with next unlocking when you finish the previous one.
 
 3 **Labours:** Each labour will fall under one or few of these categories: puzzles, chase, exploration, battle, and tell a story. There will be some extra platforming sections before the final boss to make it more entertaining and rewarding.
 
