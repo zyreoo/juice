@@ -1,27 +1,20 @@
-Who am I?
-One guy that has way too much time, i used unity for 2 years and a lot of python recently, with also some glsl and sql. I would love to go to China, because I like to experience different cultures and languages.
-I also was part of high seas and made a game engine from scratch with python and glsl.
-I live in France.
+你喜欢火车吗？: A 2d train management simulator game
+Team Members: Billard Isidore (Easy Door)
 
-The team?
-Me and my dog (this is obviously a joke because dogs can’t program you silly!).
+How would you pitch your game in one line? "It's a pretty fast paced game with fast and good decision making required, you also need to think about optimisation"
 
-The project?
-A game made with godot (never used it before, brackeys please save me).
-You are in charge of managing a train going from cities to other villages to transport people, you need to manage the train tracks so that it doesn’t arrive late!
-You must also be aware of your level of coal and be ready for dysfonctionnements.
-You will be able to buy upgardes, like coal space, new wagon, speed...
-And train tracks!
+What is the key mechanic(s) that make it fun? Imagining new ways and tracks for your train to go faster! You need to be one step aheadn, seeing your small train tracks evolve into a complexe yet organized track system
 
-Core game Loop?
-You win money as people embarque on the train / loose money if you are late
-You buy train tracks/upgrades...
-More people arrive with new cities
+How does the game actually play? (Core Game Loop) 
+
+You win money as people embarque on the train / loose money if you are late 
+
+You buy train tracks/upgrades... 
+
+More people arrive with new cities 
+
 You rewire your traintrack system
 
-Goal?
-The goal of the game is to hold for as long as possible, with time new cities will appear with more people, you will have to optimize your tracks, coal refuels and speed.
 
-Maybe?
-- CO2 and O2 => the train will leave some pollution
-- to get rid of it => buy trees or change your fuel 
+How will you keep players engaged for 30 minutes? What's the general scope of your game (will change as you go)? You will be busy trying your best to adapt to the changing environement and managing your ressources and speed! 
+I might add a CO2/O2 system (like the train pollutes and you plant trees to improve the air quality (otherwise the map is filled with fog)) if I have time.
