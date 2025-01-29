@@ -12,6 +12,7 @@ import KudosWindow from './KudosWindow';
 import Background from '../Background';
 import ShareSuccessPanel from './ShareSuccessPanel';
 import FortuneBasket from './FortuneBasket';
+import ThanksWindow from './ThanksWindow';
 
 export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserData }) {
   const [time, setTime] = React.useState(new Date());
@@ -43,6 +44,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
   const [kudosPosition, setKudosPosition] = React.useState({ x: 350, y: 350 });
   const [isJuicing, setIsJuicing] = React.useState(false);
   const juicerSoundRef = React.useRef(null);
+  const [thanksPosition, setThanksPosition] = React.useState({ x: 400, y: 400 });
 
   // Constants
   const TOP_BAR_HEIGHT = 36;
@@ -54,7 +56,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
     video: 397,
     faction: 200,
     juiceWindow: 300,
-    fortuneBasket: 220
+    fortuneBasket: 220,
+    thanks: 300
   };
   const BASE_Z_INDEX = 1;
 
@@ -139,6 +142,13 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         } else {
           setWindowOrder(prev => [...prev.filter(w => w !== 'kudos'), 'kudos']);
         }
+      } else if (fileId === "Thanks") {
+        if (!openWindows.includes('thanks')) {
+          setOpenWindows(prev => [...prev, 'thanks']);
+          setWindowOrder(prev => [...prev.filter(w => w !== 'thanks'), 'thanks']);
+        } else {
+          setWindowOrder(prev => [...prev.filter(w => w !== 'thanks'), 'thanks']);
+        }
       }
     }
     setSelectedFile(fileId);
@@ -184,6 +194,9 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         break;
       case 'kudos':
         position = kudosPosition;
+        break;
+      case 'thanks':
+        position = thanksPosition;
         break;
       default:
         console.log('Unknown window name:', windowName);
@@ -234,6 +247,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         setFortuneBasketPosition(newPosition);
       } else if (activeWindow === 'kudos') {
         setKudosPosition(newPosition);
+      } else if (activeWindow === 'thanks') {
+        setThanksPosition(newPosition);
       }
     }
   };
@@ -744,6 +759,19 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
           />
         )}
 
+        {openWindows.includes('thanks') && (
+          <ThanksWindow 
+            position={thanksPosition}
+            isDragging={isDragging && activeWindow === 'thanks'}
+            isActive={windowOrder[windowOrder.length - 1] === 'thanks'}
+            handleMouseDown={handleMouseDown}
+            handleDismiss={handleDismiss}
+            handleWindowClick={handleWindowClick}
+            BASE_Z_INDEX={getWindowZIndex('thanks')}
+            ACTIVE_Z_INDEX={getWindowZIndex('thanks')}
+          />
+        )}
+
         <div style={{
             position: "absolute", 
             top: TOP_BAR_HEIGHT, 
@@ -785,7 +813,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                 <div>
                     <FileIcon 
                         text={isLoggedIn ? "Juicer" : "Register"}
-                        icon={isLoggedIn ? "./juicer.png" : "registericon.png"}
+                        icon={isLoggedIn ? "./juicerRest.png" : "registericon.png"}
                         isSelected={selectedFile === (isLoggedIn ? "Juicer" : "Register")}
                         onClick={handleFileClick(isLoggedIn ? "Juicer" : "Register")}
                         delay={0.2}
@@ -919,6 +947,17 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
             onClick={() => setSelectedFile(null)}
             style={{width: "100vw", height: "100vh", overflow: "hidden", display: "flex", margin: 0, cursor: "default"}}>
             <Background />
+        </div>
+
+        <div style={{position: "absolute", bottom: 8, left: 8}}>
+            <FileIcon 
+                text="Thanks" 
+                icon="./heart.png"
+                isSelected={selectedFile === "Thanks"}
+                onClick={handleFileClick("Thanks")}
+                delay={0.6}
+                data-file-id="Thanks"
+            />
         </div>
 
         {/* Add audio elements */}
