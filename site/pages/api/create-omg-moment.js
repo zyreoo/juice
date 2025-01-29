@@ -1,34 +1,12 @@
 import Airtable from 'airtable';
-import formidable from 'formidable';
-import fs from 'fs';
-import AWS from 'aws-sdk';
+
+const base = new Airtable({apiKey: process.env.AIRTABLE_API_KEY}).base(process.env.AIRTABLE_BASE_ID);
 
 export const config = {
   api: {
     bodyParser: false,
   },
 };
-
-// Configure AWS SDK v2
-AWS.config.update({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  region: process.env.AWS_REGION
-});
-
-const s3 = new AWS.S3();
-const base = new Airtable({apiKey: process.env.AIRTABLE_API_KEY}).base(process.env.AIRTABLE_BASE_ID);
-
-// Function to upload a file to S3
-async function uploadToS3(buffer, key, contentType) {
-  const params = {
-    Bucket: process.env.AWS_S3_BUCKET,
-    Key: key,
-    Body: buffer,
-    ContentType: contentType
-  };
-  return s3.upload(params).promise();
-}
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -37,17 +15,31 @@ export default async function handler(req, res) {
 
   try {
     // Forward the request to the Express server
-    const response = await fetch(`${process.env.EXPRESS_SERVER_URL}/api/video/upload`, {
+    const response = await fetch('https://sww48o88cs88sg8k84g4s4kg.a.selfhosted.hackclub.com/api/video/upload', {
       method: 'POST',
       body: req,
+      duplex: 'half',
       headers: {
         ...req.headers,
-        host: new URL(process.env.EXPRESS_SERVER_URL).host,
+        host: new URL('https://sww48o88cs88sg8k84g4s4kg.a.selfhosted.hackclub.com').host,
       },
     });
 
-    const data = await response.json();
-    res.status(response.status).json(data);
+    console.log('Response status:', response.status);
+    console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+    const responseText = await response.text();
+    console.log('Response body:', responseText);
+
+    try {
+      const data = JSON.parse(responseText);
+      res.status(response.status).json(data);
+    } catch (parseError) {
+      console.error('Error parsing response as JSON:', parseError);
+      res.status(500).json({ 
+        message: 'Invalid response from server',
+        responseText: responseText.substring(0, 200) + '...' // Log first 200 chars in case it's very long
+      });
+    }
   } catch (error) {
     console.error('Error forwarding request to express server:', error);
     res.status(500).json({ message: 'Error processing video upload' });

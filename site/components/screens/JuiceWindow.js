@@ -169,11 +169,11 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
                 return;
             }
             
-            // Check file size (4MB = 4 * 1024 * 1024 bytes)
-            if (file.size > 4 * 1024 * 1024) {
-                alert("I'm sorry, we have a 4mb limit on file uploads rn. I am fixing this! ~Thomas");
-                return;
-            }
+            // // Check file size (4MB = 4 * 1024 * 1024 bytes)
+            // if (file.size > 4 * 1024 * 1024) {
+            //     alert("I'm sorry, we have a 4mb limit on file uploads rn. I am fixing this! ~Thomas");
+            //     return;
+            // }
             
             setSelectedVideo(file);
             setStopTime(new Date());
