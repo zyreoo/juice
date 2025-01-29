@@ -813,7 +813,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                 <div>
                     <FileIcon 
                         text={isLoggedIn ? "Juicer" : "Register"}
-                        icon={isLoggedIn ? "./juicer.png" : "registericon.png"}
+                        icon={isLoggedIn ? "./juicerRest.png" : "registericon.png"}
                         isSelected={selectedFile === (isLoggedIn ? "Juicer" : "Register")}
                         onClick={handleFileClick(isLoggedIn ? "Juicer" : "Register")}
                         delay={0.2}

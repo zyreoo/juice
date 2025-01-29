@@ -15,6 +15,8 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
     const fileInputRef = useRef(null);
     const clickSoundRef = useRef(null);
     const expSoundRef = useRef(null);
+    const congratsSoundRef = useRef(null);
+    const [juicerImage, setJuicerImage] = useState('/juicerRest.png');
 
     // Add play click function
     const playClick = () => {
@@ -29,6 +31,13 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
             expSoundRef.current.volume = 0.5;
             expSoundRef.current.currentTime = 0;
             expSoundRef.current.play().catch(e => console.error('Error playing exp:', e));
+        }
+    };
+
+    const playCongratsSound = () => {
+        if (congratsSoundRef.current) {
+            congratsSoundRef.current.currentTime = 0;
+            congratsSoundRef.current.play().catch(e => console.error('Error playing congrats sound:', e));
         }
     };
 
@@ -138,9 +147,10 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
             setStopTime(null);
             setSelectedVideo(null);
             setDescription('');
-            playExp();
+            playCongratsSound();
             setIsPaused(false);
             setTotalPauseTimeSeconds(0);
+            setJuicerImage('/juicerAnimation.gif');
 
         } catch (error) {
             console.error('Error starting juice stretch:', error);
@@ -240,6 +250,7 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
             setDescription('');
             setTimeJuiced('0:00');
             setIsPaused(false);
+            setJuicerImage('/juicerRest.png');
         } catch (error) {
             console.error('Error creating OMG moment:', error);
             alert('Failed to create OMG moment. Please try again.');
@@ -275,7 +286,8 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
             setSelectedVideo(null);
             setDescription('');
             setTimeJuiced('0:00');
-            setIsPaused(false)
+            setIsPaused(false);
+            setJuicerImage('/juicerRest.png');
         } catch (error) {
             console.error('Error pausing juice stretch:', error);
         }
@@ -302,6 +314,7 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
                 throw new Error('Failed to pause juice stretch');
             }
             setIsPaused(true);
+            setJuicerImage('/juicerRest.png');
         } catch (error) {
             console.error('Error pausing juice stretch:', error);
         }
@@ -331,6 +344,8 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
             console.log(data.newPauseTime)
             setTotalPauseTimeSeconds(data.newPauseTime)
             setIsPaused(false);
+            setJuicerImage('/juicerAnimation.gif');
+            playCongratsSound();
         } catch (error) {
             console.error('Error resuming juice stretch:', error);
         }
@@ -340,6 +355,7 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
         <>
             <audio ref={clickSoundRef} src="./click.mp3" />
             <audio ref={expSoundRef} src="./expSound.mp3" volume="0.5" />
+            <audio ref={congratsSoundRef} src="./juicercongrats.mp3" />
             <div 
                 onClick={handleWindowClick('juiceWindow')}
                 style={{
@@ -347,7 +363,7 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
                     position: "absolute", 
                     zIndex: isActive ? ACTIVE_Z_INDEX : BASE_Z_INDEX, 
                     width: 400,
-                    height: 300,
+                    height: 475,
                     color: 'black',
                     backgroundColor: "#fff", 
                     border: "1px solid #000", 
@@ -377,13 +393,13 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
                             handleDismiss('juiceWindow'); 
                         }}>x</button>
                     </div>
-                    <p>Juicer (v.0.11)</p>
+                    <p>Juicer (v0.3)</p>
                     <div></div>
                 </div>
                 <div style={{flex: 1, padding: 16, display: "flex", flexDirection: "column", gap: 8}}>
                     {!showExplanation ? (
                         <>
-                            <h1 style={{fontSize: 32, lineHeight: 1}}>Juicer (v.0.11)</h1>
+                            <h1 style={{fontSize: 32, lineHeight: 1}}>Juicer (v0.3)</h1>
                             {isJuicing &&
                             <p>Log your time working on a feature then share "OMG IT WORKS" moment when you make it work</p>
                             }
@@ -393,6 +409,25 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
                                     `${Math.floor(userData.totalStretchHours)} hours ${Math.round((userData.totalStretchHours % 1) * 60)} min` : 
                                     "0 hours 0 min"}</p>
                             </div>
+                            
+                            <div style={{
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                margin: "10px 0",
+                            }}>
+                                <img 
+                                    src={juicerImage}
+                                    alt="Juicer"
+                                    style={{
+                                        width: "150px",
+                                        height: "150px",
+                                        imageRendering: "pixelated",
+                                        objectFit: "contain"
+                                    }}
+                                />
+                            </div>
+
                             {!isJuicingLocal &&
                             <div style={{display: "flex", flexDirection: "column", gap: 8}}>
                                 <button onClick={() => {
