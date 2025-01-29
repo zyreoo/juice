@@ -192,6 +192,16 @@ export default function GameGuildsWindow({ position, isDragging, isActive, handl
             formData.append('token', userData.token);
             formData.append('stretchId', currentStretchId);
             formData.append('stopTime', stopTime.toISOString());
+            formData.append("isJuice", false)
+
+            const uploadResponse = await fetch('https://sww48o88cs88sg8k84g4s4kg.a.selfhosted.hackclub.com/api/video/upload', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (!uploadResponse.ok) {
+                throw new Error('Failed to upload video');
+            }
 
             try {
                 const response = await fetch('/api/resume-jungle-stretch', {
@@ -215,11 +225,6 @@ export default function GameGuildsWindow({ position, isDragging, isActive, handl
             } catch (error) {
                 console.error('Error resuming jungle stretch:', error);
             }
-
-            const response = await fetch('/api/create-omg-moment', {
-                method: 'POST',
-                body: formData,
-            });
 
             if (!response.ok) {
                 throw new Error('Failed to create OMG moment');
