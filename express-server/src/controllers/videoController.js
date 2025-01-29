@@ -44,9 +44,7 @@ export async function uploadVideo(req, res) {
       signupRecord.fields.email,
       s3Upload.Location
     );
-
-    
-    if (isJuice){
+    if (isJuice == true){
       // Update juice stretch with end time and link to OMG moment
       await updateJuiceStretch(stretchId, stopTime, omgMoment.id);
     } else {

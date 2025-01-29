@@ -194,7 +194,7 @@ export default function GameGuildsWindow({ position, isDragging, isActive, handl
             formData.append('stopTime', stopTime.toISOString());
             formData.append("isJuice", false)
 
-            const uploadResponse = await fetch('https://sww48o88cs88sg8k84g4s4kg.a.selfhosted.hackclub.com/api/video/upload', {
+            const uploadResponse = await fetch('http://localhost:3001/api/video/upload', {
                 method: 'POST',
                 body: formData,
             });
@@ -224,10 +224,6 @@ export default function GameGuildsWindow({ position, isDragging, isActive, handl
                 setIsPaused(false);
             } catch (error) {
                 console.error('Error resuming jungle stretch:', error);
-            }
-
-            if (!response.ok) {
-                throw new Error('Failed to create OMG moment');
             }
 
             // Fetch updated user data to get new total time
