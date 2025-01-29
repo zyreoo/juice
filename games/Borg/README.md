@@ -1,6 +1,6 @@
 # Borg: 
 
-**Team Members:** Sia Rathod, Sophia Duan
+**Team Members:** Sia Rathod & Sophia Duan
 
 **How would you pitch your game in one line?**
 "You are stranded on the planet “Borg” with your spaceship stolen, battle diverse cyborg enemies, steal their weapons, and grow strong enough to defeat the BOSS and reclaim your spaceship."
