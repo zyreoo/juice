@@ -188,12 +188,22 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
 
         setIsSubmitting(true);
         try {
+            // Upload video and create OMG moment through Express server
             const formData = new FormData();
             formData.append('video', selectedVideo);
             formData.append('description', description);
             formData.append('token', userData.token);
             formData.append('stretchId', currentStretchId);
             formData.append('stopTime', stopTime.toISOString());
+
+            const uploadResponse = await fetch('https://sww48o88cs88sg8k84g4s4kg.a.selfhosted.hackclub.com/api/video/upload', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (!uploadResponse.ok) {
+                throw new Error('Failed to upload video');
+            }
 
             try {
                 const response = await fetch('/api/resume-juice-stretch', {
@@ -216,15 +226,6 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
                 setIsPaused(false);
             } catch (error) {
                 console.error('Error resuming juice stretch:', error);
-            }
-
-            const response = await fetch('/api/create-omg-moment', {
-                method: 'POST',
-                body: formData,
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to create OMG moment');
             }
 
             // Fetch updated user data to get new total time
