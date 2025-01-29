@@ -1,7 +1,7 @@
 # Game Name
 **Love is Languageless**
 
-**Team Members:** ![Divyansh Pandey](href=https://github.com/Divyansh6)
+**Team Members:** ![Divyansh Pandey](href=(https://github.com/Divyansh6))
 
 ---
 
