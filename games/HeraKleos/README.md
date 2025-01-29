@@ -48,4 +48,4 @@ The legendary story of Heracles in a platformer style with unique minigames, awa
 - 12 Mini-games - Labours.
 - Two players: Platformer Character (Hercules) and Cursor (Hera?).
 
-If creating all 12 labour will be challenging, we'll divide the game into two sections, the second one releasing as a DLS.
+If creating all 12 labour will be challenging, we'll divide the game into two sections, the second one releasing as a DLC.
