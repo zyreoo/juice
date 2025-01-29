@@ -121,7 +121,7 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
     }, [])
 
     const handleStartJuicing = async () => {
-        if (!confirm("Just to confirm, you have your game editor ready and you're ready to start working on your game? also sorry but pls keep demo clip at 4mb or less, will fix this soon ~Thomas")) {
+        if (!confirm("Just to confirm, you have your game editor ready and you're ready to start working on your game?")) {
             return;
         }
 
