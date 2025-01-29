@@ -26,19 +26,33 @@ export default async function handler(req, res) {
     const userData = records[0].fields;
 
     // Get juiceStretches for this user
-    const stretches = await base('juiceStretches').select({
+    const juiceStretches = await base('juiceStretches').select({
       filterByFormula: `{email (from Signups)} = '${userData.email}'`,
     }).firstPage();
 
     // Calculate total duration in hours
     let totalHours = 0;
-    stretches.forEach(record => {
+    juiceStretches.forEach(record => {
       const stretchTime = record.fields.timeWorkedSeconds == undefined ? 0 : record.fields.timeWorkedSeconds
       totalHours += Math.round(stretchTime / 3600 * 100) / 100;
     });
 
-    userData.totalStretchHours = totalHours; // Rounded to 2 decimal places
-    console.log(totalHours)
+    userData.totalJuiceHours = totalHours; // Rounded to 2 decimal places
+
+    // Get juiceStretches for this user
+    const jungleStretches = await base('jungleStretches').select({
+      filterByFormula: `{email (from Signups)} = '${userData.email}'`,
+    }).firstPage();
+
+    // Calculate total duration in hours
+    let totalJungleHours = 0;
+    jungleStretches.forEach(record => {
+      const stretchTime = record.fields.timeWorkedSeconds == undefined ? 0 : record.fields.timeWorkedSeconds
+      totalJungleHours += Math.round(stretchTime / 3600 * 100) / 100;
+    });
+
+    userData.totalJungleHours = totalJungleHours; // Rounded to 2 decimal places
+
     // Get all OMG moments for this user and sum up kudos
     const omgMoments = await base('omgMoments').select({
       filterByFormula: `{email} = '${userData.email}'`
