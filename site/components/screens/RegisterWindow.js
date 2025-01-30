@@ -10,6 +10,7 @@ export default function RegisterWindow({ position, isDragging, isActive, handleM
     const [tokenStatus, setTokenStatus] = useState('');
     const [isShaking, setIsShaking] = useState(false);
     const [pixelCrumble, setPixelCrumble] = useState(false);
+    const fileInputRef = useRef(null);
 
     useEffect(() => {
         if (inputRef.current && !showTokenUpload) {
@@ -63,6 +64,55 @@ export default function RegisterWindow({ position, isDragging, isActive, handleM
         setIsDraggingFile(false);
 
         const file = e.dataTransfer.files[0];
+        if (!file) return;
+
+        try {
+            const text = await file.text();
+            // Validate the token first
+            const response = await fetch('/api/user', {
+                headers: {
+                    'Authorization': `Bearer ${text.trim()}`
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error('Invalid token');
+            }
+            
+            // Get user data from response
+            const data = await response.json();
+            
+            // Only set token and logged in state if validation succeeds
+            localStorage.setItem('token', text.trim());
+            setTokenStatus('success');
+            // Update userData in parent component with the correct nested structure
+            if (data.userData) {
+                setUserData(data.userData);
+            }
+            // Play collect sound
+            audioRef.current?.play();
+            // Trigger the shake animation in the parent
+            document.querySelector('div[data-shake-container="true"]')?.style.setProperty('animation', 'shake 0.6s cubic-bezier(.36,.07,.19,.97) both');
+            
+            // Start disintegration animation
+            setTimeout(() => {
+                setPixelCrumble(true);
+                // Wait for animation to complete before setting logged in
+                setTimeout(() => {
+                    document.querySelector('div[data-shake-container="true"]')?.style.setProperty('animation', 'none');
+                    setIsLoggedIn(true);
+                    handleDismiss('register'); // Dismiss the window after animation
+                }, 1200); // Adjusted to match new animation duration
+            }, 600);
+        } catch (error) {
+            console.error('Error reading token file:', error);
+            setTokenStatus('error');
+            setIsLoggedIn(false);
+            localStorage.removeItem('token');
+        }
+    };
+
+    const handleFileSelect = async (file) => {
         if (!file) return;
 
         try {
@@ -397,10 +447,21 @@ export default function RegisterWindow({ position, isDragging, isActive, handleM
                         ) : (
                             <p style={{textAlign: "center"}}>Drag and drop your special key file here
                                 <br/>
-                                <i style={{fontSize: 14}}>key not in your inbox? <span style={{fontSize: 14, cursor: "pointer", color: "blue", textDecoration: "underline"}} onClick={() => {
+                                <input 
+                                    type="file"
+                                    ref={fileInputRef}
+                                    style={{ display: 'none' }}
+                                    onChange={(e) => handleFileSelect(e.target.files[0])}
+                                />
+                                <i style={{fontSize: 14, marginTop: 8, display: "flex", gap: 16, justifyContent: "center"}}><span style={{fontSize: 14, cursor: "pointer", color: "blue", textDecoration: "underline"}} onClick={() => {
+                                    fileInputRef.current?.click();
+                                }}>select token</span>
+                                <span style={{fontSize: 14, cursor: "pointer", color: "blue", textDecoration: "underline"}} onClick={() => {
                                     setShowTokenUpload(false)
                                     setStatus("")
-                                }}>try again</span></i>
+                                }}>resend token?</span>
+                                
+                                </i>
                             </p>
                         )}
                     </div>
