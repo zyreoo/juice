@@ -353,30 +353,31 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
     };
 
     return (
-        <>
+        <div onClick={handleWindowClick('juiceWindow')}
+            style={{
+                position: "absolute", 
+                transform: `translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px))`,
+                top: "50%",
+                left: "50%",
+                zIndex: isActive ? ACTIVE_Z_INDEX : BASE_Z_INDEX, 
+            }}>
             <audio ref={clickSoundRef} src="./click.mp3" />
             <audio ref={expSoundRef} src="./expSound.mp3" volume="0.5" />
             <audio ref={congratsSoundRef} src="./juicercongrats.mp3" />
-            <div 
-                onClick={handleWindowClick('juiceWindow')}
-                style={{
-                    display: "flex", 
-                    position: "absolute", 
-                    zIndex: isActive ? ACTIVE_Z_INDEX : BASE_Z_INDEX, 
-                    width: 400,
-                    height: 475,
-                    color: 'black',
-                    backgroundColor: "#fff", 
-                    border: "1px solid #000", 
-                    borderRadius: 4,
-                    flexDirection: "column",
-                    padding: 0,
-                    justifyContent: "space-between",
-                    transform: `translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px))`,
-                    top: "50%",
-                    left: "50%",
-                    userSelect: "none"
-                }}>
+            <div style={{
+                display: "flex", 
+                width: 400,
+                height: "fit-content",
+                color: 'black',
+                backgroundColor: "#fff", 
+                border: "1px solid #000", 
+                borderRadius: 4,
+                flexDirection: "column",
+                padding: 0,
+                justifyContent: "space-between",
+                userSelect: "none",
+                animation: "linear .3s windowShakeAndScale"
+            }}>
                 <div 
                     onMouseDown={handleMouseDown('juiceWindow')}
                     style={{
@@ -531,6 +532,6 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
                     )}
                 </div>
             </div>
-        </>
+        </div>
     );
 } 
