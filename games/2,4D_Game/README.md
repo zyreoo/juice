@@ -1,13 +1,13 @@
 # 2,4D Game
 
-**Team Members:** [Leon Gohn, Maximilian Zhu, Nico Scholl ]
+**Team Members:** Leon Gohn, Maximilian Zhu, Nico Scholl
 
 **How would you pitch your game in one line?**
-[example format: "It's like [Mario Bros.] meets [Design from Terraria] but with [the 2,4D (switching between layers in front and behind]" ]
+"It's like Mario Bros. meets Design from Terraria but with the 2,4D (switching between layers in front and behind" 
 
 **What is the key mechanic(s) that make it fun?**
 <!-- [Describe how the mechanic works, why it's fun/important, how it interacts with other mechanics, -->
-[You can face through walls going futher into or out of the level, so you can explore the levels more and more and getting more possibilitys for this level (You aren't needed to switch between layers) ]
+You can face through walls going futher into or out of the level, so you can explore the levels more and more and getting more possibilitys for this level (You aren't needed to switch between layers)
 
 **How does the game actually play? (Core Game Loop)**
 <!-- [Describe what players do, what they're trying to achieve, what challenges they face, and what rewards they get, etc] -->
