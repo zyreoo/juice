@@ -14,7 +14,7 @@ The player will have to build stairs with building blocks (literally building), 
 
 **How will you keep players engaged for 30 minutes? What's the general scope of your game (will change as you go)?**
 
-After each successful stair build, the player has to jump from the previous building block to the new one and so on, and if the player falls from the building, they have to start from the starting ground.
+After each successful stair build, the player has to jump from the previous building block to the new one and so on, and if the player falls from the building or the building freefall fails, they have to start from the starting ground.
 -
 ---
 *Remember: Focus on gameplay mechanics and player experience. Save the details about the story, art style, sound design, UI flowcharts, marketing plans, or achievements for later.*
