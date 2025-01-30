@@ -26,5 +26,6 @@ Initially there will be one map available, but the player will have the abillity
 ---
 
 **Features that might be added in the future:**
-**-** Ability to import real orienteering maps into the game
-**-** Multiplayer mode
+  - Ability to import real orienteering maps into the game
+  - Multiplayer mode
+---
