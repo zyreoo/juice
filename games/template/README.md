@@ -1,54 +1,21 @@
-# Game Name
-**Harmony Chronicles**
+# mountainVille
 
-**Team Members:** ![Kaivalya Vanguri](href=https://github.com/KaivalyaVanguri)
+**Team Members:** Paolo & Thomas
 
----
+**How would you pitch your game in one line?**
+It's like Celeste meets Farmville but local tied-together co-op multiplayer
 
-### How would you pitch your game in one line?
+**What is the key mechanic(s) that make it fun?**
+You must jump from platform to platform with your teammate and make sure the string tieing you two together doesn't lead you to your doom. Initially the string feels like a constraint, but it becomes a resource allowing you to swing your teammate from platform to platform and pull the string in to climb up or extend it to let them climb down.
 
-"It's like **Duolingo** meets **Clash of Clans** but with a **language-less, interconnected AR treasure hunt, Zen Garden, and Tower Defense twist!"
+Each round you collect resources you need for your farm, seeds, creatures, etc that were displaced due to a torando. The resources you grow, make you better at hiking the trails (fulfilling your need for food/stamania)
 
----
+**How does the game actually play? (Core Game Loop)**
+Players go through platformer series with their friend to collect the resources that they need to build their farm. They jump, climb, extend and de-extend their rope, etc. 
 
-### What is the key mechanic(s) that make it fun?
+**How will you keep players engaged for 30 minutes? What's the general scope of your game (will change as you go)?**
+Players will stage engaged by going through a series of trails (series of platformers levels) with escalating difficuluty. Each time it will feel more challenging than the last.
 
-**1. Interconnected Mini-Games:** Each of the three games (Zen Garden, Tower Strategist, Treasure Hunt) is interconnected, creating a larger village-building narrative. Success in one game directly impacts the others by adding resources, harmony, or defense.
+We'll have 4 mountains to climb (each mountain you climb will be for a different season). Weather conditions & materials you collect will get more intenses as the year progresses, Spring, Summer, Fall, Winter. 
 
-**2. Freedom of Choice:** Players can follow the guided progression trail or use earned coins to replay their favorite mini-games and customize their journey.
-
-**3. Visual Progression and Feedback:** A glowing trail shows advancement, while the evolving village reflects the player's success, creating a tangible sense of achievement.
-
----
-
-### How does the game actually play? (Core Game Loop)
-
-1. **Start at the Trailhead:** Players embark on a path representing their kingdom's journey, with levels unlocked by completing mini-games.
-
-2. **Mini-Games:**
-   - **Zen Garden:** Players arrange objects (stones, plants, water) to restore harmony and earn coins for successful placements.
-   - **Tower Strategist:** Players defend their kingdom by placing towers to stop waves of enemies trying to steal resources.
-   - **Treasure Hunt:** Players explore a grid to uncover treasures and avoid traps, earning prosperity points for their kingdom.
-
-3. **Build and Upgrade Village:** Coins earned from mini-games are used to develop and protect the kingdom’s resources.
-
-4. **Repeat and Explore:** Players choose between following the trail’s main progression or replaying their favorite games for extra rewards.
-
----
-
-### How will you keep players engaged for 30 minutes? What's the general scope of your game (will change as you go)?
-
-1. **Diverse Gameplay:** The combination of three mini-games keeps the experience fresh and dynamic.
-
-2. **Progression System:** A visible trail and unlockable village upgrades encourage continued play.
-
-3. **Replayability:** Players can replay mini-games to maximize rewards and customize their journey.
-
-4. **Intuitive Design:** The language-less mechanics (drag-and-drop, tapping, path-building) make it easy to understand and engage with immediately.
-
-**Scope:** The initial game will feature:
-- 5-7 levels for each mini-game with increasing complexity.
-- A single-player mode with a visual tutorial.
-- A basic village-building system.
-
-Expansion plans include a multiplayer mode and additional levels post-launch!
+At first you'll build your farm with the resources you get from your first mountain, then you'll find the animals that got lost along the way, and then you'll find villagers that were displaced on the Trail. You thought you found all of them on the third mountain (during Fall), but then wait oh no there are still a bunch to save during Winter (notably your family) (timed & critical you get them before they freeze & die).
