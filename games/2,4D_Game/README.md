@@ -3,7 +3,7 @@
 **Team Members:** Leon Gohn, Maximilian Zhu, Nico Scholl
 
 **How would you pitch your game in one line?**
-"It's like Mario Bros. meets Design from Terraria but with the 2,4D (switching between layers in front and behind" 
+"It's like Mario Bros. meets Design from Terraria but with the 2,4D (switching between layers in front and behind)" 
 
 **What is the key mechanic(s) that make it fun?**
 <!-- [Describe how the mechanic works, why it's fun/important, how it interacts with other mechanics, -->
