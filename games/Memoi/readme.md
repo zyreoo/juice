@@ -13,6 +13,7 @@ After certain stairs, the player will roam inside the house and have to remember
 The player will have to build stairs with building blocks (literally building), which will be free-falling from the sky, and after each successful drop, the level will increase, after a certain level, the player will roam inside a building block and have to memorise the minute details just like Sherlock Holmes did, and after a certain level, the same building will appear, and the player has to re-roam and point-out the changes.
 
 **How will you keep players engaged for 30 minutes? What's the general scope of your game (will change as you go)?**
+
 After each successful stair build, the player has to jump from the previous building block to the new one and so on, and if the player falls from the building, they have to start from the starting ground.
 -
 ---
