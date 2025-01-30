@@ -2,6 +2,7 @@
 The Climb
 
 **Team Members:** Yashas Singh
+
 **How would you pitch your game in one line?**
 Imagine a PC VR game where *The Climb* meets *Getting Over It*, immersing players in a physics-driven climbing adventure that forgoes guided gameplay, requiring them to rely solely on instincts, tools, and problem-solving to conquer the raw challenge of the mountain, all while a dynamic music system reacts to every step, enhancing both immersion and difficulty.
 
