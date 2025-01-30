@@ -1,4 +1,4 @@
-# Game Name
+# Cat Puzzle
 
 **Team Members:** Caroline Chan, Lauren Chan, Edlyn To, Elyse To
 
