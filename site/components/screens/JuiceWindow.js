@@ -121,7 +121,7 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
     }, [])
 
     const handleStartJuicing = async () => {
-        if (!confirm("Just to confirm, you have your game editor ready and you're ready to start working on your game? also sorry but pls keep demo clip at 4mb or less, will fix this soon ~Thomas")) {
+        if (!confirm("Just to confirm, you have your game editor ready and you're ready to start working on your game?")) {
             return;
         }
 
@@ -188,12 +188,22 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
 
         setIsSubmitting(true);
         try {
+            // Upload video and create OMG moment through Express server
             const formData = new FormData();
             formData.append('video', selectedVideo);
             formData.append('description', description);
             formData.append('token', userData.token);
             formData.append('stretchId', currentStretchId);
             formData.append('stopTime', stopTime.toISOString());
+
+            const uploadResponse = await fetch('https://sww48o88cs88sg8k84g4s4kg.a.selfhosted.hackclub.com/api/video/upload', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (!uploadResponse.ok) {
+                throw new Error('Failed to upload video');
+            }
 
             try {
                 const response = await fetch('/api/resume-juice-stretch', {
@@ -216,15 +226,6 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
                 setIsPaused(false);
             } catch (error) {
                 console.error('Error resuming juice stretch:', error);
-            }
-
-            const response = await fetch('/api/create-omg-moment', {
-                method: 'POST',
-                body: formData,
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to create OMG moment');
             }
 
             // Fetch updated user data to get new total time
@@ -352,30 +353,31 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
     };
 
     return (
-        <>
+        <div onClick={handleWindowClick('juiceWindow')}
+            style={{
+                position: "absolute", 
+                transform: `translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px))`,
+                top: "50%",
+                left: "50%",
+                zIndex: isActive ? ACTIVE_Z_INDEX : BASE_Z_INDEX, 
+            }}>
             <audio ref={clickSoundRef} src="./click.mp3" />
             <audio ref={expSoundRef} src="./expSound.mp3" volume="0.5" />
             <audio ref={congratsSoundRef} src="./juicercongrats.mp3" />
-            <div 
-                onClick={handleWindowClick('juiceWindow')}
-                style={{
-                    display: "flex", 
-                    position: "absolute", 
-                    zIndex: isActive ? ACTIVE_Z_INDEX : BASE_Z_INDEX, 
-                    width: 400,
-                    height: 475,
-                    color: 'black',
-                    backgroundColor: "#fff", 
-                    border: "1px solid #000", 
-                    borderRadius: 4,
-                    flexDirection: "column",
-                    padding: 0,
-                    justifyContent: "space-between",
-                    transform: `translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px))`,
-                    top: "50%",
-                    left: "50%",
-                    userSelect: "none"
-                }}>
+            <div style={{
+                display: "flex", 
+                width: 400,
+                height: "fit-content",
+                color: 'black',
+                backgroundColor: "#fff", 
+                border: "1px solid #000", 
+                borderRadius: 4,
+                flexDirection: "column",
+                padding: 0,
+                justifyContent: "space-between",
+                userSelect: "none",
+                animation: "linear .3s windowShakeAndScale"
+            }}>
                 <div 
                     onMouseDown={handleMouseDown('juiceWindow')}
                     style={{
@@ -530,6 +532,6 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
                     )}
                 </div>
             </div>
-        </>
+        </div>
     );
 } 
