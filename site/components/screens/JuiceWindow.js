@@ -254,7 +254,7 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
             setJuicerImage('/juicerRest.png');
         } catch (error) {
             console.error('Error creating OMG moment:', error);
-            alert('Failed to create OMG moment. Please try again.');
+            alert('Failed to create OMG moment. Please try again with a smaller file or refresh  the page');
         } finally {
             setIsSubmitting(false);
         }
