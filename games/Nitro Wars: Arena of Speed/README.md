@@ -1,36 +1,36 @@
-🚀 Nitro Wars: Arena of Speed
+# 🚀Nitro Wars: Arena of Speed
 
-Team Members
-- [Shalom123-debug](https://github.com/Shalom123-debug)  
-- [abby123-design](https://github.com/abby123-design)  
+# Team Members
+- [Shalom123-debug](https://github.com/Shalom123-debug) 
+- [abby123-design](https://github.com/abby123-design) 
 - [qawsed3734](https://github.com/qawsed3734)
 
-Game Pitch
-It's a simple combat racing game where players race through shifting tracks, collect power-ups, and use combat abilities to sabotage opponents.
+# Pitch
+A simple combat racing game where players race on shifting tracks while collecting power-ups and using combat abilities in order to sabotage opponents.
 
 Key Mechanics
-- Dynamic Arena Tracks – The racecourse is randomly generated or shifts during gameplay, introducing new challenges like obstacles or shortcuts.  
-- Boost & Nitro System – Players can collect Nitro by performing stunts or near-misses, which can then be used for speed boosts.  
-- Combat Racing – Use simple attack mechanics like EMPs or missiles to disrupt opponents.  
-- Track Hazards – The track may contain randomly appearing obstacles, such as moving walls or traps that affect the race.  
-- Upgrades & Power-ups – Collect items during the race to enhance your vehicle's performance, like speed boosts, shields, or missile upgrades.
+- **Dynamic Arena Tracks** - The racing track is either procedurally generated or changes during play and includes new obstacles or shortcuts.
+- **Boost & Nitro System**: Players gather Nitro through doing stunts or barely avoiding collision courses to spend on boosting. 
+- **Combat Racing**: Light attack mechanics like EMP and missiles make the process of disrupting opponents easy. 
+- **Track Hazards**: Sometimes the track features randomly appearing obstacles such as moving walls or traps that affect racing.
+- **Power-ups & Upgrades** - While racing, pick up items that give the performance of your vehicle for instance a speed boost, shield, or missile upgrades.
 
-Core Game Loop
-1. Enter the Arena – Choose a character or vehicle and prepare to race.  
-2. Race & Survive – Navigate a dynamically shifting track, avoiding obstacles and attacking opponents.  
-3. Use Boost & Combat – Collect Nitro and use it to get ahead or defend against attacks.  
-4. Track Hazards & Shifts – The track may change over time, adding new obstacles or opening alternate routes.  
-5. Win or Upgrade – Finish the race, earn rewards, and use them to unlock better vehicles or upgrades.
+# Core Game Loop
+1. **Enter the Arena** - The player selects a character or vehicle to race and prepares for launch. 
+2. **Race & Survive** - Make one's way around a dynamically shifting track while dodging obstacles and attacking opponents.
+3. **Boost & Attack** - Run and collect Nitro to overtake or defend. 
+4. **Watch out for Hazard & Track Change** - Sometimes, the track changes, exposing more obstacles or yielding a new route.
+5. **Finish Race or Upgrade** - Finish the race, get the reward, and then buy more capable vehicles or upgrades with that.
 
-Keeping Players Engaged
-- Simple Game Modes: Standard Races and "Last Racer Standing" mode.  
-- Progression System: Unlockable vehicles and track variations.  
-- Dynamic Challenges: The randomly generated track and hazards make each race unique.  
-- Leaderboards: Track the best times or wins in different modes.
+# Keep Players Engaged
+**Game Modes**: Classic races and "Last Racer Standing" mode.
+**Progressive System**: Vehicle and Track unlocks. 
+**Dynamic Challenges**: No two races will ever be the same with randomly generated tracks and other hazards. 
+**Leaderboards**: Records of the best times or wins in the different modes.
 
-Development Status
-Currently in development. Stay tuned for updates!
+# Status
+Under development currently, check back for updates!
 
-📢 Stay Updated!  
-Follow our development journey and contribute on [GitHub](https://github.com/abby123-design).
+#📢Stay Tuned!
+Follow our progress and contribute over at [GitHub](https://github.com/abby123-design).
 
