@@ -3,16 +3,14 @@
 **Team Members:** [Aayush](https://github.com/aayush-ojha), [Jeevan](https://github.com/jeevankoirala)
 
 **How would you pitch your game in one line?**
-[example format: "It's like [Game X] meets [Game Y] but with [Unique Element Z]" (doesn't have to follow this format)]
+It's like Celestine meets Dead Cells but with a seamless transition from 2D platformer combat to an RPG-style boss battle in another dimension.
 
 **What is the key mechanic(s) that make it fun?**
-[Describe how the mechanic works, why it's fun/important, how it interacts with other mechanics, etc]
+The key mechanics are platformer combat where the player sprints, jumps and slashes through enemies and the dimension shift from platformer to a RPG-style boss battle also while discovering new weapons and abilities on the journey.
 
 **How does the game actually play? (Core Game Loop)**
-[Describe what players do, what they're trying to achieve, what challenges they face, and what rewards they get, etc]
+The player starts in a platformer world defeats enemies powers up through collectibles fights the boss in another dimension and again comes back in the same platformer world through portal and the story continues until you finish all the main bosses after which you come to an endless platformer game where the game gets harder as you progress further 
 
 How will you keep players engaged for 30 minutes? What's the general scope of your game (will change as you go)?
-[Describe your plan for sustaining gameplay]
+We will keep players engaged by presenting more challenges as they progress further and introducing new abilities and weapons and the boss fights, we also will use different themes in the platformer world so it feels interesting.
 
----
-*Remember: Focus on gameplay mechanics and player experience. Save the details about story, art style, sound design, UI flowcharts, marketing plans, or achievements for later.*
