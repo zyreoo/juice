@@ -3,7 +3,7 @@
 **Team Members:** [Aayush](https://github.com/aayush-ojha), [Jeevan](https://github.com/jeevankoirala)
 
 **How would you pitch your game in one line?**
-It's like Celestine meets Dead Cells but with a seamless transition from 2D platformer combat to an RPG-style boss battle in another dimension.
+It's like Celeste meets Dead Cells but with a seamless transition from 2D platformer combat to an RPG-style boss battle in another dimension.
 
 **What is the key mechanic(s) that make it fun?**
 The key mechanics are platformer combat where the player sprints, jumps and slashes through enemies and the dimension shift from platformer to a RPG-style boss battle also while discovering new weapons and abilities on the journey.
