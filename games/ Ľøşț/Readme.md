@@ -19,8 +19,8 @@ Players try to find the kid’s way back home, they will have to find food for t
 They will have to solve puzzles, look for keys, and survive. And this will keep players engaged.
 
 ## Links:
-https://github.com/ntd3\
-https://github.com/Yafet1234-b\
-https://github.com/Nahom-cyber-coder\
+https://github.com/ntd3 \
+https://github.com/Yafet1234-b \
+https://github.com/Nahom-cyber-coder \
 https://github.com/Bereket-dot
 
