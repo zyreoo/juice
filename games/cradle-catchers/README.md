@@ -1,6 +1,6 @@
 # Cradle Catchers
 
-**Team Members:** Ramon de Leon, Lucas Martinez, Adrian Rangel
+**Team Members:** Ramon de Leon, Lucas Martinez, Eduardo Amador, Adrian Rangel
 
 **How would you pitch your game in one line?**  
 A game where you catch `[TO BE DEFINED]` falling from the sky
