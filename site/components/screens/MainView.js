@@ -97,6 +97,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         if (!openWindows.includes('achievements')) {
           setOpenWindows(prev => [...prev, 'achievements']);
           setWindowOrder(prev => [...prev.filter(w => w !== 'achievements'), 'achievements']);
+          document.getElementById("windowOpenAudio").currentTime = 0;
+          document.getElementById("windowOpenAudio").play();
         } else {
           setWindowOrder(prev => [...prev.filter(w => w !== 'achievements'), 'achievements']);
         }
@@ -104,6 +106,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         if (!openWindows.includes('wutIsThis')) {
           setOpenWindows(prev => [...prev, 'wutIsThis']);
           setWindowOrder(prev => [...prev.filter(w => w !== 'wutIsThis'), 'wutIsThis']);
+          document.getElementById("windowOpenAudio").currentTime = 0;
+          document.getElementById("windowOpenAudio").play();
         } else {
           setWindowOrder(prev => [...prev.filter(w => w !== 'wutIsThis'), 'wutIsThis']);
         }
@@ -111,6 +115,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         if (!openWindows.includes('register')) {
           setOpenWindows(prev => [...prev, 'register']);
           setWindowOrder(prev => [...prev.filter(w => w !== 'register'), 'register']);
+          document.getElementById("windowOpenAudio").currentTime = 0;
+          document.getElementById("windowOpenAudio").play();
         } else {
           setWindowOrder(prev => [...prev.filter(w => w !== 'register'), 'register']);
         }
@@ -118,6 +124,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         if (!openWindows.includes('juiceWindow')) {
           setOpenWindows(prev => [...prev, 'juiceWindow']);
           setWindowOrder(prev => [...prev.filter(w => w !== 'juiceWindow'), 'juiceWindow']);
+          document.getElementById("windowOpenAudio").currentTime = 0;
+          document.getElementById("windowOpenAudio").play();
         } else {
           setWindowOrder(prev => [...prev.filter(w => w !== 'juiceWindow'), 'juiceWindow']);
         }
@@ -125,6 +133,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         if (!openWindows.includes('video')) {
           setOpenWindows(prev => [...prev, 'video']);
           setWindowOrder(prev => [...prev.filter(w => w !== 'video'), 'video']);
+          document.getElementById("windowOpenAudio").currentTime = 0;
+          document.getElementById("windowOpenAudio").play();
         } else {
           setWindowOrder(prev => [...prev.filter(w => w !== 'video'), 'video']);
         }
@@ -132,6 +142,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         if (!openWindows.includes('fortuneBasket')) {
           setOpenWindows(prev => [...prev, 'fortuneBasket']);
           setWindowOrder(prev => [...prev.filter(w => w !== 'fortuneBasket'), 'fortuneBasket']);
+          document.getElementById("windowOpenAudio").currentTime = 0;
+          document.getElementById("windowOpenAudio").play();
         } else {
           setWindowOrder(prev => [...prev.filter(w => w !== 'fortuneBasket'), 'fortuneBasket']);
         }
@@ -139,6 +151,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         if (!openWindows.includes('kudos')) {
           setOpenWindows(prev => [...prev, 'kudos']);
           setWindowOrder(prev => [...prev.filter(w => w !== 'kudos'), 'kudos']);
+          document.getElementById("windowOpenAudio").currentTime = 0;
+          document.getElementById("windowOpenAudio").play();
         } else {
           setWindowOrder(prev => [...prev.filter(w => w !== 'kudos'), 'kudos']);
         }
@@ -146,6 +160,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         if (!openWindows.includes('thanks')) {
           setOpenWindows(prev => [...prev, 'thanks']);
           setWindowOrder(prev => [...prev.filter(w => w !== 'thanks'), 'thanks']);
+          document.getElementById("windowOpenAudio").currentTime = 0;
+          document.getElementById("windowOpenAudio").play();
         } else {
           setWindowOrder(prev => [...prev.filter(w => w !== 'thanks'), 'thanks']);
         }
@@ -286,6 +302,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
   const handleRegisterOpen = () => {
     if (!openWindows.includes('register')) {
       setOpenWindows(prev => [...prev, 'register']);
+      document.getElementById("windowOpenAudio").currentTime = 0;
+      document.getElementById("windowOpenAudio").play();
       setWindowOrder(prev => [...prev.filter(w => w !== 'register'), 'register']);
     } else {
       setWindowOrder(prev => [...prev.filter(w => w !== 'register'), 'register']);
@@ -295,6 +313,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
   const handleFactionOpen = () => {
     if (!openWindows.includes('faction')) {
       setOpenWindows(prev => [...prev, 'faction']);
+      document.getElementById("windowOpenAudio").currentTime = 0;
+      document.getElementById("windowOpenAudio").play();
       setWindowOrder(prev => [...prev.filter(w => w !== 'faction'), 'faction']);
     } else {
       setWindowOrder(prev => [...prev.filter(w => w !== 'faction'), 'faction']);
@@ -304,6 +324,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
   const handleFirstChallengeOpen = () => {
     if (!openWindows.includes('firstChallenge')) {
       setOpenWindows(prev => [...prev, 'firstChallenge']);
+      document.getElementById("windowOpenAudio").currentTime = 0;
+      document.getElementById("windowOpenAudio").play();
       setWindowOrder(prev => [...prev.filter(w => w !== 'firstChallenge'), 'firstChallenge']);
     } else {
       setWindowOrder(prev => [...prev.filter(w => w !== 'firstChallenge'), 'firstChallenge']);
@@ -317,6 +339,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         // Open register window if no token
         if (!openWindows.includes('register')) {
           setOpenWindows(prev => [...prev, 'register']);
+          document.getElementById("windowOpenAudio").currentTime = 0;
+          document.getElementById("windowOpenAudio").play();
           setWindowOrder(prev => [...prev.filter(w => w !== 'register'), 'register']);
         }
         return;
@@ -386,6 +410,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
   const handleFortuneCookieOpen = () => {
     if (!openWindows.includes('fortuneBasket')) {
       setOpenWindows(prev => [...prev, 'fortuneBasket']);
+      document.getElementById("windowOpenAudio").currentTime = 0;
+      document.getElementById("windowOpenAudio").play();
     }
   };
 
@@ -531,6 +557,20 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
           }
           100% {
             transform: scale(1.1);
+          }
+        }
+        @keyframes windowShakeAndScale {
+          0%{
+            transform: rotateZ(0deg) scale(0.5);
+          }
+          33%{
+            transform: rotateZ(20deg) scale(1.2);
+          }
+          66%{
+            transform: rotateZ(-20deg) scale(0.8);
+          }
+          100% {
+            transform: rotateZ(0deg) scale(1);
           }
         }
       `}</style>
@@ -963,6 +1003,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         {/* Add audio elements */}
         <audio id="juicerAudio" src="./juicer.mp3" preload="auto"></audio>
         <audio id="collectAudio" src="./collect.mp3" preload="auto"></audio>
+        <audio id="windowOpenAudio" src="./sounds/windowOpenSound.wav"/>
       </div>
     </div>
   );
