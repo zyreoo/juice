@@ -12,6 +12,7 @@ import KudosWindow from './KudosWindow';
 import Background from '../Background';
 import ShareSuccessPanel from './ShareSuccessPanel';
 import FortuneBasket from './FortuneBasket';
+import ThanksWindow from './ThanksWindow';
 
 export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserData }) {
   const [time, setTime] = React.useState(new Date());
@@ -43,6 +44,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
   const [kudosPosition, setKudosPosition] = React.useState({ x: 350, y: 350 });
   const [isJuicing, setIsJuicing] = React.useState(false);
   const juicerSoundRef = React.useRef(null);
+  const [thanksPosition, setThanksPosition] = React.useState({ x: 400, y: 400 });
 
   // Constants
   const TOP_BAR_HEIGHT = 36;
@@ -54,7 +56,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
     video: 397,
     faction: 200,
     juiceWindow: 300,
-    fortuneBasket: 220
+    fortuneBasket: 220,
+    thanks: 300
   };
   const BASE_Z_INDEX = 1;
 
@@ -94,6 +97,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         if (!openWindows.includes('achievements')) {
           setOpenWindows(prev => [...prev, 'achievements']);
           setWindowOrder(prev => [...prev.filter(w => w !== 'achievements'), 'achievements']);
+          document.getElementById("windowOpenAudio").currentTime = 0;
+          document.getElementById("windowOpenAudio").play();
         } else {
           setWindowOrder(prev => [...prev.filter(w => w !== 'achievements'), 'achievements']);
         }
@@ -101,6 +106,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         if (!openWindows.includes('wutIsThis')) {
           setOpenWindows(prev => [...prev, 'wutIsThis']);
           setWindowOrder(prev => [...prev.filter(w => w !== 'wutIsThis'), 'wutIsThis']);
+          document.getElementById("windowOpenAudio").currentTime = 0;
+          document.getElementById("windowOpenAudio").play();
         } else {
           setWindowOrder(prev => [...prev.filter(w => w !== 'wutIsThis'), 'wutIsThis']);
         }
@@ -108,6 +115,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         if (!openWindows.includes('register')) {
           setOpenWindows(prev => [...prev, 'register']);
           setWindowOrder(prev => [...prev.filter(w => w !== 'register'), 'register']);
+          document.getElementById("windowOpenAudio").currentTime = 0;
+          document.getElementById("windowOpenAudio").play();
         } else {
           setWindowOrder(prev => [...prev.filter(w => w !== 'register'), 'register']);
         }
@@ -115,6 +124,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         if (!openWindows.includes('juiceWindow')) {
           setOpenWindows(prev => [...prev, 'juiceWindow']);
           setWindowOrder(prev => [...prev.filter(w => w !== 'juiceWindow'), 'juiceWindow']);
+          document.getElementById("windowOpenAudio").currentTime = 0;
+          document.getElementById("windowOpenAudio").play();
         } else {
           setWindowOrder(prev => [...prev.filter(w => w !== 'juiceWindow'), 'juiceWindow']);
         }
@@ -122,6 +133,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         if (!openWindows.includes('video')) {
           setOpenWindows(prev => [...prev, 'video']);
           setWindowOrder(prev => [...prev.filter(w => w !== 'video'), 'video']);
+          document.getElementById("windowOpenAudio").currentTime = 0;
+          document.getElementById("windowOpenAudio").play();
         } else {
           setWindowOrder(prev => [...prev.filter(w => w !== 'video'), 'video']);
         }
@@ -129,6 +142,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         if (!openWindows.includes('fortuneBasket')) {
           setOpenWindows(prev => [...prev, 'fortuneBasket']);
           setWindowOrder(prev => [...prev.filter(w => w !== 'fortuneBasket'), 'fortuneBasket']);
+          document.getElementById("windowOpenAudio").currentTime = 0;
+          document.getElementById("windowOpenAudio").play();
         } else {
           setWindowOrder(prev => [...prev.filter(w => w !== 'fortuneBasket'), 'fortuneBasket']);
         }
@@ -136,8 +151,19 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         if (!openWindows.includes('kudos')) {
           setOpenWindows(prev => [...prev, 'kudos']);
           setWindowOrder(prev => [...prev.filter(w => w !== 'kudos'), 'kudos']);
+          document.getElementById("windowOpenAudio").currentTime = 0;
+          document.getElementById("windowOpenAudio").play();
         } else {
           setWindowOrder(prev => [...prev.filter(w => w !== 'kudos'), 'kudos']);
+        }
+      } else if (fileId === "Thanks") {
+        if (!openWindows.includes('thanks')) {
+          setOpenWindows(prev => [...prev, 'thanks']);
+          setWindowOrder(prev => [...prev.filter(w => w !== 'thanks'), 'thanks']);
+          document.getElementById("windowOpenAudio").currentTime = 0;
+          document.getElementById("windowOpenAudio").play();
+        } else {
+          setWindowOrder(prev => [...prev.filter(w => w !== 'thanks'), 'thanks']);
         }
       }
     }
@@ -184,6 +210,9 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         break;
       case 'kudos':
         position = kudosPosition;
+        break;
+      case 'thanks':
+        position = thanksPosition;
         break;
       default:
         console.log('Unknown window name:', windowName);
@@ -234,6 +263,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         setFortuneBasketPosition(newPosition);
       } else if (activeWindow === 'kudos') {
         setKudosPosition(newPosition);
+      } else if (activeWindow === 'thanks') {
+        setThanksPosition(newPosition);
       }
     }
   };
@@ -271,6 +302,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
   const handleRegisterOpen = () => {
     if (!openWindows.includes('register')) {
       setOpenWindows(prev => [...prev, 'register']);
+      document.getElementById("windowOpenAudio").currentTime = 0;
+      document.getElementById("windowOpenAudio").play();
       setWindowOrder(prev => [...prev.filter(w => w !== 'register'), 'register']);
     } else {
       setWindowOrder(prev => [...prev.filter(w => w !== 'register'), 'register']);
@@ -280,6 +313,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
   const handleFactionOpen = () => {
     if (!openWindows.includes('faction')) {
       setOpenWindows(prev => [...prev, 'faction']);
+      document.getElementById("windowOpenAudio").currentTime = 0;
+      document.getElementById("windowOpenAudio").play();
       setWindowOrder(prev => [...prev.filter(w => w !== 'faction'), 'faction']);
     } else {
       setWindowOrder(prev => [...prev.filter(w => w !== 'faction'), 'faction']);
@@ -289,6 +324,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
   const handleFirstChallengeOpen = () => {
     if (!openWindows.includes('firstChallenge')) {
       setOpenWindows(prev => [...prev, 'firstChallenge']);
+      document.getElementById("windowOpenAudio").currentTime = 0;
+      document.getElementById("windowOpenAudio").play();
       setWindowOrder(prev => [...prev.filter(w => w !== 'firstChallenge'), 'firstChallenge']);
     } else {
       setWindowOrder(prev => [...prev.filter(w => w !== 'firstChallenge'), 'firstChallenge']);
@@ -302,6 +339,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         // Open register window if no token
         if (!openWindows.includes('register')) {
           setOpenWindows(prev => [...prev, 'register']);
+          document.getElementById("windowOpenAudio").currentTime = 0;
+          document.getElementById("windowOpenAudio").play();
           setWindowOrder(prev => [...prev.filter(w => w !== 'register'), 'register']);
         }
         return;
@@ -371,6 +410,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
   const handleFortuneCookieOpen = () => {
     if (!openWindows.includes('fortuneBasket')) {
       setOpenWindows(prev => [...prev, 'fortuneBasket']);
+      document.getElementById("windowOpenAudio").currentTime = 0;
+      document.getElementById("windowOpenAudio").play();
     }
   };
 
@@ -516,6 +557,20 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
           }
           100% {
             transform: scale(1.1);
+          }
+        }
+        @keyframes windowShakeAndScale {
+          0%{
+            transform: rotateZ(0deg) scale(0.5);
+          }
+          33%{
+            transform: rotateZ(20deg) scale(1.2);
+          }
+          66%{
+            transform: rotateZ(-20deg) scale(0.8);
+          }
+          100% {
+            transform: rotateZ(0deg) scale(1);
           }
         }
       `}</style>
@@ -744,6 +799,19 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
           />
         )}
 
+        {openWindows.includes('thanks') && (
+          <ThanksWindow 
+            position={thanksPosition}
+            isDragging={isDragging && activeWindow === 'thanks'}
+            isActive={windowOrder[windowOrder.length - 1] === 'thanks'}
+            handleMouseDown={handleMouseDown}
+            handleDismiss={handleDismiss}
+            handleWindowClick={handleWindowClick}
+            BASE_Z_INDEX={getWindowZIndex('thanks')}
+            ACTIVE_Z_INDEX={getWindowZIndex('thanks')}
+          />
+        )}
+
         <div style={{
             position: "absolute", 
             top: TOP_BAR_HEIGHT, 
@@ -785,7 +853,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                 <div>
                     <FileIcon 
                         text={isLoggedIn ? "Juicer" : "Register"}
-                        icon={isLoggedIn ? "./juicer.png" : "registericon.png"}
+                        icon={isLoggedIn ? "./juicerRest.png" : "registericon.png"}
                         isSelected={selectedFile === (isLoggedIn ? "Juicer" : "Register")}
                         onClick={handleFileClick(isLoggedIn ? "Juicer" : "Register")}
                         delay={0.2}
@@ -921,9 +989,21 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
             <Background />
         </div>
 
+        <div style={{position: "absolute", bottom: 8, left: 8}}>
+            <FileIcon 
+                text="Thanks" 
+                icon="./heart.png"
+                isSelected={selectedFile === "Thanks"}
+                onClick={handleFileClick("Thanks")}
+                delay={0.6}
+                data-file-id="Thanks"
+            />
+        </div>
+
         {/* Add audio elements */}
         <audio id="juicerAudio" src="./juicer.mp3" preload="auto"></audio>
         <audio id="collectAudio" src="./collect.mp3" preload="auto"></audio>
+        <audio id="windowOpenAudio" src="./sounds/windowOpenSound.wav"/>
       </div>
     </div>
   );
