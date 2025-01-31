@@ -1,6 +1,6 @@
 # Lost Beyond Realms
 
-**Team Members:** Aayush[https://github.com/aayush-ojha], Jeevan[https://github.com/jeevankoirala]
+**Team Members:** [Aayush](https://github.com/aayush-ojha), [Jeevan](https://github.com/jeevankoirala)
 
 **How would you pitch your game in one line?**
 [example format: "It's like [Game X] meets [Game Y] but with [Unique Element Z]" (doesn't have to follow this format)]
