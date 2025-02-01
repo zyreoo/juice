@@ -32,4 +32,5 @@ Our goal is to create a game that keeps players thinking, experimenting, and eag
 ---
 
 *Remember: Focus on gameplay mechanics and player experience. Save the details about story, art style, sound design, UI flowcharts, marketing plans, or achievements for later.*
+*+Small [PREVIEW](https://youtu.be/dQw4w9WgXcQ?si=VMKaV9Qrsp09B2XO) of the game*
 
