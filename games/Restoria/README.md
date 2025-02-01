@@ -6,7 +6,8 @@
 A game based on sustainability where the player picks up trash and goes through a mission to save the birds and restore the forest from pollution
 
 **What is the key mechanic(s) that make it fun?**
-[Describe how the mechanic works, why it's fun/important, how it interacts with other mechanics, etc]
+- Fun puzzles
+- Storyline (but no words)
 
 **How does the game actually play? (Core Game Loop)**
 [Describe what players do, what they're trying to achieve, what challenges they face, and what rewards they get, etc]
