@@ -33,19 +33,12 @@ export default async function handler(req, res) {
     // Calculate total duration in hours
     let totalHours = 0;
     stretches.forEach(record => {
-      const startTime = record.fields.startTime;
-      const endTime = record.fields.endTime;
-      
-      if (startTime && endTime) {
-        const start = new Date(startTime);
-        const end = new Date(endTime);
-        const durationHours = (end - start) / (1000 * 60 * 60); // Convert ms to hours
-        totalHours += durationHours;
-      }
+      const stretchTime = record.fields.timeWorkedSeconds == undefined ? 0 : record.fields.timeWorkedSeconds
+      totalHours += Math.round(stretchTime / 3600 * 100) / 100;
     });
 
-    userData.totalStretchHours = Math.round(totalHours * 100) / 100; // Round to 2 decimal places
-
+    userData.totalStretchHours = totalHours; // Rounded to 2 decimal places
+    console.log(totalHours)
     // Get all OMG moments for this user and sum up kudos
     const omgMoments = await base('omgMoments').select({
       filterByFormula: `{email} = '${userData.email}'`

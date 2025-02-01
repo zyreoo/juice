@@ -2,6 +2,8 @@
 
 **Team Members:** Estella (@magicfrog)
 
+https://github.com/themagicfrog/vendingmachine
+
 **How would you pitch your game in one line?**
 You got stuck in vending machine and you must escape!!
 

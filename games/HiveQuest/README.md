@@ -1,4 +1,4 @@
-# Bee Seeker
+# HiveQuest
 
 **Team Members:** Charmunk, truekas, Colbster937
 
