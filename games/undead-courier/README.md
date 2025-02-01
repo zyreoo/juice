@@ -1,6 +1,6 @@
 # Undead Courier
 
-**Team Members:** Hridya Agrawal
+**Team Members:** Hridya Agrawal, OC
 
 **How would you pitch your game in one line?**
 It's like a high-speed delivery game meets a zombie apocalypse, where you ride through a chaotic city dodging undead and upgrading your bike to survive!
