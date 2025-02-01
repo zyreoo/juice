@@ -22,5 +22,5 @@ The players are or our characters will be going in fight to help(after the intro
 - and some things which I haven't thought of yet..
 
 ---
-*Note: everything and anything is subject to change(including name..), Beware!!*
+*Note: everything and anything is subject to change(including name..), Beware!!* <br>
 *Remember: Focus on gameplay mechanics and player experience. Save the details about story, art style, sound design, UI flowcharts, marketing plans, or achievements for later.*
