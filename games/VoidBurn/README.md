@@ -6,7 +6,7 @@
 It is most likely be having a story with LOL fights or somewhat particals of fortnite and may be pillagers..
 
 ### **What is the key mechanic(s) that make it fun?**
-It gonna have a character which will have some story for intro and to know everything else like how the weapon gonna work, or this weapon can attack down enemy in just two attacks, I'll try if I can add a online multi-player(but my pc sucks, yep in godot too). for fun aspect, It'll have story based fun or may be the character playing with some other ppl..
+It gonna have a character which will have some story for intro and to know everything else like how the weapon gonna work, or this weapon can attack down enemy in just two attacks, I'll try if I can add a online multi-player(but my pc sucks, yep in godot too). for fun aspect, It'll have story based fun or may be the character playing with some other ppl..(fighting with other ppl)
 
 
 ### **How does the game actually play? (Core Game Loop)**
