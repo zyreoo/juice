@@ -607,6 +607,17 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
             transform: rotateZ(0deg) scale(1);
           }
         }
+        @keyframes warningScale{
+          0%{
+            transform: scale(1)
+          }
+          50%{
+            transform: scale(1.5)
+          }
+          100%{
+            transform:scale(1)
+          }
+        }
       `}</style>
       <div 
         style={{

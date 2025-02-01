@@ -471,6 +471,7 @@ export default function JungleWindow({ position, isDragging, isActive, handleMou
                             <p>Log your time working on a feature then share "OMG IT WORKS" moment when you make it work</p>
                             }
                             <div style={{display: "flex", flexDirection: "column", gap: 4}}>
+                                <p style={{color: "red"}} >TIME SPENT FOR JUNGLE DOESN'T COUNT FOR THE 100H FOR JUICE</p>
                                 <p>Current Session: {timeForaged}</p>
                                 <p>Total Time Foraging: {userData?.totalJungleHours ? 
                                     `${Math.floor(userData.totalJungleHours)} hours ${Math.round((userData.totalJungleHours % 1) * 60)} min` : 

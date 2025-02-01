@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-export default function FruitBasketWindow({ position, isDragging, isActive, handleMouseDown, handleDismiss, handleWindowClick, BASE_Z_INDEX, ACTIVE_Z_INDEX, userData, setUserData, startJuicing, playCollectSound, isJuicing }) {
+export default function FruitBasketWindow({ position, isDragging, isActive, handleMouseDown, handleDismiss, handleWindowClick, BASE_Z_INDEX, ACTIVE_Z_INDEX, userData}) {
     const [fruitCollected, setFruitCollected] = useState({
         kiwis: 0,
         lemons: 0,
@@ -121,7 +121,8 @@ export default function FruitBasketWindow({ position, isDragging, isActive, hand
                             <img style={{height:".8rem", imageRendering: "pixelated"}} src='/jungle/junglelemon.png'/> Lemons: {fruitCollected.lemons}, {" "}
                             <img style={{height:".8rem", imageRendering: "pixelated"}} src='/jungle/jungleorange.png'/> Oranges: {fruitCollected.oranges} {" "}<br/>
                             <img style={{height:".8rem", imageRendering: "pixelated"}} src='/jungle/jungleapple.png'/> Apples: {fruitCollected.apples}, {" "}
-                            <img style={{height:".8rem", imageRendering: "pixelated"}} src='/jungle/jungleblueberry.png'/> Blueberries: {fruitCollected.blueberries}</p>
+                            <img style={{height:".8rem", imageRendering: "pixelated"}} src='/jungle/jungleblueberry.png'/> Blueberries: {fruitCollected.blueberries} <br/>
+                            <img style={{height:".8rem", imageRendering: "pixelated"}} src='/jungle/token.png'/> Tokens: {userData.totalTokens}</p>
                         </div>
 
                         <div style={{
