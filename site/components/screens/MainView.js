@@ -13,7 +13,7 @@ import Background from '../Background';
 import ShareSuccessPanel from './ShareSuccessPanel';
 import FortuneBasket from './FortuneBasket';
 import ThanksWindow from './ThanksWindow';
-import GameGuildsWindow from './GameGuildsWindow';
+import JungleWindow from './JungleWindow';
 
 export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserData }) {
   const [time, setTime] = React.useState(new Date());
@@ -33,7 +33,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
   const [factionPosition, setFactionPosition] = React.useState({ x: 250, y: 250 });
   const [firstChallengePosition, setFirstChallengePosition] = React.useState({ x: 300, y: 300 });
   const [juiceWindowPosition, setJuiceWindowPosition] = React.useState({ x: 0, y: 0 });
-  const [gameGuildsWindowPosition, setgameGuildsWindowPosition] = React.useState({ x: 0, y: 0 });
+  const [jungleWindowPosition, setjungleWindowPosition] = React.useState({ x: 0, y: 0 });
   const [fortuneBasketPosition, setFortuneBasketPosition] = React.useState({ 
     x: Math.max(0, window.innerWidth / 2 - 150), 
     y: Math.max(0, window.innerHeight / 2 - 110)
@@ -58,7 +58,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
     video: 397,
     faction: 200,
     juiceWindow: 300,
-    gameguildsWindow: 300,
+    jungleWindow: 300,
     fortuneBasket: 220,
     thanks: 300
   };
@@ -152,12 +152,12 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         } else {
           setWindowOrder(prev => [...prev.filter(w => w !== 'thanks'), 'thanks']);
         }
-      } else if (fileId === "GameGuilds") {
-        if (!openWindows.includes('gameGuildsWindow')) {
-          setOpenWindows(prev => [...prev, 'gameGuildsWindow']);
-          setWindowOrder(prev => [...prev.filter(w => w !== 'gameGuildsWindow'), 'gameGuildsWindow']);
+      } else if (fileId === "Jungle") {
+        if (!openWindows.includes('jungleWindow')) {
+          setOpenWindows(prev => [...prev, 'jungleWindow']);
+          setWindowOrder(prev => [...prev.filter(w => w !== 'jungleWindow'), 'jungleWindow']);
         } else {
-          setWindowOrder(prev => [...prev.filter(w => w !== 'gameGuildsWindow'), 'gameGuildsWindow']);
+          setWindowOrder(prev => [...prev.filter(w => w !== 'jungleWindow'), 'jungleWindow']);
         }
       }
     }
@@ -208,8 +208,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
       case 'thanks':
         position = thanksPosition;
         break;
-      case 'gameGuildsWindow':
-        position = gameGuildsWindowPosition
+      case 'jungleWindow':
+        position = jungleWindowPosition
         break;
       default:
         console.log('Unknown window name:', windowName);
@@ -262,8 +262,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         setKudosPosition(newPosition);
       } else if (activeWindow === 'thanks') {
         setThanksPosition(newPosition);
-      } else if (activeWindow === 'gameGuildsWindow') {
-        setgameGuildsWindowPosition(newPosition);
+      } else if (activeWindow === 'jungleWindow') {
+        setjungleWindowPosition(newPosition);
       }
     }
   };
@@ -743,16 +743,16 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
           />
         )}
 
-        {openWindows.includes('gameGuildsWindow') && (
-          <GameGuildsWindow
-            position={gameGuildsWindowPosition}
-            isDragging={isDragging && activeWindow === 'gameGuildsWindow'}
-            isActive={windowOrder[windowOrder.length - 1] === 'gameGuildsWindow'}
+        {openWindows.includes('jungleWindow') && (
+          <JungleWindow
+            position={jungleWindowPosition}
+            isDragging={isDragging && activeWindow === 'jungleWindow'}
+            isActive={windowOrder[windowOrder.length - 1] === 'jungleWindow'}
             handleMouseDown={handleMouseDown}
             handleDismiss={handleDismiss}
             handleWindowClick={handleWindowClick}
-            BASE_Z_INDEX={getWindowZIndex('gameGuildsWindow')}
-            ACTIVE_Z_INDEX={getWindowZIndex('gameGuildsWindow')}
+            BASE_Z_INDEX={getWindowZIndex('jungleWindow')}
+            ACTIVE_Z_INDEX={getWindowZIndex('jungleWindow')}
             userData={userData}
             setUserData={setUserData}
             startJuicing={startJuicing}
@@ -818,14 +818,16 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         }}>
             <div style={{display: "flex", gap: 8, flexDirection: "row", padding: 8}}>
                 <div>
-                    <FileIcon 
-                        text="wutIsThis.txt" 
-                        icon="./texticon.png"
-                        isSelected={selectedFile === "file1"}
-                        onClick={handleFileClick("file1")}
-                        delay={0}
-                        data-file-id="file1"
-                    />
+                  {isLoggedIn && (
+                      <FileIcon
+                      text="Jungle"
+                      icon="./jungle/jungleicon.png"
+                      isSelected={selectedFile === "Jungle"}
+                      onClick={handleFileClick("Jungle")}
+                      delay={0.5}
+                      data-file-id="Jungle"
+                      />
+                    )}
                     <FileIcon 
                         text="Achievements" 
                         icon="achievmentsicon.png"
@@ -874,16 +876,14 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                     }
                 </div>
                 <div>
-                  {isLoggedIn && (
-                    <FileIcon
-                    text="GameGuilds"
-                    icon="./juicerRest.png"
-                    isSelected={selectedFile === "GameGuilds"}
-                    onClick={handleFileClick("GameGuilds")}
-                    delay={0.5}
-                    data-file-id="GameGuilds"
+                    <FileIcon 
+                        text="wutIsThis.txt" 
+                        icon="./texticon.png"
+                        isSelected={selectedFile === "file1"}
+                        onClick={handleFileClick("file1")}
+                        delay={0}
+                        data-file-id="file1"
                     />
-                  )}
                 </div>
             </div>
         </div>

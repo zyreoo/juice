@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-export default function GameGuildsWindow({ position, isDragging, isActive, handleMouseDown, handleDismiss, handleWindowClick, BASE_Z_INDEX, ACTIVE_Z_INDEX, userData, setUserData, startJuicing, playCollectSound, isJuicing }) {
-    const [isJuicingLocal, setIsJuicingLocal] = useState(false);
+export default function JungleWindow({ position, isDragging, isActive, handleMouseDown, handleDismiss, handleWindowClick, BASE_Z_INDEX, ACTIVE_Z_INDEX, userData, setUserData, startJuicing, playCollectSound, isJuicing }) {
+    const [isForagingLocal, setIsForagingLocal] = useState(false);
     const [showExplanation, setShowExplanation] = useState(false);
     const [currentStretchId, setCurrentStretchId] = useState(null);
-    const [timeJungled, setTimeJungled] = useState('0:00');
+    const [timeForaged, setTimeForaged] = useState('0:00');
     const [startTime, setStartTime] = useState(null);
     const [selectedVideo, setSelectedVideo] = useState(null);
     const [description, setDescription] = useState('');
@@ -43,16 +43,16 @@ export default function GameGuildsWindow({ position, isDragging, isActive, handl
     useEffect(() => {
         let interval;
         let saveInterval;
-        if (isJuicingLocal && startTime && !stopTime && !isPaused) {
+        if (isForagingLocal && startTime && !stopTime && !isPaused) {
             interval = setInterval(() => {
                 const now = new Date();
                 const diff = Math.floor((now - startTime) / 1000 - totalPauseTimeSeconds);
                 const minutes = Math.floor(diff / 60);
                 const seconds = diff % 60;
-                setTimeJungled(`${minutes}:${seconds.toString().padStart(2, '0')}`);
+                setTimeForaged(`${minutes}:${seconds.toString().padStart(2, '0')}`);
             }, 1000);
             // Update pausedTimeStart without actually pausing so if the broswer closes unexpectedly you can resume your progress
-        if (isJuicingLocal && startTime && !stopTime && !isPaused){
+        if (isForagingLocal && startTime && !stopTime && !isPaused){
             saveInterval = setInterval(async () => {
                 try {
                     const response = await fetch('/api/pause-jungle-stretch', {
@@ -79,7 +79,7 @@ export default function GameGuildsWindow({ position, isDragging, isActive, handl
             clearInterval(interval)
             clearInterval(saveInterval)
         };
-    }, [isJuicingLocal, startTime, stopTime, isPaused]);
+    }, [isForagingLocal, startTime, stopTime, isPaused]);
 
     // Load data
     useEffect(() => {
@@ -100,7 +100,7 @@ export default function GameGuildsWindow({ position, isDragging, isActive, handl
 
                 const data = await response.json()
                 if(data.id == undefined) return;
-                setIsJuicingLocal(true);
+                setIsForagingLocal(true);
                 setCurrentStretchId(data.id);
                 const startTimeDate = new Date(data.startTime)
                 setStartTime(startTimeDate);
@@ -110,7 +110,7 @@ export default function GameGuildsWindow({ position, isDragging, isActive, handl
                 const diff = Math.floor((now - startTimeDate) / 1000 - data.totalPauseTimeSeconds);
                 const minutes = Math.floor(diff / 60);
                 const seconds = diff % 60;
-                setTimeJungled(`${minutes}:${seconds.toString().padStart(2, '0')}`);
+                setTimeForaged(`${minutes}:${seconds.toString().padStart(2, '0')}`);
                 
             } catch (error) {
                 console.error('Error pausing jungle stretch:', error);
@@ -141,7 +141,7 @@ export default function GameGuildsWindow({ position, isDragging, isActive, handl
 
             const data = await response.json();
             setCurrentStretchId(data.stretchId);
-            setIsJuicingLocal(true);
+            setIsForagingLocal(true);
             setStartTime(new Date());
             setStopTime(null);
             setSelectedVideo(null);
@@ -241,13 +241,13 @@ export default function GameGuildsWindow({ position, isDragging, isActive, handl
             // Play collect sound when successful
             playCollectSound();
 
-            setIsJuicingLocal(false);
+            setIsForagingLocal(false);
             setCurrentStretchId(null);
             setStartTime(null);
             setStopTime(null);
             setSelectedVideo(null);
             setDescription('');
-            setTimeJungled('0:00');
+            setTimeForaged('0:00');
             setIsPaused(false);
         } catch (error) {
             console.error('Error creating OMG moment:', error);
@@ -277,13 +277,13 @@ export default function GameGuildsWindow({ position, isDragging, isActive, handl
                 throw new Error('Failed to pause jungle stretch');
             }
 
-            setIsJuicingLocal(false);
+            setIsForagingLocal(false);
             setCurrentStretchId(null);
             setStartTime(null);
             setStopTime(null);
             setSelectedVideo(null);
             setDescription('');
-            setTimeJungled('0:00');
+            setTimeForaged('0:00');
             setIsPaused(false);
         } catch (error) {
             console.error('Error pausing jungle stretch:', error);
@@ -352,7 +352,7 @@ export default function GameGuildsWindow({ position, isDragging, isActive, handl
             <audio ref={expSoundRef} src="./expSound.mp3" volume="0.5" />
             <audio ref={congratsSoundRef} src="./juicercongrats.mp3" />
             <div 
-                onClick={handleWindowClick('gameGuildsWindow')}
+                onClick={handleWindowClick('jungleWindow')}
                 style={{
                     display: "flex", 
                     position: "absolute", 
@@ -372,7 +372,7 @@ export default function GameGuildsWindow({ position, isDragging, isActive, handl
                     userSelect: "none"
                 }}>
                 <div 
-                    onMouseDown={handleMouseDown('gameGuildsWindow')}
+                    onMouseDown={handleMouseDown('jungleWindow')}
                     style={{
                         display: "flex", 
                         borderBottom: "1px solid #000", 
@@ -385,7 +385,7 @@ export default function GameGuildsWindow({ position, isDragging, isActive, handl
                         <button onClick={(e) => { 
                             e.stopPropagation(); 
                             playClick();
-                            handleDismiss('gameGuildsWindow'); 
+                            handleDismiss('jungleWindow'); 
                         }}>x</button>
                     </div>
                     <p>Jungle (v0.1)</p>
@@ -399,7 +399,7 @@ export default function GameGuildsWindow({ position, isDragging, isActive, handl
                             <p>Log your time working on a feature then share "OMG IT WORKS" moment when you make it work</p>
                             }
                             <div style={{display: "flex", flexDirection: "column", gap: 4}}>
-                                <p>Current Session: {timeJungled}</p>
+                                <p>Current Session: {timeForaged}</p>
                                 <p>Total Time Foraging: {userData?.totalJungleHours ? 
                                     `${Math.floor(userData.totalJungleHours)} hours ${Math.round((userData.totalJungleHours % 1) * 60)} min` : 
                                     "0 hours 0 min"}</p>
@@ -413,7 +413,7 @@ export default function GameGuildsWindow({ position, isDragging, isActive, handl
                             }}>
                             </div>
 
-                            {!isJuicingLocal &&
+                            {!isForagingLocal &&
                             <div style={{display: "flex", flexDirection: "column", gap: 8}}>
                                 <button onClick={() => {
                                     playClick();
@@ -428,7 +428,7 @@ export default function GameGuildsWindow({ position, isDragging, isActive, handl
                                     What is this?
                                 </button>
                             </div>}
-                            {isJuicingLocal &&
+                            {isForagingLocal &&
                             <div style={{padding: 8, display: 'flex', gap: 4, flexDirection: "column", border: "1px solid #000"}}>
                                 <input 
                                     type="file" 
