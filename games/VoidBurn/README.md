@@ -10,7 +10,7 @@ It gonna have a character which will have some story for intro and to know every
 
 
 ### **How does the game actually play? (Core Game Loop)**
-The players are or our characters will be going in fight to help(after the intro scene and some story..) some ppl in danger and since the characters won't have their own family they'll kinda start liking that they can literally get so much gold going to somewhere and attacking them, and the game converts to; less story, more fight/logic/strategy
+The players are or our characters will be going in fight to help(after the intro scene and some story..) some ppl in danger and since the characters won't have their own family they'll kinda start liking that they can literally get so much gold going to somewhere and attacking them, and the game converts to; less story, more fight/logic/strategy and this logic/strategy loop continuos
 
 
 ### **How will you keep players engaged for 30 minutes? What's the general scope of your game (will change as you go)?**
