@@ -25,5 +25,5 @@ a 2D multiplayer game, where the player comes dresses up their character, weapon
 - and some things which I haven't thought of yet..
 
 ---
-*Note: everything and anything is subject to change(including name..), Beware!!* <br>
+*PS: I have a low-end pc. So, everything and anything is subject to change(including name..IF I don't like it later), Beware!!* <br>
 *Remember: Focus on gameplay mechanics and player experience. Save the details about story, art style, sound design, UI flowcharts, marketing plans, or achievements for later.*
