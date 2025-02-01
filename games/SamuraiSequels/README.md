@@ -1,4 +1,4 @@
-# Game Name
+# Samurai Sequels
 
 **Team Members:** Hussam, Pukit
 
