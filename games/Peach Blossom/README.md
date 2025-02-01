@@ -1,8 +1,8 @@
 # Peach Blossom
 
-**Team Members:** Ira Tiwari(solo woker)
+**Team Members:** Ira Tiwari, Jiya Pandey
 
----
+
 
 ### How would you pitch your game in one line?
 
