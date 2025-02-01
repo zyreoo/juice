@@ -1,4 +1,4 @@
-# Game Name
+# Co-op Chaos
 
 **Team Members:** Bright L., Nikolai O., Jay A., Cisco W.
 
