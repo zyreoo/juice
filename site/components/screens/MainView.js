@@ -172,6 +172,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         if (!openWindows.includes('jungleWindow')) {
           setOpenWindows(prev => [...prev, 'jungleWindow']);
           setWindowOrder(prev => [...prev.filter(w => w !== 'jungleWindow'), 'jungleWindow']);
+          document.getElementById("windowOpenAudio").currentTime = 0;
+          document.getElementById("windowOpenAudio").play();
         } else {
           setWindowOrder(prev => [...prev.filter(w => w !== 'jungleWindow'), 'jungleWindow']);
         }

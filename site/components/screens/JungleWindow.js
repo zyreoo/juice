@@ -347,7 +347,13 @@ export default function JungleWindow({ position, isDragging, isActive, handleMou
     };
 
     return (
-        <>
+        <div style={{
+            transform: `translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px))`,
+            top: "50%",
+            left: "50%",
+            position: "absolute", 
+            zIndex: isActive ? ACTIVE_Z_INDEX : BASE_Z_INDEX, 
+        }}>
             <audio ref={clickSoundRef} src="./click.mp3" />
             <audio ref={expSoundRef} src="./expSound.mp3" volume="0.5" />
             <audio ref={congratsSoundRef} src="./juicercongrats.mp3" />
@@ -355,10 +361,8 @@ export default function JungleWindow({ position, isDragging, isActive, handleMou
                 onClick={handleWindowClick('jungleWindow')}
                 style={{
                     display: "flex", 
-                    position: "absolute", 
-                    zIndex: isActive ? ACTIVE_Z_INDEX : BASE_Z_INDEX, 
                     width: 400,
-                    height: 320,
+                    height: "fit-content",
                     color: 'black',
                     backgroundColor: "#fff", 
                     border: "1px solid #000", 
@@ -366,10 +370,8 @@ export default function JungleWindow({ position, isDragging, isActive, handleMou
                     flexDirection: "column",
                     padding: 0,
                     justifyContent: "space-between",
-                    transform: `translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px))`,
-                    top: "50%",
-                    left: "50%",
-                    userSelect: "none"
+                    userSelect: "none",
+                    animation: "linear .3s windowShakeAndScale"
                 }}>
                 <div 
                     onMouseDown={handleMouseDown('jungleWindow')}
@@ -403,6 +405,42 @@ export default function JungleWindow({ position, isDragging, isActive, handleMou
                                 <p>Total Time Foraging: {userData?.totalJungleHours ? 
                                     `${Math.floor(userData.totalJungleHours)} hours ${Math.round((userData.totalJungleHours % 1) * 60)} min` : 
                                     "0 hours 0 min"}</p>
+                            </div>
+
+                            <div style={{
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                            }}>
+                                <img 
+                                    src="/jungle/jungleicon.png"
+                                    alt="Jungle"
+                                    style={{
+                                        width: "150px",
+                                        height: "150px",
+                                        imageRendering: "pixelated",
+                                        objectFit: "contain"
+                                    }}
+                                />
+                            </div>
+
+                            <div style={{
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                marginRight: "120px",
+                                marginTop: "-40px"
+                            }}>
+                                <img 
+                                    src="/jungle/basket.png"
+                                    alt="Jungle"
+                                    style={{
+                                        width: "60px",
+                                        height: "60px",
+                                        imageRendering: "pixelated",
+                                        objectFit: "contain"
+                                    }}
+                                />
                             </div>
                             
                             <div style={{
@@ -515,6 +553,6 @@ export default function JungleWindow({ position, isDragging, isActive, handleMou
                     )}
                 </div>
             </div>
-        </>
+        </div>
     );
 } 
