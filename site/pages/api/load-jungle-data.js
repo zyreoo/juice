@@ -45,7 +45,9 @@ export default async function handler(req, res) {
     console.log(lastRecord)
     const previousPauseTime = lastRecord.totalPauseTimeSeconds == undefined ? 0 : lastRecord.totalPauseTimeSeconds
     const newPauseTime = Math.round(previousPauseTime + Math.abs(new Date() - new Date(lastRecord.pauseTimeStart))/1000)
-    res.status(200).json({ id: lastRecord.ID, startTime: lastRecord.startTime, totalPauseTimeSeconds: newPauseTime });
+    res.status(200).json({ id: lastRecord.ID, startTime: lastRecord.startTime, totalPauseTimeSeconds: newPauseTime, 
+      kiwisCollected: lastRecord.kiwisCollected, lemonsCollected: lastRecord.lemonsCollected, orangesCollected: lastRecord.orangesCollected, 
+      applesCollected : lastRecord.applesCollected, blueberriesCollected: lastRecord.blueberriesCollected });
 
   } catch (error) {
     console.error('Error loading jungle stretch:', error);

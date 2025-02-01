@@ -34,14 +34,13 @@ export default async function handler(req, res) {
     }
 
     const fruitCollected = {
-      kiwis: records[0].kiwisCollected == undefined ? 0 : records[0].kiwisCollected,
-      lemons: records[0].lemonsCollected == undefined ? 0 : records[0].lemonsCollected,
-      oranges: records[0].orangesCollected == undefined ? 0 : records[0].orangesCollected,
-      apples: records[0].applesCollected == undefined ? 0 : records[0].applesCollected,
-      blueberries: records[0].blueberriesCollected == undefined ? 0 : records[0].blueberriesCollected,
+      kiwis: records[0].fields.kiwisCollected == undefined ? 0 : records[0].fields.kiwisCollected,
+      lemons: records[0].fields.lemonsCollected == undefined ? 0 : records[0].fields.lemonsCollected,
+      oranges: records[0].fields.orangesCollected == undefined ? 0 : records[0].fields.orangesCollected,
+      apples: records[0].fields.applesCollected == undefined ? 0 : records[0].fields.applesCollected,
+      blueberries: records[0].fields.blueberriesCollected == undefined ? 0 : records[0].fields.blueberriesCollected,
     }
-
-    res.status(200).json({ newPauseTime });
+    res.status(200).json({ fruitCollected });
   } catch (error) {
     console.error('Error resuming jungle stretch:', error);
     res.status(500).json({ message: 'Error resuming jungle stretch' });

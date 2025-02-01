@@ -12,6 +12,13 @@ export default function JungleWindow({ position, isDragging, isActive, handleMou
     const [stopTime, setStopTime] = useState(null);
     const [isPaused, setIsPaused] = useState(false);
     const [totalPauseTimeSeconds, setTotalPauseTimeSeconds] = useState(0)
+    const [fruitCollected, setFruitCollected] = useState({
+        kiwis: 0,
+        lemons: 0,
+        oranges: 0,
+        apples: 0,
+        blueberries: 0,
+    })
     const fileInputRef = useRef(null);
     const clickSoundRef = useRef(null);
     const expSoundRef = useRef(null);
@@ -43,6 +50,7 @@ export default function JungleWindow({ position, isDragging, isActive, handleMou
     useEffect(() => {
         let interval;
         let saveInterval;
+        let getFruitForagedInterval;
         if (isForagingLocal && startTime && !stopTime && !isPaused) {
             interval = setInterval(() => {
                 const now = new Date();
@@ -73,11 +81,35 @@ export default function JungleWindow({ position, isDragging, isActive, handleMou
                     console.error('Error pausing jungle stretch:', error);
                 }
             }, 10000)
+
+            getFruitForagedInterval = setInterval(async () => {
+                try {
+                    const response = await fetch('/api/get-jungle-stretch-fruit-collected', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            token: userData.token,
+                            stretchId: currentStretchId
+                        }),
+                    });
+
+                    setFruitCollected((await response.json()).fruitCollected)
+
+                    if (!response.ok) {
+                        throw new Error('Failed to get jungle stretch fruit');
+                    }
+                } catch (error) {
+                    console.error('Error getting jungle stretch fruit:', error);
+                }
+            }, 60000)
         }
         }
         return () => {
             clearInterval(interval)
             clearInterval(saveInterval)
+            clearInterval(getFruitForagedInterval)
         };
     }, [isForagingLocal, startTime, stopTime, isPaused]);
 
@@ -111,9 +143,26 @@ export default function JungleWindow({ position, isDragging, isActive, handleMou
                 const minutes = Math.floor(diff / 60);
                 const seconds = diff % 60;
                 setTimeForaged(`${minutes}:${seconds.toString().padStart(2, '0')}`);
+                const kiwis = data.kiwisCollected == undefined ? 0 : data.kiwisCollected
+                const lemons = data.lemonsCollected == undefined ? 0 : data.lemonsCollected
+                const oranges = data.orangesCollected == undefined ? 0 : data.orangesCollected
+                const apples = data.applesCollected == undefined ? 0 : data.applesCollected
+                const blueberries = data.blueberriesCollected == undefined ? 0 : data.blueberriesCollected
+
+                const fruitCollected = {
+                    kiwis,
+                    lemons,
+                    oranges,
+                    apples,
+                    blueberries,
+                }
+
+                console.log(fruitCollected)
+
+                setFruitCollected(fruitCollected);
                 
             } catch (error) {
-                console.error('Error pausing jungle stretch:', error);
+                console.error('Error Loading jungle stretch:', error);
             }
         }
         loadData()
@@ -405,6 +454,11 @@ export default function JungleWindow({ position, isDragging, isActive, handleMou
                                 <p>Total Time Foraging: {userData?.totalJungleHours ? 
                                     `${Math.floor(userData.totalJungleHours)} hours ${Math.round((userData.totalJungleHours % 1) * 60)} min` : 
                                     "0 hours 0 min"}</p>
+                                <p><img style={{height:".8rem", imageRendering: "pixelated"}} src='/jungle/junglekiwi.png'/> Kiwis: {fruitCollected.kiwis}, {" "}
+                                <img style={{height:".8rem", imageRendering: "pixelated"}} src='/jungle/junglelemon.png'/> Lemons: {fruitCollected.lemons}, {" "}
+                                <img style={{height:".8rem", imageRendering: "pixelated"}} src='/jungle/jungleorange.png'/> Oranges: {fruitCollected.oranges} {" "}<br/>
+                                <img style={{height:".8rem", imageRendering: "pixelated"}} src='/jungle/jungleapple.png'/> Apples: {fruitCollected.apples}, {" "}
+                                <img style={{height:".8rem", imageRendering: "pixelated"}} src='/jungle/jungleblueberry.png'/> Blueberries: {fruitCollected.blueberries}</p>
                             </div>
 
                             <div style={{
