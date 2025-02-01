@@ -31,3 +31,5 @@ It's like *Stray* meets *Prince of Persia: The Sands of Time* but with a time-tr
 *   **Open World Exploration:** The open world encourages exploration and allows players to discover new areas and challenges at their own pace.
 
 The initial scope of the game involves the core mechanics of time travel, Cataclysm, agile movement, and curse removal. As development progresses, the scope can be expanded to include more environments, abilities, enemies, and story content. The focus for the first 30 minutes will be introducing the core mechanics, the world, and establishing the initial narrative hook of the cat's time-traveling adventure.
+
+This is a prototype of the projects README, we will update on it as we go.
