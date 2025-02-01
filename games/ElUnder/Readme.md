@@ -1,6 +1,6 @@
 # ElUnder
 
-**Team Members:** aMaxThats (Max), TheBigGreed (Michael), Calorap (Nik)
+**Team Members:** [aMaxThats (Max)](https://github.com/aMaxThats), [TheBigGreed (Michael)](https://github.com/Thebiggreed), Calorap (Nik)
 
 ---
 
