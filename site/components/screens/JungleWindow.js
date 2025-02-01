@@ -415,6 +415,10 @@ export default function JungleWindow({ position, isDragging, isActive, handleMou
         }
     };
 
+    const handleFightBoss = () => {
+        alert("You're not strong enough to fight the boss yet! You need to forage more in the jungle.")
+    }
+
     return (
         <div style={{
             transform: `translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px))`,
@@ -540,6 +544,13 @@ export default function JungleWindow({ position, isDragging, isActive, handleMou
                                     setShowExplanation(true);
                                 }}>
                                     What is this?
+                                </button>
+                                <button style={{background: "#fa6666"}}
+                                onClick={() => {
+                                    playClick();
+                                    handleFightBoss();
+                                }}>
+                                    Fight Boss
                                 </button>
                             </div>}
                             {isForagingLocal &&

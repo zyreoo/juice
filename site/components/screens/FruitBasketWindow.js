@@ -21,6 +21,10 @@ export default function FruitBasketWindow({ position, isDragging, isActive, hand
         }
     };
 
+    const handleRedeemTokens = () => {
+        alert("This feature will become available in " + Math.floor((new Date("2025-02-04T00:00:00").getTime() - new Date().getTime())/3600000) + " hours " + "and " + Math.round((new Date("2025-02-04T00:00:00").getTime() - new Date().getTime())/60000%60) + " minutes")
+    }
+
     // Load data
     useEffect(() => {
         async function loadData() {
@@ -142,6 +146,20 @@ export default function FruitBasketWindow({ position, isDragging, isActive, hand
                             />
                         </div>
                     </>
+                    <div style={{display: "flex", flexDirection: "column", gap: 8}}>
+                        <button style={{
+                            background: "linear-gradient(270deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff)",
+                            backgroundSize: "1400% 1400%",
+                            animation: "rainbow 5s linear infinite",
+                            color: "white",
+                            padding: "10px 20px",
+                        }} onClick={() => {
+                            playClick();
+                            handleRedeemTokens();
+                        }}>
+                            Redeem Your tokens!
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
