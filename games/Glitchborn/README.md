@@ -1,6 +1,6 @@
 # Glitchborn
 
-**Team Members:** ral1009, festivius, seanhuangcode
+**Team Members:** ral1009 (Ryan Liu), festivius (Jesse Ma), seanhuangcode (Sean Huang), breakfastcult (Ethan Fu)
 
 **How would you pitch your game in one line?**
 You are an anomaly created by a glitch and you fight against AI bosses.
