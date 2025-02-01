@@ -19,6 +19,7 @@ The special tips are placed on the corner of the pizzeria like a trophy.
 
 **How will you keep players engaged for 30 minutes? What's the general scope of your game (will change as you go)?**
 The game will loop back a day if the player's pizzeria has a negative revenue. 
-The players have to maintain their pizzeria till day 7 (or longer) to have a normal ending, and collect all special tips to have a happy ending.
+The players have to maintain their pizzeria till day 7 (or longer) to have a normal ending, and collect all special tips to have a happy ending. 
+
 ---
 *Remember: Focus on gameplay mechanics and player experience. Save the details about story, art style, sound design, UI flowcharts, marketing plans, or achievements for later.*
