@@ -74,24 +74,20 @@ export default async function handler(req, res) {
           `,
         }).firstPage()).map((record) => record.fields);
 
-      if(jungleStretchesCompleted.length === 0) {
-        res.status(200).json({});
-        return;
-      }
-
       let kiwisCollected = 0;
       let lemonsCollected = 0;
       let orangesCollected = 0;
       let applesCollected = 0;
       let blueberriesCollected = 0;
-
-      jungleStretchesCompleted.forEach((jungleRecord) => {
-        kiwisCollected += jungleRecord.kiwisCollected == undefined ? 0 : jungleRecord.kiwisCollected;
-        lemonsCollected += jungleRecord.lemonsCollected == undefined ? 0 : jungleRecord.lemonsCollected;
-        orangesCollected += jungleRecord.orangesCollected == undefined ? 0 : jungleRecord.orangesCollected;
-        applesCollected += jungleRecord.applesCollected == undefined ? 0 : jungleRecord.applesCollected;
-        blueberriesCollected += jungleRecord.blueberriesCollected == undefined ? 0 : jungleRecord.blueberriesCollected;
-    })
+      if(jungleStretchesCompleted.length > 0) {
+          jungleStretchesCompleted.forEach((jungleRecord) => {
+            kiwisCollected += jungleRecord.kiwisCollected == undefined ? 0 : jungleRecord.kiwisCollected;
+            lemonsCollected += jungleRecord.lemonsCollected == undefined ? 0 : jungleRecord.lemonsCollected;
+            orangesCollected += jungleRecord.orangesCollected == undefined ? 0 : jungleRecord.orangesCollected;
+            applesCollected += jungleRecord.applesCollected == undefined ? 0 : jungleRecord.applesCollected;
+            blueberriesCollected += jungleRecord.blueberriesCollected == undefined ? 0 : jungleRecord.blueberriesCollected;
+        })
+      }
 
       //Get conversion rate from db
       const tokenFruitConversionRecrods = await base("fruitPricesProbabilities - Do not modify").select({}).firstPage();
@@ -124,6 +120,7 @@ export default async function handler(req, res) {
       console.log(totalTokens)
 
       userData.totalKudos = totalKudos;
+      console.log(userData)
     
     res.status(200).json({ userData });
   } catch (error) {

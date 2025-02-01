@@ -96,17 +96,14 @@ export default function JungleWindow({ position, isDragging, isActive, handleMou
                         }),
                     });
                     const dataFruitCollected = (await response.json()).fruitCollected
-                    let shouldPlayFruitSound = !(dataFruitCollected.kiwis != fruitCollected.kiwis || 
-                    dataFruitCollected.lemons != fruitCollected.lemons || dataFruitCollected.oranges != fruitCollected.oranges ||
-                    dataFruitCollected.apples != fruitCollected.apples || dataFruitCollected.blueberries != fruitCollected.blueberries)
-                    if(dataFruitCollected != fruitCollected){
-                        console.log(dataFruitCollected)
-                        console.log(fruitCollected)
-                        if(fruitDropSoundRef.current){
-                            fruitDropSoundRef.current.currentTime = 0;
-                            fruitDropSoundRef.current.play()
-                        }
-                    }
+                    // if(shouldPlayFruitSound){
+                    //     console.log(dataFruitCollected)
+                    //     console.log(fruitCollected)
+                    //     if(fruitDropSoundRef.current){
+                    //         fruitDropSoundRef.current.currentTime = 0;
+                    //         fruitDropSoundRef.current.play()
+                    //     }
+                    // }
 
                     setFruitCollected(dataFruitCollected)
 
@@ -116,7 +113,7 @@ export default function JungleWindow({ position, isDragging, isActive, handleMou
                 } catch (error) {
                     console.error('Error getting jungle stretch fruit:', error);
                 }
-            }, 5000)
+            }, 60000)
         }
         }
         return () => {
@@ -170,8 +167,6 @@ export default function JungleWindow({ position, isDragging, isActive, handleMou
                     blueberries,
                 }
 
-                console.log(fruitCollected)
-
                 setFruitCollected(fruitCollected);
                 
             } catch (error) {
@@ -182,7 +177,7 @@ export default function JungleWindow({ position, isDragging, isActive, handleMou
     }, [])
 
     const handleStartJuicing = async () => {
-        if (!confirm("Just to confirm, you have your game editor ready and you're ready to start working on your game? also sorry but pls keep demo clip at 4mb or less, will fix this soon ~Thomas")) {
+        if (!confirm("Just to confirm, you have your game editor ready and you're ready to start working on your game? - This time will not count for Juice.")) {
             return;
         }
 
@@ -281,7 +276,6 @@ export default function JungleWindow({ position, isDragging, isActive, handleMou
                     throw new Error('Failed to resume jungle stretch');
                 }
                 const data = await response.json();
-                console.log(data.newPauseTime)
                 setTotalPauseTimeSeconds(data.newPauseTime)
                 setIsPaused(false);
             } catch (error) {
@@ -406,7 +400,6 @@ export default function JungleWindow({ position, isDragging, isActive, handleMou
                 throw new Error('Failed to resume jungle stretch');
             }
             const data = await response.json();
-            console.log(data.newPauseTime)
             setTotalPauseTimeSeconds(data.newPauseTime)
             setIsPaused(false);
             playCongratsSound();
