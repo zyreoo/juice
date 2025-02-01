@@ -32,8 +32,8 @@ export default async function handler(req, res) {
       return res.status(404).json({ message: 'jungle stretch not found' });
     }
 
-    const timeToReward = Math.floor(Math.random() * (600000 - 300000 + 1)) + 300000; // Randomly generated between 300k and 600k ms -> 5m and 10m (average 7.5m)
-    // const timeToReward = 0; // testing
+    // const timeToReward = Math.floor(Math.random() * (600000 - 300000 + 1)) + 300000; // Randomly generated between 300k and 600k ms -> 5m and 10m (average 7.5m)
+    const timeToReward = 0; // testing
     // We reward ~$4/h, so we need to reward ~$0.50 per session probabilty calculations have been made and are in airtable
 
     const lastCollectedFruitTime = records[0].fields.lastCollectedFruitTime;

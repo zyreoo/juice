@@ -14,6 +14,7 @@ import ShareSuccessPanel from './ShareSuccessPanel';
 import FortuneBasket from './FortuneBasket';
 import ThanksWindow from './ThanksWindow';
 import JungleWindow from './JungleWindow';
+import FruitBasketWindow from './FruitBasketWindow';
 
 export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserData }) {
   const [time, setTime] = React.useState(new Date());
@@ -34,6 +35,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
   const [firstChallengePosition, setFirstChallengePosition] = React.useState({ x: 300, y: 300 });
   const [juiceWindowPosition, setJuiceWindowPosition] = React.useState({ x: 0, y: 0 });
   const [jungleWindowPosition, setjungleWindowPosition] = React.useState({ x: 0, y: 0 });
+  const [fruitBasketWindowPosition, setFruitBasketWindowPosition] = React.useState({ x: 0, y: 0})
   const [fortuneBasketPosition, setFortuneBasketPosition] = React.useState({ 
     x: Math.max(0, window.innerWidth / 2 - 150), 
     y: Math.max(0, window.innerHeight / 2 - 110)
@@ -59,6 +61,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
     faction: 200,
     juiceWindow: 300,
     jungleWindow: 300,
+    fruitBasketWindow: 300,
     fortuneBasket: 220,
     thanks: 300
   };
@@ -177,6 +180,15 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         } else {
           setWindowOrder(prev => [...prev.filter(w => w !== 'jungleWindow'), 'jungleWindow']);
         }
+      } else if (fileId === "FruitBasket") {
+        if (!openWindows.includes('fruitBasketWindow')) {
+          setOpenWindows(prev => [...prev, 'fruitBasketWindow']);
+          setWindowOrder(prev => [...prev.filter(w => w !== 'fruitBasketWindow'), 'fruitBasketWindow']);
+          document.getElementById("windowOpenAudio").currentTime = 0;
+          document.getElementById("windowOpenAudio").play();
+        } else {
+          setWindowOrder(prev => [...prev.filter(w => w !== 'fruitBasketWindow'), 'fruitBasketWindow']);
+        }
       }
     }
     setSelectedFile(fileId);
@@ -229,6 +241,9 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
       case 'jungleWindow':
         position = jungleWindowPosition
         break;
+      case 'fruitBasketWindow':
+        position = fruitBasketWindowPosition
+        break
       default:
         console.log('Unknown window name:', windowName);
         position = { x: 0, y: 0 };
@@ -282,6 +297,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         setThanksPosition(newPosition);
       } else if (activeWindow === 'jungleWindow') {
         setjungleWindowPosition(newPosition);
+      } else if (activeWindow === 'fruitBasketWindow') {
+        setFruitBasketWindowPosition(newPosition);
       }
     }
   };
@@ -654,6 +671,26 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                         fontWeight: userData?.totalKudos > 0 ? 'bold' : 'normal'
                     }}>{userData?.totalKudos || 0}</p>
                 </div>
+                <div style={{
+                    display: "flex", 
+                    border: "1px solid #000", 
+                    alignItems: "center", 
+                    justifyContent: "space-around", 
+                    borderRadius: 4, 
+                    padding: "2px 4px",
+                    minWidth: 42,
+                    gap: 6,
+                    transition: 'all 0.3s ease',
+                    backgroundColor: 'rgba(0, 0, 0, 0.05)',
+                    borderColor: '#000'
+                }}>  
+                    <img style={{width: 14, height: 14}} src={"/jungle/token.png"}/>
+                    <p style={{
+                        fontSize: 16,
+                        color: '#000',
+                        fontWeight: userData?.totalKudos > 0 ? 'bold' : 'normal'
+                    }}>{userData?.totalTokens || 0}</p>
+                </div>
                 <p style={{
                     color: "rgba(0, 0, 0, 0.8)",
                     fontWeight: 500
@@ -803,6 +840,24 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
           />
         )}
 
+        {openWindows.includes('fruitBasketWindow') && (
+          <FruitBasketWindow
+            position={fruitBasketWindowPosition}
+            isDragging={isDragging && activeWindow === 'fruitBasketWindow'}
+            isActive={windowOrder[windowOrder.length - 1] === 'fruitBasketWindow'}
+            handleMouseDown={handleMouseDown}
+            handleDismiss={handleDismiss}
+            handleWindowClick={handleWindowClick}
+            BASE_Z_INDEX={getWindowZIndex('fruitBasketWindow')}
+            ACTIVE_Z_INDEX={getWindowZIndex('fruitBasketWindow')}
+            userData={userData}
+            setUserData={setUserData}
+            startJuicing={startJuicing}
+            playCollectSound={playCollectSound}
+            isJuicing={isJuicing}
+          />
+        )}
+
         {openWindows.includes('fortuneBasket') && (
           <FortuneBasket 
             handleDismiss={() => handleDismiss('fortuneBasket')}
@@ -886,6 +941,16 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                         delay={0.4} 
                         data-file-id="Fortune Basket" 
                     />
+                    {isLoggedIn && (
+                      <FileIcon
+                      text="Fruit Basket"
+                      icon="./jungle/fullbasket.png"
+                      isSelected={selectedFile === "FruitBasket"}
+                      onClick={handleFileClick("FruitBasket")}
+                      delay={0.5}
+                      data-file-id="FruitBasket"
+                      />
+                    )}
                 </div>
                 <div>
                     <FileIcon 

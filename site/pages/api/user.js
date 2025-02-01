@@ -63,7 +63,67 @@ export default async function handler(req, res) {
       totalKudos += moment.fields.kudos || 0;
     });
 
-    userData.totalKudos = totalKudos;
+    //Calculate total fruit
+    const jungleStretchesCompleted = (await base('jungleStretches').select({
+          filterByFormula: `
+              AND(
+              {email (from Signups)} = '${userData.email}',
+              ({endtime}),
+              NOT({isCanceled})
+              )
+          `,
+        }).firstPage()).map((record) => record.fields);
+
+      if(jungleStretchesCompleted.length === 0) {
+        res.status(200).json({});
+        return;
+      }
+
+      let kiwisCollected = 0;
+      let lemonsCollected = 0;
+      let orangesCollected = 0;
+      let applesCollected = 0;
+      let blueberriesCollected = 0;
+
+      jungleStretchesCompleted.forEach((jungleRecord) => {
+        kiwisCollected += jungleRecord.kiwisCollected == undefined ? 0 : jungleRecord.kiwisCollected;
+        lemonsCollected += jungleRecord.lemonsCollected == undefined ? 0 : jungleRecord.lemonsCollected;
+        orangesCollected += jungleRecord.orangesCollected == undefined ? 0 : jungleRecord.orangesCollected;
+        applesCollected += jungleRecord.applesCollected == undefined ? 0 : jungleRecord.applesCollected;
+        blueberriesCollected += jungleRecord.blueberriesCollected == undefined ? 0 : jungleRecord.blueberriesCollected;
+    })
+
+      //Get conversion rate from db
+      const tokenFruitConversionRecrods = await base("fruitPricesProbabilities - Do not modify").select({}).firstPage();
+
+      // Get conversion rates for all fruits
+      const kiwiConversion = tokenFruitConversionRecrods.find(record => record.fields.fruit === 'kiwis');
+      const lemonConversion = tokenFruitConversionRecrods.find(record => record.fields.fruit === 'lemons');
+      const orangeConversion = tokenFruitConversionRecrods.find(record => record.fields.fruit === 'oranges');
+      const appleConversion = tokenFruitConversionRecrods.find(record => record.fields.fruit === 'apples');
+      const blueberryConversion = tokenFruitConversionRecrods.find(record => record.fields.fruit === 'blueberries');
+
+      // Get token rates with fallback to 0
+      const kiwiTokenRate = kiwiConversion ? kiwiConversion.fields.tokens : 0;
+      const lemonTokenRate = lemonConversion ? lemonConversion.fields.tokens : 0;
+      const orangeTokenRate = orangeConversion ? orangeConversion.fields.tokens : 0;
+      const appleTokenRate = appleConversion ? appleConversion.fields.tokens : 0;
+      const blueberryTokenRate = blueberryConversion ? blueberryConversion.fields.tokens : 0;
+
+      // Convert fruit to tokens
+      const kiwiTokens = kiwisCollected * kiwiTokenRate;
+      const lemonTokens = lemonsCollected * lemonTokenRate;
+      const orangeTokens = orangesCollected * orangeTokenRate;
+      const appleTokens = applesCollected * appleTokenRate;
+      const blueberryTokens = blueberriesCollected * blueberryTokenRate;
+
+      // Calculate total tokens
+      const totalTokens = kiwiTokens + lemonTokens + orangeTokens + appleTokens + blueberryTokens;
+      userData.totalTokens = totalTokens;
+
+      console.log(totalTokens)
+
+      userData.totalKudos = totalKudos;
     
     res.status(200).json({ userData });
   } catch (error) {

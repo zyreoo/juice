@@ -23,6 +23,7 @@ export default function JungleWindow({ position, isDragging, isActive, handleMou
     const clickSoundRef = useRef(null);
     const expSoundRef = useRef(null);
     const congratsSoundRef = useRef(null);
+    const fruitDropSoundRef = useRef(null);
 
     // Add play click function
     const playClick = () => {
@@ -94,8 +95,20 @@ export default function JungleWindow({ position, isDragging, isActive, handleMou
                             stretchId: currentStretchId
                         }),
                     });
+                    const dataFruitCollected = (await response.json()).fruitCollected
+                    let shouldPlayFruitSound = !(dataFruitCollected.kiwis != fruitCollected.kiwis || 
+                    dataFruitCollected.lemons != fruitCollected.lemons || dataFruitCollected.oranges != fruitCollected.oranges ||
+                    dataFruitCollected.apples != fruitCollected.apples || dataFruitCollected.blueberries != fruitCollected.blueberries)
+                    if(dataFruitCollected != fruitCollected){
+                        console.log(dataFruitCollected)
+                        console.log(fruitCollected)
+                        if(fruitDropSoundRef.current){
+                            fruitDropSoundRef.current.currentTime = 0;
+                            fruitDropSoundRef.current.play()
+                        }
+                    }
 
-                    setFruitCollected((await response.json()).fruitCollected)
+                    setFruitCollected(dataFruitCollected)
 
                     if (!response.ok) {
                         throw new Error('Failed to get jungle stretch fruit');
@@ -103,7 +116,7 @@ export default function JungleWindow({ position, isDragging, isActive, handleMou
                 } catch (error) {
                     console.error('Error getting jungle stretch fruit:', error);
                 }
-            }, 60000)
+            }, 5000)
         }
         }
         return () => {
@@ -334,6 +347,13 @@ export default function JungleWindow({ position, isDragging, isActive, handleMou
             setDescription('');
             setTimeForaged('0:00');
             setIsPaused(false);
+            setFruitCollected({
+                kiwis: 0,
+                lemons: 0,
+                oranges: 0,
+                apples: 0,
+                blueberries: 0,
+            })
         } catch (error) {
             console.error('Error pausing jungle stretch:', error);
         }
@@ -406,6 +426,7 @@ export default function JungleWindow({ position, isDragging, isActive, handleMou
             <audio ref={clickSoundRef} src="./click.mp3" />
             <audio ref={expSoundRef} src="./expSound.mp3" volume="0.5" />
             <audio ref={congratsSoundRef} src="./juicercongrats.mp3" />
+            <audio ref={fruitDropSoundRef} src="./sounds/fruitDropSound.wav" />
             <div 
                 onClick={handleWindowClick('jungleWindow')}
                 style={{
