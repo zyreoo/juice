@@ -3,7 +3,7 @@
 **Team Members:** Ciaran McGuinness, Drew Stafford, Jackson White
 
 **How would you pitch your game in one line?**
-[Mario but with multiple knives 
+Cuphead, deadcells, and mario all had a one night stand and it's way too happy.
 
 **What is the key mechanic(s) that make it fun?**
 An array of weapons to be used on enemies with a flowy movement system that feels as if you can be in the air forever.
