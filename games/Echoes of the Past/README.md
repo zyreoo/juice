@@ -1,6 +1,6 @@
-# Solace
+# Echoes of the Past
 
-**Team Members:** Raghav Kumar
+**Team Members:** Raghav Kumar, Tanmay Bijalwan
 
 **How would you pitch your game in one line?**
 A person who is mentally disturbed due to his past lives a simple life in forest enjoying solace while facing nightmares.
