@@ -8,7 +8,7 @@ title: 'Team Members:'
 **Name:** BORROW
 **Genre:** Platformer
 
-**Team Members:** Lostbot09, Username3D, Liande
+**Team Members:** LostBot09, Username3D, Liande
 
 **How would you pitch your game in one line?** A momentum based platformer combining beautiful pixel graphics with dynamic archery gameplay.
 
