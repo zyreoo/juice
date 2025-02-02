@@ -1,10 +1,3 @@
----
-title: 'Team Members:'
-
----
-
-**INFO:**
-
 **Name:** BORROW
 **Genre:** Platformer
 
