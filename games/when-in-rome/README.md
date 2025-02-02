@@ -1,6 +1,6 @@
 # *When in Rome*
 
-**Team Members:** kai
+**Team Members:** kai (@mavdotj)
 
 **How would you pitch your game in one line?**  
 Think of a game where you have to blend in with everyone without any communication.
