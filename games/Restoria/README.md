@@ -10,7 +10,7 @@ A game based on sustainability where the player picks up trash and goes through 
 - Storyline (but no words)
 
 **How does the game actually play? (Core Game Loop)**
-[Describe what players do, what they're trying to achieve, what challenges they face, and what rewards they get, etc]
+The player has to go through a story, defeat enemies and restore the forest
 
 How will you keep players engaged for 30 minutes? What's the general scope of your game (will change as you go)?
-[Describe your plan for sustaining gameplay]
+By having puzzles and a story to go through so the player has to play for at least 30 minutes in order to play! :)
