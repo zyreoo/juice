@@ -1,6 +1,6 @@
 # Eyes to Reality
 
-**Team Members:** Nathaniel
+**Team Members:** Nathaniel and Eli
 
 **How would you pitch your game in one line?**
 A platformer with some puzzle elements where things act differently based on whether you are looking at them.
