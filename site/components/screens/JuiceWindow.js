@@ -197,7 +197,7 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
             formData.append('stopTime', stopTime.toISOString());
             formData.append("isJuice", true);
 
-            const uploadResponse = await fetch('http://localhost:3001/api/video/upload', {
+            const uploadResponse = await fetch('https://sww48o88cs88sg8k84g4s4kg.a.selfhosted.hackclub.com/api/video/upload', {
                 method: 'POST',
                 body: formData,
             });

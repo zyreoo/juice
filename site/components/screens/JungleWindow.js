@@ -251,7 +251,7 @@ export default function JungleWindow({ position, isDragging, isActive, handleMou
             formData.append('stopTime', stopTime.toISOString());
             formData.append("isJuice", false)
 
-            const uploadResponse = await fetch('http://localhost:3001/api/video/upload', {
+            const uploadResponse = await fetch('https://sww48o88cs88sg8k84g4s4kg.a.selfhosted.hackclub.com/api/video/upload', {
                 method: 'POST',
                 body: formData,
             });
