@@ -2,7 +2,7 @@
 
 **Team Members:** 
 
-- Alonso Banda (don´t have any friends that want to participate, so hoping someone from the community to join me!) 
+- **Alonso Banda** & **Diego Landeros**
 
 
 **How would you pitch your game in one line?**
