@@ -3,7 +3,7 @@
 **Team Members:** Oisín & Sebastian
 
 **How would you pitch your game in one line?**
-[example format: "It's like [Game X] meets [Game Y] but with [Unique Element Z]" (doesn't have to follow this format)]
+A child trapped in dream experiments must escape as nightmares bleed into reality.
 
 **What is the key mechanic(s) that make it fun?**
 [Describe how the mechanic works, why it's fun/important, how it interacts with other mechanics, etc]
