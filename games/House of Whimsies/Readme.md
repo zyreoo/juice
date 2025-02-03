@@ -1,4 +1,10 @@
-GAME PITCH: "House of Whimsies: The Enchanted Repair"HOW WOULD YOU PITCH YOUR GAME IN ONE LINE?"Help a charmingly crumbling house come alive by solving puzzles, restoring its rooms, and unlocking secrets—with floating furniture, magic doors, and no pressure!"
+GAME PITCH: "House of Whimsies: The Enchanted Repair
+
+"HOW WOULD YOU PITCH YOUR GAME IN ONE LINE?
+
+"Help a charmingly crumbling house come alive by solving puzzles, restoring its rooms, and unlocking secrets—with floating furniture, magic doors, and no pressure!"
+
+WHAT IS THE KEY MECHANIC(S) THAT MAKE IT FUN?
 
 • living house puzzles:interact with animated rooms(e.g.,"rotate a staircase to reach a hidden attic,""use rainwater to reveal invisible paintings").
 
