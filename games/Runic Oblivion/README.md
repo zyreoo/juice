@@ -11,5 +11,5 @@ Magic.
 **How does the game actually play? (Core Game Loop)**
 Magic combination.
 
-How will you keep players engaged for 30 minutes? What's the general scope of your game (will change as you go)?
-Yes
+**How will you keep players engaged for 30 minutes? What's the general scope of your game (will change as you go)?**
+Yes.
