@@ -696,6 +696,26 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                         fontWeight: userData?.totalKudos > 0 ? 'bold' : 'normal'
                     }}>{userData?.totalTokens || 0}</p>
                 </div>
+                <div style={{
+                    display: "flex", 
+                    border: "1px solid #000", 
+                    alignItems: "center", 
+                    justifyContent: "space-around", 
+                    borderRadius: 4, 
+                    padding: "2px 4px",
+                    minWidth: 42,
+                    gap: 6,
+                    transition: 'all 0.3s ease',
+                    backgroundColor: 'rgba(0, 0, 0, 0.05)',
+                    borderColor: '#000'
+                }}>  
+                    <img style={{width: 14, height: 14}} src={"/jungle/goldToken.png"}/>
+                    <p style={{
+                        fontSize: 16,
+                        color: '#000',
+                        fontWeight: userData?.totalKudos > 0 ? 'bold' : 'normal'
+                    }}>{userData?.totalRedeemableTokens || 0}</p>
+                </div>
                 <p style={{
                     color: "rgba(0, 0, 0, 0.8)",
                     fontWeight: 500

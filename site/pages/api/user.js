@@ -79,13 +79,29 @@ export default async function handler(req, res) {
       let orangesCollected = 0;
       let applesCollected = 0;
       let blueberriesCollected = 0;
+      let kiwisRedeemable = 0;
+      let lemonsRedeemable = 0;
+      let orangesRedeemable = 0;
+      let applesRedeemable = 0;
+      let blueberriesRedeemable = 0;
       if(jungleStretchesCompleted.length > 0) {
           jungleStretchesCompleted.forEach((jungleRecord) => {
-            kiwisCollected += jungleRecord.kiwisCollected == undefined ? 0 : jungleRecord.kiwisCollected;
-            lemonsCollected += jungleRecord.lemonsCollected == undefined ? 0 : jungleRecord.lemonsCollected;
-            orangesCollected += jungleRecord.orangesCollected == undefined ? 0 : jungleRecord.orangesCollected;
-            applesCollected += jungleRecord.applesCollected == undefined ? 0 : jungleRecord.applesCollected;
-            blueberriesCollected += jungleRecord.blueberriesCollected == undefined ? 0 : jungleRecord.blueberriesCollected;
+            if(!jungleRecord.countsForBoss){
+              kiwisCollected += jungleRecord.kiwisCollected == undefined ? 0 : jungleRecord.kiwisCollected;
+              lemonsCollected += jungleRecord.lemonsCollected == undefined ? 0 : jungleRecord.lemonsCollected;
+              orangesCollected += jungleRecord.orangesCollected == undefined ? 0 : jungleRecord.orangesCollected;
+              applesCollected += jungleRecord.applesCollected == undefined ? 0 : jungleRecord.applesCollected;
+              blueberriesCollected += jungleRecord.blueberriesCollected == undefined ? 0 : jungleRecord.blueberriesCollected;
+              return;
+            }
+            if(!jungleRecord.isRedeemed){
+              kiwisRedeemable += jungleRecord.kiwisCollected == undefined ? 0 : jungleRecord.kiwisCollected;
+              lemonsRedeemable += jungleRecord.lemonsCollected == undefined ? 0 : jungleRecord.lemonsCollected;
+              orangesRedeemable += jungleRecord.orangesCollected == undefined ? 0 : jungleRecord.orangesCollected;
+              applesRedeemable += jungleRecord.applesCollected == undefined ? 0 : jungleRecord.applesCollected;
+              blueberriesRedeemable += jungleRecord.blueberriesCollected == undefined ? 0 : jungleRecord.blueberriesCollected;
+              return;
+            }
         })
       }
 
@@ -113,11 +129,18 @@ export default async function handler(req, res) {
       const appleTokens = applesCollected * appleTokenRate;
       const blueberryTokens = blueberriesCollected * blueberryTokenRate;
 
+      const kiwiTokensRedeemable = kiwisRedeemable * kiwiTokenRate;
+      const lemonTokensRedeemable = lemonsRedeemable * lemonTokenRate;
+      const orangeTokensRedeemable = orangesRedeemable * orangeTokenRate;
+      const appleTokensRedeemable = applesRedeemable * appleTokenRate;
+      const blueberryTokensRedeemable = blueberriesRedeemable * blueberryTokenRate;
+
       // Calculate total tokens
       const totalTokens = kiwiTokens + lemonTokens + orangeTokens + appleTokens + blueberryTokens;
+      const totalRedeemableTokens = kiwiTokensRedeemable + lemonTokensRedeemable + 
+      orangeTokensRedeemable + appleTokensRedeemable + blueberryTokensRedeemable;
       userData.totalTokens = totalTokens;
-
-      console.log(totalTokens)
+      userData.totalRedeemableTokens = totalRedeemableTokens
 
       userData.totalKudos = totalKudos;
       console.log(userData)
