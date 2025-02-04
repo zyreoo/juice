@@ -22,7 +22,7 @@ export default function FruitBasketWindow({ position, isDragging, isActive, hand
     };
 
     const handleRedeemTokens = () => {
-        alert("This feature will become available REAL SOON. Stay tuned in the #juice channel")
+        alert("This feature will become available REAL SOON. Stay tuned in the #jungle channel")
     }
 
     // Load data
