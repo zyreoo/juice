@@ -25,6 +25,13 @@ export default async function handler(req, res) {
     const stretchId = uuidv4();
     // console.log("singup " + signupRecord.id)
 
+    const records = await base('jungleBosses').select({}).firstPage();
+    const jungleBossesFought = signupRecord.fields.jungleBossesFought || [];
+    // Filter jungle bosses not fought
+    const jungleBossesNotFought = records.filter(record => 
+      !jungleBossesFought.includes(record.id)
+    );
+
     // Create new record in jungleStretches with a reference to the Signups record
     const bossFought = (await base('jungleBossesFought').create([
       {
@@ -33,12 +40,13 @@ export default async function handler(req, res) {
           githubLink,
           itchLink,
           user: [signupRecord.id], // Link to the Signups record
-          timeFought: new Date().toISOString()
+          timeFought: new Date().toISOString(),
+          jungleBoss: [jungleBossesNotFought[0].id]
         }
       }
     ]))[0];
 
-    // Retrieve the current jungleStretches record
+
     const jungleStretchesRecords = await base('jungleStretches').select({
       filterByFormula: `
             AND(
@@ -46,29 +54,32 @@ export default async function handler(req, res) {
             ({endtime}),
             NOT({isCanceled})
             )
-        `,
-      maxRecords: 1
+        `
     }).all();
 
     if (!jungleStretchesRecords || jungleStretchesRecords.length === 0) {
       return res.status(404).json({ message: 'Jungle stretch not found' });
     }
 
-    console.log(jungleStretchesRecords)
+    let maxHours = jungleBossesNotFought[0].fields.hours
 
-    jungleStretchesRecords.forEach(async (jungleStretchesRecord) => {
+    for (let i = 0; i < jungleStretchesRecords.length; i++) {
+      const jungleStretchesRecord = jungleStretchesRecords[i];
       const currentBossesFought = jungleStretchesRecord.fields.jungleBossesFought || [];
 
-      // Update the jungleStretches record by appending the new bossFought.id
+      // Await the update operation
       const jungleStretch = await base("jungleStretches").update([
         {
           id: jungleStretchesRecord.id,
           fields: {
-            jungleBossesFought: [...currentBossesFought, bossFought.id]
+            jungleBossesFought: [...currentBossesFought, bossFought.id],
+            jungleBossesFoughtFiltered: [...currentBossesFought, bossFought.id],
+            countsForBoss: maxHours >= 0 ? true : false,
           }
         }
       ]);
-    })
+      maxHours -= jungleStretch[0].fields.timeWorkedHours;
+    }
     
     res.status(200).json({ stretchId });
   } catch (error) {

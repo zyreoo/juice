@@ -411,14 +411,40 @@ export default function JungleWindow({ position, isDragging, isActive, handleMou
         }
     };
 
-    const handleFightBoss = () => {
-        if(!userData) return;
-        if(userData.totalJungleHours < 3) // first boss: 3h
-            alert("You're not strong enough to fight the boss yet! You need to forage more in the jungle.")
-        else{
-            setIsFightingBoss(true);
+    const handleFightBoss = async () => {
+        if (!userData) return;
+
+        try {
+            const response = await fetch('/api/get-time-to-next-boss', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    token: userData.token,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to get time to next boss');
+            }
+
+            const data = await response.json();
+            const timeToNextBoss = data.timeToNextBoss;
+            if(!timeToNextBoss) {
+                alert("The jungle seems peaceful... for now.")
+                return;
+            }
+
+            if (timeToNextBoss > 0) {
+                alert(`You're not strong enough to fight the boss yet! You need to forage more in the jungle for ${timeToNextBoss} more hours.`);
+            } else {
+                setIsFightingBoss(true);
+            }
+        } catch (error) {
+            console.error('Error fetching time to next boss:', error);
         }
-    }
+    };
 
     const handleFinishBoss = async () => {
         if (!confirm("Are you sure your game meets all the requirements?")) {
@@ -531,7 +557,7 @@ export default function JungleWindow({ position, isDragging, isActive, handleMou
                                 alignItems: "center",
                             }}>
                                 <img 
-                                    src="/jungle/jungleicon.png"
+                                    src="/jungle/mossgolem.gif"
                                     alt="Jungle"
                                     style={{
                                         width: "150px",
