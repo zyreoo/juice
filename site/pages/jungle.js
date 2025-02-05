@@ -204,7 +204,7 @@ export default function Home() {
           {stage === "loading" && <LoadingScreen />}
           {stage === "computer" && (
             <MainView
-              isJungle={false}
+              isJungle={true}
               isLoggedIn={isLoggedIn}
               setIsLoggedIn={setIsLoggedIn}
               userData={userData}
@@ -234,7 +234,7 @@ export default function Home() {
             <p style={{ fontSize: 24, marginBottom: 16 }}>
               You're on the mobile version of the site which is unfortunately
               quite lame compared to the desktop version! Open
-              juice.hackclub.com on your laptop
+              juice.hackclub.com/jungle on your laptop
             </p>
           </div>
           <img
@@ -245,10 +245,10 @@ export default function Home() {
             }}
             src="./background.gif"
           />
-          <p style={{ fontSize: 48 }}>Juice</p>
+          <p style={{ fontSize: 48 }}>Jungle</p>
           <p style={{ fontSize: 24 }}>
-            2 Month Game Jam Followed by Popup Cafe in Shanghai, China (flight
-            stipends available).
+            Get grants to buy assets from the unity store or itch.io or get licenses to game-making software and 
+            publish it on various platforms
           </p>
           <div
             style={{
@@ -305,7 +305,7 @@ export default function Home() {
           {mobileSignupStatus === "success" && (
             <p style={{ color: "green", textAlign: "center", marginTop: 8 }}>
               You're signed up! <br />
-              Kickoff Call Saturday Feb 1st 7:30 PM EST
+              Check the desktop version for more
             </p>
           )}
           {mobileSignupStatus === "error" && (

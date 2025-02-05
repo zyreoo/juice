@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 
-export default function WutIsThisWindow({ position, isDragging, isActive, handleMouseDown, handleDismiss, handleWindowClick, BASE_Z_INDEX, ACTIVE_Z_INDEX }) {
+export default function WutIsJungleWindow({ position, isDragging, isActive, handleMouseDown, handleDismiss, handleWindowClick, BASE_Z_INDEX, ACTIVE_Z_INDEX }) {
     const contentRef = useRef(null);
 
     const handleRegisterClick = (e) => {
@@ -23,7 +23,7 @@ export default function WutIsThisWindow({ position, isDragging, isActive, handle
             zIndex: isActive ? ACTIVE_Z_INDEX : BASE_Z_INDEX, 
         }}>
             <div 
-                onClick={handleWindowClick('wutIsThis')}
+                onClick={handleWindowClick('wutIsJungle')}
                 style={{
                     display: "flex", 
                     width: 650,
@@ -38,7 +38,7 @@ export default function WutIsThisWindow({ position, isDragging, isActive, handle
                     animation: "linear .3s windowShakeAndScale"
                 }}>
                 <div 
-                    onMouseDown={handleMouseDown('wutIsThis')}
+                    onMouseDown={handleMouseDown('wutIsJungle')}
                     style={{
                         display: "flex", 
                         borderBottom: "1px solid #00000020", 
@@ -51,9 +51,9 @@ export default function WutIsThisWindow({ position, isDragging, isActive, handle
                         borderTopRightRadius: 4
                     }}>
                     <div style={{display: "flex", flexDirection: "row", gap: 8}}>
-                        <button onClick={(e) => { e.stopPropagation(); handleDismiss('wutIsThis'); }}>x</button>
+                        <button onClick={(e) => { e.stopPropagation(); handleDismiss('wutIsJungle'); }}>x</button>
                     </div>
-                    <p>wutIsThis.txt</p>
+                    <p>wutIsJungle.txt</p>
                     <div></div>
                 </div>
                 <div 
@@ -81,17 +81,12 @@ export default function WutIsThisWindow({ position, isDragging, isActive, handle
                     }}
                 >
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                        <p>Hello Hacker, <a href="https://hackclub.slack.com/team/U041FQB8VK2">Thomas</a> here</p>
-                        <p>Every year, we organize wild adventures at Hack Club (see <a target="_blank" href="https://youtu.be/ufMUJ9D1fi8?feature=shared">Trail</a>, <a target="_blank" href="https://www.youtube.com/watch?v=KLx4NZZPzMc">Epoch</a>, <a target="_blank" href="https://youtu.be/2BID8_pGuqA?feature=shared">Zephyr</a>, etc).</p>
-                        <p>This year we're organizing our wildest adventure yet. We will be working together online for two months, making our own games, shipping our games to the steam store, and then getting together in-person in Shanghai, China to run a popup cafe for people to come and play our games.</p>
-                        <p>Every week we will get together on call, gain achievements, and play eachother's games. I'll be making my first real video game alongside all of you for these two months, and we'll learn together in the <a target="_blank" href="https://hackclub.slack.com/archives/C088UF12N1Z">#juice</a>.</p>
-                        <p>We have travel stipends available to game devs who:</p>
-                        <ul style={{marginLeft: 16}}>
-                            <li>spend 100+ hours building their game</li>
-                            <li>include no spoken or written words in their game (languageless)</li>
-                            <li>ship their game to the Steam Store (30min playable content)</li>
-                        </ul>
-                        <p>You are invited & all of the tools are in your hands to make this adventure happen, so it's up to you. Do you want to make this adventure happen? If <a href="#" class="register-link">let's do this together</a></p>
+                        <p>Hey there! I'm <a href="https://hackclub.slack.com/team/U06GEGEHX16">Cosmin</a></p>
+                        <p>Jungle is a Hackclub You Ship We Ship program for game developers, where you get to work on your game and earn assets and licenses throughout your development journey.</p>
+                        <p>Some of the prizes include: Steam Developer License, and other publishing licenses, GameMaker Studio commercial license, any asset from Itch.io and the Unity Store, and, for music enthusiasts, FL Studio</p>
+                        <p>In order to earn these prizes, open the Jungle app and start foraging! You'll receive a fruit every 5-10 minutes which will automatically be converted to tokens. After you defeat your first boss, you can redeem your tokens up until that point and get assets for your game to make it to the next boss! The bossfights are going to give you requirements for your game and you'll have to publish them in itch.io and github</p>
+                        <p>The only requirement for games is that they are made in a Game Engine (Unity, Unreal, Godot, GameMaker - for other engines ask in #jungle channel first) and that they beat the bosses requirements - don't worry though, the Moss Golem is really easy.. But they get MORE and MORE dangerous as you progress</p>
+                        <p>So hop into the jungle by registering and start collecting those delicious kiwis and slash those evil monsters!</p>
                     </div>
                 </div>
             </div>

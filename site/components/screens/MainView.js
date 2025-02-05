@@ -2,7 +2,7 @@ import React, { Suspense } from 'react';
 import FileIcon from '../FileIcon';
 import WelcomeWindow from './WelcomeWindow';
 import AchievementsWindow from './AchievementsWindow';
-import WutIsThisWindow from './WutIsThisWindow';
+import WutIsJuiceWindow from './WutIsJuiceWindow';
 import RegisterWindow from './RegisterWindow';
 import VideoWindow from './VideoWindow';
 import FactionWindow from './FactionWindow';
@@ -15,8 +15,9 @@ import FortuneBasket from './FortuneBasket';
 import ThanksWindow from './ThanksWindow';
 import JungleWindow from './JungleWindow';
 import FruitBasketWindow from './FruitBasketWindow';
+import WutIsJungleWindow from './WutIsJungleWindow';
 
-export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserData }) {
+export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserData, isJungle }) {
   const [time, setTime] = React.useState(new Date());
   const [timeRemaining, setTimeRemaining] = React.useState('');
   const [selectedFile, setSelectedFile] = React.useState(null);
@@ -28,7 +29,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
   const [openWindows, setOpenWindows] = React.useState(['welcomeWindow']);
   const [windowOrder, setWindowOrder] = React.useState(['welcomeWindow']);
   const [selectedRank, setSelectedRank] = React.useState(1);
-  const [wutIsThisPosition, setWutIsThisPosition] = React.useState({ x: 100, y: 100 });
+  const [wutIsJuicePosition, setWutIsJuicePosition] = React.useState({ x: 100, y: 100 });
+  const [wutIsJunglePosition, setwutIsJunglePosition] = React.useState({ x: 100, y: 100 });
   const [registerPosition, setRegisterPosition] = React.useState({ x: 150, y: 150 });
   const [videoPosition, setVideoPosition] = React.useState({ x: 200, y: 200 });
   const [factionPosition, setFactionPosition] = React.useState({ x: 250, y: 250 });
@@ -55,7 +57,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
   const WINDOW_HEIGHTS = {
     welcomeWindow: 160,
     achievements: 320,
-    wutIsThis: 470,
+    wutIsJuice: 470,
+    wutIsJungle: 470,
     register: 200,
     video: 397,
     faction: 200,
@@ -109,13 +112,13 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
           setWindowOrder(prev => [...prev.filter(w => w !== 'achievements'), 'achievements']);
         }
       } else if (fileId === "file1") {
-        if (!openWindows.includes('wutIsThis')) {
-          setOpenWindows(prev => [...prev, 'wutIsThis']);
-          setWindowOrder(prev => [...prev.filter(w => w !== 'wutIsThis'), 'wutIsThis']);
+        if (!openWindows.includes('wutIsJuice')) {
+          setOpenWindows(prev => [...prev, 'wutIsJuice']);
+          setWindowOrder(prev => [...prev.filter(w => w !== 'wutIsJuice'), 'wutIsJuice']);
           document.getElementById("windowOpenAudio").currentTime = 0;
           document.getElementById("windowOpenAudio").play();
         } else {
-          setWindowOrder(prev => [...prev.filter(w => w !== 'wutIsThis'), 'wutIsThis']);
+          setWindowOrder(prev => [...prev.filter(w => w !== 'wutIsJuice'), 'wutIsJuice']);
         }
       } else if (fileId === "Register") {
         if (!openWindows.includes('register')) {
@@ -189,6 +192,15 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         } else {
           setWindowOrder(prev => [...prev.filter(w => w !== 'fruitBasketWindow'), 'fruitBasketWindow']);
         }
+      } else if (fileId === "wutIsJungle") {
+        if (!openWindows.includes('wutIsJungle')) {
+          setOpenWindows(prev => [...prev, 'wutIsJungle']);
+          setWindowOrder(prev => [...prev.filter(w => w !== 'wutIsJungle'), 'wutIsJungle']);
+          document.getElementById("windowOpenAudio").currentTime = 0;
+          document.getElementById("windowOpenAudio").play();
+        } else {
+          setWindowOrder(prev => [...prev.filter(w => w !== 'wutIsJungle'), 'wutIsJungle']);
+        }
       }
     }
     setSelectedFile(fileId);
@@ -210,8 +222,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
       case 'achievements':
         position = achievementsPosition;
         break;
-      case 'wutIsThis':
-        position = wutIsThisPosition;
+      case 'wutIsJuice':
+        position = wutIsJuicePosition;
         break;
       case 'register':
         position = registerPosition;
@@ -244,6 +256,9 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
       case 'fruitBasketWindow':
         position = fruitBasketWindowPosition
         break
+      case 'wutIsJungle':
+      position = wutIsJunglePosition;
+      break;
       default:
         console.log('Unknown window name:', windowName);
         position = { x: 0, y: 0 };
@@ -276,8 +291,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         setWelcomePosition(newPosition);
       } else if (activeWindow === 'achievements') {
         setAchievementsPosition(newPosition);
-      } else if (activeWindow === 'wutIsThis') {
-        setWutIsThisPosition(newPosition);
+      } else if (activeWindow === 'wutIsJuice') {
+        setWutIsJuicePosition(newPosition);
       } else if (activeWindow === 'register') {
         setRegisterPosition(newPosition);
       } else if (activeWindow === 'video') {
@@ -299,6 +314,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         setjungleWindowPosition(newPosition);
       } else if (activeWindow === 'fruitBasketWindow') {
         setFruitBasketWindowPosition(newPosition);
+      } else if (activeWindow === 'wutIsJungle') {
+        setwutIsJunglePosition(newPosition);
       }
     }
   };
@@ -725,6 +742,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
 
         {openWindows.includes('welcomeWindow') && (
           <WelcomeWindow 
+            isJungle={isJungle}
             position={welcomePosition}
             isDragging={isDragging}
             isActive={windowOrder[windowOrder.length - 1] === 'welcomeWindow'}
@@ -757,16 +775,29 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
           />
         )}
 
-        {openWindows.includes('wutIsThis') && (
-          <WutIsThisWindow 
-            position={wutIsThisPosition}
+        {openWindows.includes('wutIsJuice') && (
+          <WutIsJuiceWindow 
+            position={wutIsJuicePosition}
             isDragging={isDragging}
-            isActive={windowOrder[windowOrder.length - 1] === 'wutIsThis'}
+            isActive={windowOrder[windowOrder.length - 1] === 'wutIsJuice'}
             handleMouseDown={handleMouseDown}
             handleDismiss={handleDismiss}
             handleWindowClick={handleWindowClick}
-            BASE_Z_INDEX={getWindowZIndex('wutIsThis')}
-            ACTIVE_Z_INDEX={getWindowZIndex('wutIsThis')}
+            BASE_Z_INDEX={getWindowZIndex('wutIsJuice')}
+            ACTIVE_Z_INDEX={getWindowZIndex('wutIsJuice')}
+          />
+        )}
+
+        {openWindows.includes('wutIsJungle') && (
+          <WutIsJungleWindow 
+            position={wutIsJunglePosition}
+            isDragging={isDragging}
+            isActive={windowOrder[windowOrder.length - 1] === 'wutIsJungle'}
+            handleMouseDown={handleMouseDown}
+            handleDismiss={handleDismiss}
+            handleWindowClick={handleWindowClick}
+            BASE_Z_INDEX={getWindowZIndex('wutIsJungle')}
+            ACTIVE_Z_INDEX={getWindowZIndex('wutIsJungle')}
           />
         )}
 
@@ -950,14 +981,15 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                       data-file-id="Jungle"
                       />
                     )}
-                    <FileIcon 
+                    {isJungle || (<FileIcon 
                         text="Achievements" 
                         icon="achievmentsicon.png"
                         isSelected={selectedFile === "Achievements"}
                         onClick={handleFileClick("Achievements")}
                         delay={0.1}
                         data-file-id="Achievements"
-                    />
+                    />)}
+                    
                     <FileIcon 
                         text="Fortune Basket" 
                         icon="./fortunecookieicon.png" 
@@ -1009,18 +1041,27 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                 </div>
                 <div>
                     <FileIcon 
-                        text="wutIsThis.txt" 
+                        text="wutIsJuice.txt" 
                         icon="./texticon.png"
                         isSelected={selectedFile === "file1"}
                         onClick={handleFileClick("file1")}
                         delay={0}
                         data-file-id="file1"
                     />
+                    <FileIcon 
+                        text="wutIsJungle.txt" 
+                        icon="./texticon.png"
+                        isSelected={selectedFile === "wutIsJungle"}
+                        onClick={handleFileClick("wutIsJungle")}
+                        delay={0}
+                        data-file-id="wutIsJungle"
+                    />
                 </div>
             </div>
         </div>
 
         <div style={{position: "absolute", top: TOP_BAR_HEIGHT + 8, right: 8}}>
+          {isJungle || (<>
             <div 
                 className="panel-pop"
                 style={{
@@ -1052,7 +1093,9 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                         cursor: isRsvped ? "default" : "pointer"
                     }}>{isRsvped ? "Sent Google Calendar Invite" : "RSVP for Call"}</button>
             </div>
-            {(isLoggedIn && !userData?.achievements?.includes("pr_submitted")) && (
+          </>)}
+            
+            {(isLoggedIn && !userData?.achievements?.includes("pr_submitted")) && !isJungle && (
                 <div 
                     className="panel-pop"
                     style={{
