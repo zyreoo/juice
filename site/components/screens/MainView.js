@@ -68,7 +68,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
     jungleWindow: 300,
     fruitBasketWindow: 300,
     fortuneBasket: 220,
-    thanks: 300
+    thanks: 300,
+    secondChallenge: 300
   };
   const BASE_Z_INDEX = 1;
 
@@ -261,6 +262,9 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
       case 'wutIsJungle':
       position = wutIsJunglePosition;
       break;
+      case 'secondChallenge':
+        position = secondChallengePosition;
+        break;
       default:
         console.log('Unknown window name:', windowName);
         position = { x: 0, y: 0 };
@@ -318,6 +322,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         setFruitBasketWindowPosition(newPosition);
       } else if (activeWindow === 'wutIsJungle') {
         setwutIsJunglePosition(newPosition);
+      } else if (activeWindow === 'secondChallenge') {
+        setSecondChallengePosition(newPosition);
       }
     }
   };
@@ -1196,7 +1202,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                     </div>
             )}
 
-            {/* {(isLoggedIn && userData?.achievements?.includes("pr_submitted")) && !isJungle && (
+            {(isLoggedIn && userData?.achievements?.includes("pr_submitted")) && !isJungle && (
                 <div 
                     className="panel-pop rainbow-glass-panel"
                     style={{
@@ -1219,23 +1225,25 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                         }}>Second Challenge Reveals Itself...</p>
                         <button 
                             onClick={handleSecondChallengeOpen}
+                            disabled={userData.achievements.includes("poc_submitted")}
                             style={{
                                 padding: "4px 12px",
                                 backgroundColor: "#FFE600",
                                 color: "#000",
+                                opacity: userData.achievements.includes("poc_submitted") ? 0.7 : 1.0,
                                 border: "2px solid #000",
                                 borderRadius: 4,
                                 cursor: "pointer",
                                 fontWeight: "bold",
-                                animation: "buttonBounce 2s ease-in-out infinite",
+                                animation: !userData.achievements.includes("poc_submitted") ? "buttonBounce 2s ease-in-out infinite" : "",
                                 transition: "transform 0.2s ease, box-shadow 0.2s ease"
-                            }}>Uncover Challenge</button>
+                            }}>{userData.achievements.includes("poc_submitted") ? "Itch Submitted" : "Uncover Challenge"}</button>
                     </div>
                     <div className="floating-boat boat1" style={{ left: '0', top: '50%' }}>⛵️</div>
                     <div className="floating-boat boat2" style={{ right: '0', top: '30%' }}>⛵️</div>
                     <div className="floating-boat boat1" style={{ left: '30%', top: '70%', animationDelay: '4s' }}>⛵️</div>
                 </div>
-            )} */}
+            )}
  
             {/* {isLoggedIn && (
               <>
