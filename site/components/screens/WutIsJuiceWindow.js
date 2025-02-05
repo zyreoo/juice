@@ -28,7 +28,7 @@ export default function WutIsJuiceWindow({ position, isDragging, isActive, handl
                     display: "flex", 
                     width: 650,
                     color: 'black',
-                    height: 470,
+                    height: 490,
                     backgroundColor: "#fff", 
                     border: "1px solid #000", 
                     borderRadius: 4,
@@ -92,6 +92,9 @@ export default function WutIsJuiceWindow({ position, isDragging, isActive, handl
                             <li>ship their game to the Steam Store (30min playable content)</li>
                         </ul>
                         <p>You are invited & all of the tools are in your hands to make this adventure happen, so it's up to you. Do you want to make this adventure happen? If <a href="#" class="register-link">let's do this together</a></p>
+                        <b style={{
+                            animation: 'steamGrantFlash 1s infinite'
+                        }}>ALL PARTICIPANTS THAT SHIP & MEET CRITERIA GET FREE STEAM LICENSE GRANT!</b>
                     </div>
                 </div>
             </div>
