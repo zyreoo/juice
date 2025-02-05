@@ -299,7 +299,7 @@ export default function WelcomeWindow({ position, isDragging, isActive, handleMo
                     paddingBottom: 0,
                     pointerEvents: 'none'
                 }}>
-                    <img src={isJungle ? "/jungle/jungle.svg" : "./logo_transparent.svg"} alt="Logo" width={180} style={{ pointerEvents: 'none' }} />
+                    <img src={isJungle ? "/jungle/Jungle.svg" : "./logo_transparent.svg"} alt="Logo" width={180} style={{ pointerEvents: 'none' }} />
                 </div>
                 <p style={{ 
                     pointerEvents: 'none', 
