@@ -16,6 +16,7 @@ import ThanksWindow from './ThanksWindow';
 import JungleWindow from './JungleWindow';
 import FruitBasketWindow from './FruitBasketWindow';
 import WutIsJungleWindow from './WutIsJungleWindow';
+import SecondChallengeWindow from './SecondChallengeWindow';
 
 export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserData, isJungle }) {
   const [time, setTime] = React.useState(new Date());
@@ -51,6 +52,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
   const [isJuicing, setIsJuicing] = React.useState(false);
   const juicerSoundRef = React.useRef(null);
   const [thanksPosition, setThanksPosition] = React.useState({ x: 400, y: 400 });
+  const [secondChallengePosition, setSecondChallengePosition] = React.useState({ x: 350, y: 350 });
 
   // Constants
   const TOP_BAR_HEIGHT = 36;
@@ -383,6 +385,17 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
     }
   };
 
+  const handleSecondChallengeOpen = () => {
+    if (!openWindows.includes('secondChallenge')) {
+      setOpenWindows(prev => [...prev, 'secondChallenge']);
+      document.getElementById("windowOpenAudio").currentTime = 0;
+      document.getElementById("windowOpenAudio").play();
+      setWindowOrder(prev => [...prev.filter(w => w !== 'secondChallenge'), 'secondChallenge']);
+    } else {
+      setWindowOrder(prev => [...prev.filter(w => w !== 'secondChallenge'), 'secondChallenge']);
+    }
+  };
+
   const handleRsvp = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -627,8 +640,53 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         @keyframes rainbow {
           0% { background-position: 0% 50%; }
           50% { background-position: 100% 50%; }
-          100% { background-position: 0%, 50%; }
+          100% { background-position: 0% 50%; }
         }
+        @keyframes rainbowGlass {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        .rainbow-glass-panel {
+          background: linear-gradient(90deg, rgba(255, 220, 180, 0.4), rgba(255, 180, 220, 0.4), rgba(180, 220, 255, 0.4), rgba(180, 255, 220, 0.4));
+          background-size: 300% 100%;
+          animation: rainbowGlass 3s linear infinite;
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+          border: 1px solid rgba(255, 255, 255, 0.4);
+          box-shadow: 0 2px 30px rgba(255, 255, 255, 0.2);
+        }
+        @keyframes buttonBounce {
+          0%, 100% { 
+            transform: scale(1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+          }
+          50% { 
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+          }
+        }
+        .bounce-button {
+          animation: buttonBounce 2s ease-in-out infinite;
+          transform-origin: center;
+        }
+        @keyframes floatBoat1 {
+          0% { transform: translate(-50%, 100%); }
+          100% { transform: translate(150%, -100%) rotate(45deg); }
+        }
+        @keyframes floatBoat2 {
+          0% { transform: translate(150%, 100%) rotate(-45deg); }
+          100% { transform: translate(-50%, -100%) rotate(45deg); }
+        }
+        .floating-boat {
+          position: absolute;
+          font-size: 24px;
+          opacity: 0.3;
+          pointer-events: none;
+          z-index: 0;
+        }
+        .boat1 { animation: floatBoat1 8s linear infinite; }
+        .boat2 { animation: floatBoat2 10s linear infinite; }
       `}</style>
       <div 
         style={{
@@ -958,6 +1016,21 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
           />
         )}
 
+        {openWindows.includes('secondChallenge') && (
+          <SecondChallengeWindow 
+            position={secondChallengePosition}
+            isDragging={isDragging && activeWindow === 'secondChallenge'}
+            isActive={windowOrder[windowOrder.length - 1] === 'secondChallenge'}
+            handleMouseDown={handleMouseDown}
+            handleDismiss={handleDismiss}
+            handleWindowClick={handleWindowClick}
+            BASE_Z_INDEX={getWindowZIndex('secondChallenge')}
+            ACTIVE_Z_INDEX={getWindowZIndex('secondChallenge')}
+            userData={userData}
+            setUserData={setUserData}
+          />
+        )}
+
         <div style={{
             position: "absolute", 
             top: TOP_BAR_HEIGHT, 
@@ -1061,7 +1134,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         </div>
 
         <div style={{position: "absolute", top: TOP_BAR_HEIGHT + 8, right: 8}}>
-          {isJungle || (<>
+          {/* {isJungle || (<>
             <div 
                 className="panel-pop"
                 style={{
@@ -1094,7 +1167,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                     }}>{isRsvped ? "Sent Google Calendar Invite" : "RSVP for Call"}</button>
             </div>
           </>)}
-            
+             */}
             {(isLoggedIn && !userData?.achievements?.includes("pr_submitted")) && !isJungle && (
                 <div 
                     className="panel-pop"
@@ -1109,18 +1182,58 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                         padding: 12,
                         boxShadow: '0 1px 25px rgba(255, 160, 60, 0.3)'
                     }}>
-                    <p style={{ color: "rgba(0, 0, 0, 0.8)", margin: "0 0 8px 0" }}>First Challenge Reveals Itself...</p>
-                    <button 
-                        onClick={handleFirstChallengeOpen}
-                        style={{
-                            padding: "4px 12px",
-                            backgroundColor: "rgba(0, 0, 0, 0.8)",
-                            color: "#fff",
-                            border: "none",
-                            borderRadius: 4,
-                            backgroundColor: "#FF4002",
-                            cursor: "pointer"
-                        }}>Uncover Challenge</button>
+                        <p style={{ color: "rgba(0, 0, 0, 0.8)", margin: "0 0 8px 0" }}>First Challenge Reveals Itself...</p>
+                        <button 
+                            onClick={handleFirstChallengeOpen}
+                            style={{
+                                padding: "4px 12px",
+                                backgroundColor: "#FF4002",
+                                color: "#fff",
+                                border: "none",
+                                borderRadius: 4,
+                                cursor: "pointer"
+                            }}>Uncover Challenge</button>
+                    </div>
+            )}
+
+            {(isLoggedIn && userData?.achievements?.includes("pr_submitted")) && !isJungle && (
+                <div 
+                    className="panel-pop rainbow-glass-panel"
+                    style={{
+                        width: 332,
+                        marginTop: 8,
+                        borderRadius: 8,
+                        padding: 12,
+                        position: 'relative',
+                        overflow: 'hidden'
+                    }}>
+                    <div style={{ position: 'relative', zIndex: 1 }}>
+                        <p style={{ 
+                            color: "rgba(255, 255, 255, 1.0)", 
+                            margin: "0 0 8px 0",
+                            textShadow: `
+                                -1px -1px 0 #000,
+                                1px -1px 0 #000,
+                                -1px 1px 0 #000,
+                                1px 1px 0 #000`
+                        }}>Second Challenge Reveals Itself...</p>
+                        <button 
+                            onClick={handleSecondChallengeOpen}
+                            style={{
+                                padding: "4px 12px",
+                                backgroundColor: "#FFE600",
+                                color: "#000",
+                                border: "2px solid #000",
+                                borderRadius: 4,
+                                cursor: "pointer",
+                                fontWeight: "bold",
+                                animation: "buttonBounce 2s ease-in-out infinite",
+                                transition: "transform 0.2s ease, box-shadow 0.2s ease"
+                            }}>Uncover Challenge</button>
+                    </div>
+                    <div className="floating-boat boat1" style={{ left: '0', top: '50%' }}>⛵️</div>
+                    <div className="floating-boat boat2" style={{ right: '0', top: '30%' }}>⛵️</div>
+                    <div className="floating-boat boat1" style={{ left: '30%', top: '70%', animationDelay: '4s' }}>⛵️</div>
                 </div>
             )}
  
