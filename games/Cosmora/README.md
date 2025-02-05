@@ -1,6 +1,6 @@
 # Cosmora
 
-**Team Members:** Aayush , Tane , Mehd
+**Team Members:** Aayush , Tane , Mehd , Carlos
 
 **How would you pitch your game in one line?**
 It’s like FTL meets Titanfall but with a race for survival across dying planets
