@@ -1196,7 +1196,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                     </div>
             )}
 
-            {(isLoggedIn && userData?.achievements?.includes("pr_submitted")) && !isJungle && (
+            {/* {(isLoggedIn && userData?.achievements?.includes("pr_submitted")) && !isJungle && (
                 <div 
                     className="panel-pop rainbow-glass-panel"
                     style={{
@@ -1235,7 +1235,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                     <div className="floating-boat boat2" style={{ right: '0', top: '30%' }}>⛵️</div>
                     <div className="floating-boat boat1" style={{ left: '30%', top: '70%', animationDelay: '4s' }}>⛵️</div>
                 </div>
-            )}
+            )} */}
  
             {/* {isLoggedIn && (
               <>
