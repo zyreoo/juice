@@ -10,10 +10,12 @@ export default function MenuWindow({
   BASE_Z_INDEX,
   ACTIVE_Z_INDEX,
   userData,
+  setUserData,
 }) {
   const [moments, setMoments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedMoment, setSelectedMoment] = useState(null); // To handle popup
 
   // Variables to hold calculated total hours for each status
   const [totalHours, setTotalHours] = useState(0);
@@ -23,7 +25,7 @@ export default function MenuWindow({
 
   useEffect(() => {
     const fetchMoments = async () => {
-      const userEmail = "irtazanaqvi05@gmail.com";
+      const userEmail = userData?.email;
       try {
         const response = await fetch(
           `/api/get-user-omg-moments?email=${encodeURIComponent(userEmail)}`
@@ -65,6 +67,14 @@ export default function MenuWindow({
 
     fetchMoments();
   }, []);
+
+  const handleMomentClick = (moment) => {
+    setSelectedMoment(moment); // Set the selected moment to show details
+  };
+
+  const closePopup = () => {
+    setSelectedMoment(null); // Close the popup by resetting selected moment
+  };
 
   return (
     <div
@@ -117,13 +127,21 @@ export default function MenuWindow({
           <div></div>
         </div>
 
+        <h2 style={{ margin: 0, textAlign: "center", padding: 10 }}>
+          SuperJuice!
+        </h2>
+        <p style={{ margin: 0, textAlign: "center", padding: 10 }}>
+          After completing the base 100 hours, each new accepted hour will get
+          converted into 5$ for your stipend!
+        </p>
+
         {/* Displaying the Hours Summary */}
         <div
           style={{
             display: "flex",
             justifyContent: "space-around",
             padding: "16px 0",
-            backgroundColor: "#f2f2f2",
+            backgroundColor: "#ffffff",
             borderBottom: "1px solid #ddd",
           }}
         >
@@ -143,8 +161,6 @@ export default function MenuWindow({
             overflow: "auto",
           }}
         >
-          <h2 style={{ margin: 0 }}>SuperJuice!</h2>
-
           {loading && <p>Loading moments...</p>}
           {error && <p style={{ color: "red" }}>Error: {error}</p>}
 
@@ -156,70 +172,92 @@ export default function MenuWindow({
               <div
                 style={{
                   display: "grid",
-                  gridTemplateColumns: "repeat(3, 1fr)",
+                  gridTemplateColumns: "repeat(20, 1fr)",
                   gap: 16,
                   width: "100%",
                 }}
               >
-                {moments.map((moment) => (
-                  <div
-                    key={moment.id}
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: 8,
-                      position: "relative",
-                    }}
-                  >
-                    <video
-                      onMouseEnter={(e) => e.target.play()}
-                      onMouseLeave={(e) => {
-                        e.target.pause();
-                        e.target.currentTime = 0;
-                      }}
-                      style={{
-                        width: "100%",
-                        borderRadius: 4,
-                        backgroundColor: "#000",
-                      }}
-                    >
-                      <source src={moment.video} type="video/mp4" />
-                      Your browser does not support the video tag.
-                    </video>
+                {moments.map((moment) => {
+                  let borderColor;
+                  if (moment.status === "Approved") {
+                    borderColor = "green";
+                  } else if (moment.status === "Rejected") {
+                    borderColor = "red";
+                  } else {
+                    borderColor = "orange";
+                  }
 
+                  return (
                     <div
+                      key={moment.id}
+                      onClick={() => handleMomentClick(moment)} // Show the moment details when clicked
                       style={{
-                        fontSize: "0.9em",
-                        color: "#666",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        backgroundColor: borderColor,
+                        borderRadius: "12px",
+                        width: "30px",
+                        height: "30px",
+                        cursor: "pointer",
                       }}
-                    >
-                      <div
-                        style={{
-                          maxHeight: "3.6em", // approximately 3 lines (1.2em per line)
-                          overflowY: "auto",
-                          marginBottom: 4,
-                        }}
-                      >
-                        <p
-                          style={{
-                            margin: "4px 0",
-                            fontSize: 14,
-                            lineHeight: "1.2em",
-                          }}
-                        >
-                          {moment.description}
-                        </p>
-                      </div>
-                      <p style={{ margin: "4px 0", fontSize: "0.8em" }}>
-                        {new Date(moment.created_at).toLocaleTimeString()}
-                      </p>
-                    </div>
-                  </div>
-                ))}
+                    ></div>
+                  );
+                })}
               </div>
             ))}
         </div>
       </div>
+
+      {/* Popup Modal */}
+      {selectedMoment && (
+        <div
+          style={{
+            position: "fixed",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            zIndex: 9999,
+            width: "80%",
+            maxWidth: "800px",
+            backgroundColor: "white",
+            padding: 20,
+            borderRadius: 8,
+            boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)",
+            display: "flex",
+            flexDirection: "row",
+          }}
+        >
+          <div style={{ flex: 1, marginRight: 16 }}>
+            <video
+              controls
+              style={{
+                width: "100%",
+                borderRadius: 8,
+                backgroundColor: "#000",
+              }}
+            >
+              <source src={selectedMoment.video} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          </div>
+
+          <div style={{ flex: 1 }}>
+            <h3>Description</h3>
+            <p>{selectedMoment.description}</p>
+            <p style={{ paddingTop: 10 }}>
+              Created at: {new Date(selectedMoment.created_at).toLocaleString()}
+            </p>
+            <p style={{ paddingTop: 10 }}>
+              Reviewer Comments:{" "}
+              {selectedMoment.reviewer_comments || "No comments available."}
+            </p>
+            <button onClick={closePopup} style={{ marginTop: 10 }}>
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
