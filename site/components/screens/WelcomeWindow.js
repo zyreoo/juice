@@ -117,17 +117,10 @@ export default function WelcomeWindow({ position, isDragging, isActive, handleMo
             }
         } else if (options[index] === 'Join Jam') {
             setTimeout(() => {
-                if(isJungle) {
-                    setOpenWindows(prev => [...prev, 'register']);
-                    document.getElementById("windowOpenAudio").currentTime = 0;
-                    document.getElementById("windowOpenAudio").play();
-                    setWindowOrder(prev => [...prev.filter(w => w !== 'register'), 'register']);
-                } else {
-                    const registerButton = document.querySelector('button[data-register-button="true"]');
-                    if (registerButton) {
-                        registerButton.click();
-                    }
-                }
+                setOpenWindows(prev => [...prev, 'register']);
+                document.getElementById("windowOpenAudio").currentTime = 0;
+                document.getElementById("windowOpenAudio").play();
+                setWindowOrder(prev => [...prev.filter(w => w !== 'register'), 'register']);
             }, 100);
         } else if (options[index] === 'Start Juicing') {
             setTimeout(() => {
