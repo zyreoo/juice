@@ -31,7 +31,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
   const [openWindows, setOpenWindows] = React.useState(['welcomeWindow']);
   const [windowOrder, setWindowOrder] = React.useState(['welcomeWindow']);
   const [selectedRank, setSelectedRank] = React.useState(1);
-  const [wutIsJuicePosition, setWutIsJuicePosition] = React.useState({ x: 100, y: 100 });
+  const [wutIsJuicePosition, setwutIsJuicePosition] = React.useState({ x: 100, y: 100 });
   const [wutIsJunglePosition, setwutIsJunglePosition] = React.useState({ x: 100, y: 100 });
   const [registerPosition, setRegisterPosition] = React.useState({ x: 150, y: 150 });
   const [videoPosition, setVideoPosition] = React.useState({ x: 200, y: 200 });
@@ -45,10 +45,10 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
     y: Math.max(0, window.innerHeight / 2 - 110)
   });
 
-  const [menuWindowPosition, setMenuWindowPosition] = React.useState({
-    x: 0,
-    y: 0,
-    });
+  const [menuWindowPosition, setMenuWindowPosition] = React.useState({ 
+    x: 400,
+    y: 100
+  });
 
   const [isShaking, setIsShaking] = React.useState(false);
   const collectSoundRef = React.useRef(null);
@@ -235,18 +235,18 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
           ]);
         }
       } else if (fileId === "Menu") {
-        if (!openWindows.includes("menu")) {
-          setOpenWindows((prev) => [...prev, "menu"]);
+        if (!openWindows.includes("menuWindow")) {
+          setOpenWindows((prev) => [...prev, "menuWindow"]);
           setWindowOrder((prev) => [
-            ...prev.filter((w) => w !== "menu"),
-            "menu",
+            ...prev.filter((w) => w !== "menuWindow"),
+            "menuWindow",
           ]);
           document.getElementById("windowOpenAudio").currentTime = 0;
           document.getElementById("windowOpenAudio").play();
         } else {
           setWindowOrder((prev) => [
-            ...prev.filter((w) => w !== "menu"),
-            "menu",
+            ...prev.filter((w) => w !== "menuWindow"),
+            "menuWindow",
           ]);
         }
       } else if (fileId === "Jungle") {
@@ -278,18 +278,18 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
             ...prev.filter((w) => w !== "fruitBasketWindow"),
             "fruitBasketWindow",
           ]);
-      }
-    } else if (fileId === "wutIsJungle") {
-      if (!openWindows.includes('wutIsJungle')) {
-        setOpenWindows(prev => [...prev, 'wutIsJungle']);
-        setWindowOrder(prev => [...prev.filter(w => w !== 'wutIsJungle'), 'wutIsJungle']);
-        document.getElementById("windowOpenAudio").currentTime = 0;
-        document.getElementById("windowOpenAudio").play();
-      } else {
-        setWindowOrder(prev => [...prev.filter(w => w !== 'wutIsJungle'), 'wutIsJungle']);
+        }
+      } else if (fileId === "wutIsJungle") {
+        if (!openWindows.includes('wutIsJungle')) {
+          setOpenWindows(prev => [...prev, 'wutIsJungle']);
+          setWindowOrder(prev => [...prev.filter(w => w !== 'wutIsJungle'), 'wutIsJungle']);
+          document.getElementById("windowOpenAudio").currentTime = 0;
+          document.getElementById("windowOpenAudio").play();
+        } else {
+          setWindowOrder(prev => [...prev.filter(w => w !== 'wutIsJungle'), 'wutIsJungle']);
+        }
       }
     }
-  }
     setSelectedFile(fileId);
   };
 
@@ -519,6 +519,16 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
       ]);
     }
   };
+  const handleSecondChallengeOpen = () => {
+    if (!openWindows.includes('secondChallenge')) {
+      setOpenWindows(prev => [...prev, 'secondChallenge']);
+      document.getElementById("windowOpenAudio").currentTime = 0;
+      document.getElementById("windowOpenAudio").play();
+      setWindowOrder(prev => [...prev.filter(w => w !== 'secondChallenge'), 'secondChallenge']);
+    } else {
+      setWindowOrder(prev => [...prev.filter(w => w !== 'secondChallenge'), 'secondChallenge']);
+    }
+  };
 
   const handleRsvp = async () => {
     try {
@@ -637,11 +647,6 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
       collectAudio.currentTime = 0;
       collectAudio.play();
     }
-  };
-
-  const handleMenuClick = (e) => {
-    setMenuWindowPosition({ x: e.clientX, y: e.clientY });
-    setIsMenuOpen(true);
   };
 
   return (
@@ -1218,10 +1223,18 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
           />
         )}
         
-        {isMenuOpen && (
+        {openWindows.includes("menuWindow") && (
           <MenuWindow
             position={menuWindowPosition}
-            onDismiss={() => setIsMenuOpen(false)}
+            isDragging={isDragging && activeWindow === "menuWindow"}
+            isActive={windowOrder[windowOrder.length - 1] === "menuWindow"}
+            handleMouseDown={handleMouseDown}
+            handleDismiss={handleDismiss}
+            handleWindowClick={handleWindowClick}
+            BASE_Z_INDEX={getWindowZIndex("menuWindow")}
+            ACTIVE_Z_INDEX={getWindowZIndex("menuWindow")}
+            userData={userData}
+            setUserData={setUserData}
           />
         )}
 
@@ -1313,18 +1326,14 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                 />
               )}
 
-              {
-                isLoggedIn && (
-                <FileIcon
-                  text="Menu"
-                  icon="./kudos.png"
-                  isSelected={selectedFile === "Menu"}
-                  onClick={handleMenuClick}
-                  delay={0.5}
-                  data-file-id="Menu"
-                />
-              )
-              }
+              <FileIcon
+                text="Moments"
+                icon="./fortunecookieright.png"
+                isSelected={selectedFile === "Menu"}
+                onClick={handleFileClick("Menu")}
+                delay={0.5}
+                data-file-id="Menu"
+              />
             </div>
             <div>
               <FileIcon

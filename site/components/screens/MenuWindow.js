@@ -24,49 +24,42 @@ export default function MenuWindow({
   const [rejectedHours, setRejectedHours] = useState(0);
 
   useEffect(() => {
-    const fetchMoments = async () => {
-      const userEmail = userData?.email;
-      try {
-        const response = await fetch(
-          `/api/get-user-omg-moments?email=${encodeURIComponent(userEmail)}`
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch moments");
+    if (userData?.juiceStretches) {
+      let total = 0;
+      let pending = 0;
+      let approved = 0;
+      let rejected = 0;
+
+      userData.juiceStretches.forEach(stretch => {
+        const stretchHours = Math.round((stretch.timeWorkedSeconds || 0) / 3600 * 100) / 100;
+        total += stretchHours;
+
+        if (stretch.Review === 'Approved') {
+          approved += stretchHours;
+        } else if (stretch.Review === 'Rejected') {
+          rejected += stretchHours;
+        } else {
+          pending += stretchHours;
         }
-        const data = await response.json();
-        setMoments(data);
+      });
 
-        // Calculate hours for each status after data is fetched
-        let total = 0;
-        let pending = 0;
-        let approved = 0;
-        let rejected = 0;
-
-        data.forEach((moment) => {
-          total += moment.timeHr;
-
-          if (moment.status === "Pending") {
-            pending += moment.timeHr;
-          } else if (moment.status === "Approved") {
-            approved += moment.timeHr;
-          } else if (moment.status === "Rejected") {
-            rejected += moment.timeHr;
-          }
-        });
-
-        setTotalHours(total);
-        setPendingHours(pending);
-        setApprovedHours(approved);
-        setRejectedHours(rejected);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchMoments();
-  }, []);
+      setTotalHours(total);
+      setPendingHours(pending);
+      setApprovedHours(approved);
+      setRejectedHours(rejected);
+      
+      // Set moments directly from userData
+      const allMoments = userData.juiceStretches.reduce((acc, stretch) => {
+        if (stretch.omgMoments) {
+          return [...acc, ...stretch.omgMoments];
+        }
+        return acc;
+      }, []);
+      setMoments(allMoments);
+      
+      setLoading(false);
+    }
+  }, [userData]);
 
   const handleMomentClick = (moment) => {
     setSelectedMoment(moment); // Set the selected moment to show details
@@ -76,18 +69,34 @@ export default function MenuWindow({
     setSelectedMoment(null); // Close the popup by resetting selected moment
   };
 
+  // Add useEffect to handle escape key
+  useEffect(() => {
+    const handleEscapeKey = (e) => {
+      if (e.key === 'Escape' && selectedMoment) {
+        closePopup();
+      }
+    };
+
+    if (selectedMoment) {
+      document.addEventListener('keydown', handleEscapeKey);
+    }
+
+    // Cleanup listener when component unmounts or selectedMoment changes
+    return () => {
+      document.removeEventListener('keydown', handleEscapeKey);
+    };
+  }, [selectedMoment]);
+
   return (
     <div
       style={{
         position: "absolute",
-        transform: `translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px))`,
-        top: "50%",
-        left: "50%",
+        transform: `translate(${position.x}px, ${position.y}px)`,
         zIndex: isActive ? ACTIVE_Z_INDEX : BASE_Z_INDEX,
       }}
     >
       <div
-        onClick={handleWindowClick("menu")}
+        onClick={handleWindowClick("menuWindow")}
         style={{
           display: "flex",
           width: 650,
@@ -103,7 +112,7 @@ export default function MenuWindow({
         }}
       >
         <div
-          onMouseDown={handleMouseDown("menu")}
+          onMouseDown={handleMouseDown("menuWindow")}
           style={{
             display: "flex",
             borderBottom: "1px solid #000",
@@ -117,22 +126,23 @@ export default function MenuWindow({
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                handleDismiss("menu");
+                handleDismiss("menuWindow");
               }}
             >
               x
             </button>
           </div>
-          <p>Menu</p>
+          <p>Moments</p>
           <div></div>
         </div>
 
-        <h2 style={{ margin: 0, textAlign: "center", padding: 10 }}>
-          SuperJuice!
+        <h2 style={{ margin: 0, textAlign: "center", flexDirection: "row", fontSize: 32, marginTop: 8 }}>
+          {approvedHours.toFixed(2)}/100 <p style={{fontSize: 16}} >approved shipped hours</p>
         </h2>
-        <p style={{ margin: 0, textAlign: "center", padding: 10 }}>
-          After completing the base 100 hours, each new accepted hour will get
-          converted into 5$ for your stipend!
+
+        <p style={{ margin: 0, textAlign: "center", padding: 10, fontSize: 14 }}>
+          After completing the base 100 hours, each new approved hour will get<br/>
+          converted into $5 additional for your stipend!
         </p>
 
         {/* Displaying the Hours Summary */}
@@ -140,15 +150,16 @@ export default function MenuWindow({
           style={{
             display: "flex",
             justifyContent: "space-around",
-            padding: "16px 0",
+            padding: "8px 0",
             backgroundColor: "#ffffff",
-            borderBottom: "1px solid #ddd",
+            borderBottom: "1px solid #000",
+            borderTop: "1px solid #000",
           }}
         >
-          <div>Total Hours: {totalHours} hrs</div>
-          <div>Pending Hours: {pendingHours} hrs</div>
-          <div>Approved Hours: {approvedHours} hrs</div>
-          <div>Rejected Hours: {rejectedHours} hrs</div>
+          <div>Total Hours: <br/>{totalHours.toFixed(2)} hrs</div>
+          <div>Pending Hours: <br/>{pendingHours.toFixed(2)} hrs</div>
+          <div>Approved Hours: <br/>{approvedHours.toFixed(2)} hrs</div>
+          <div>Rejected Hours: <br/>{rejectedHours.toFixed(2)} hrs</div>
         </div>
 
         <div
@@ -223,9 +234,9 @@ export default function MenuWindow({
             backgroundColor: "white",
             padding: 20,
             borderRadius: 8,
-            boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)",
             display: "flex",
             flexDirection: "row",
+            border: "1px solid #000"
           }}
         >
           <div style={{ flex: 1, marginRight: 16 }}>
@@ -243,15 +254,15 @@ export default function MenuWindow({
           </div>
 
           <div style={{ flex: 1 }}>
-            <h3>Description</h3>
+            {/* <h3>Description</h3> */}
             <p>{selectedMoment.description}</p>
             <p style={{ paddingTop: 10 }}>
-              Created at: {new Date(selectedMoment.created_at).toLocaleString()}
+             {new Date(selectedMoment.created_at).toLocaleString()}
             </p>
-            <p style={{ paddingTop: 10 }}>
+            {/* <p style={{ paddingTop: 10 }}>
               Reviewer Comments:{" "}
               {selectedMoment.reviewer_comments || "No comments available."}
-            </p>
+            </p> */}
             <button onClick={closePopup} style={{ marginTop: 10 }}>
               Close
             </button>

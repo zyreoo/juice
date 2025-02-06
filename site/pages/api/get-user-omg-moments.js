@@ -1,4 +1,6 @@
-import { table } from '@/utils/Airtable';
+import Airtable from 'airtable';
+
+const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(process.env.AIRTABLE_BASE_ID);
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
@@ -12,19 +14,23 @@ export default async function handler(req, res) {
   }
 
   try {
-    const records = await table('omgMoments')
-      .select({
-        filterByFormula: `{email} = '${email}'`,
-        sort: [{ field: 'createdTime', direction: 'desc' }]
-      })
-      .all();
+    // Get all OMG moments for this user
+    const records = await base('omgMoments').select({
+      filterByFormula: `{email} = '${email}'`,
+      sort: [{ field: 'created_at', direction: 'desc' }]
+    }).all();
 
     const moments = records.map(record => ({
       id: record.id,
-      ...record.fields
+      timeHr: record.fields.timeHr || 0,
+      status: record.fields.status || 'Pending',
+      description: record.fields.description,
+      video: record.fields.video,
+      created_at: record.fields.created_at,
+      reviewer_comments: record.fields.reviewer_comments
     }));
 
-    return res.status(200).json({ moments });
+    return res.status(200).json(moments);
   } catch (error) {
     console.error('Error fetching moments:', error);
     return res.status(500).json({ message: 'Error fetching moments' });
