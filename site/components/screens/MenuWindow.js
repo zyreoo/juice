@@ -196,20 +196,44 @@ export default function MenuWindow({
         >
           <div>
             Total Hours: <br />
-            {totalHours.toFixed(2)} hrs
+            <span style={{ color: "black" }}>{totalHours.toFixed(2)} hrs</span>
           </div>
           <div>
             Pending Hours: <br />
-            {pendingHours.toFixed(2)} hrs
+            <span style={{ color: "orange" }}>
+              {pendingHours.toFixed(2)} hrs
+            </span>
           </div>
           <div>
             Approved Hours: <br />
-            {approvedHours.toFixed(2)} hrs
+            <span style={{ color: "green" }}>
+              {approvedHours.toFixed(2)} hrs
+            </span>
           </div>
           <div>
             Rejected Hours: <br />
-            {rejectedHours.toFixed(2)} hrs
+            <span style={{ color: "red" }}>{rejectedHours.toFixed(2)} hrs</span>
           </div>
+        </div>
+
+        <div
+          style={{
+            textAlign: "center",
+            paddingTop: "5px",
+            paddingBottom: "0px",
+          }}
+        >
+          <span
+            style={{ color: "green", marginRight: "10px", fontSize: "15px" }}
+          >
+            ⬤ Approved
+          </span>
+          <span
+            style={{ color: "orange", marginRight: "10px", fontSize: "15px" }}
+          >
+            ⬤ Pending
+          </span>
+          <span style={{ color: "red", fontSize: "15px" }}>⬤ Rejected</span>
         </div>
 
         <div
