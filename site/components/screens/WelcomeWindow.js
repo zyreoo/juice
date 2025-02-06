@@ -2,30 +2,15 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { JuiceShader } from '../shaders/JuiceShader';
 import { juiceboxBuilding } from '../../public/juiceboxbuilding.png';
-import { JungleShader } from '../shaders/JungleShader';
 
-export default function WelcomeWindow({ position, isDragging, isActive, handleMouseDown, handleDismiss, handleWindowClick, BASE_Z_INDEX, ACTIVE_Z_INDEX, setOpenWindows, setWindowOrder, openWindows, isLoggedIn, isVideoOpen, isJungle }) {
+export default function WelcomeWindow({ position, isDragging, isActive, handleMouseDown, handleDismiss, handleWindowClick, BASE_Z_INDEX, ACTIVE_Z_INDEX, setOpenWindows, setWindowOrder, openWindows, isLoggedIn, isVideoOpen }) {
     const [selectedOption, setSelectedOption] = useState(0);
     const [executedOptions, setExecutedOptions] = useState(new Set());
     const [isHovered, setIsHovered] = useState(false);
     const audioRef = useRef(null);
     const fadeOutStartTimeRef = useRef(null);
     const [isMuted, setIsMuted] = useState(isLoggedIn);
-    const options = [isLoggedIn ? (isJungle ? 'Start Foraging' : 'Start Juicing') : 'Join Jam', 'Learn More', 'Exit'];
-    const logoStyle = { 
-        width: isJungle ? '70%' : '110%',
-        height: isJungle ? '70%' : '110%',
-        imageRendering: 'pixelated', 
-        marginLeft: isJungle ? '-30px' : '-70px',
-        marginBottom: isJungle ? '-30px' : '50px',
-        objectFit: 'contain',
-        userSelect: 'none',
-        WebkitUserSelect: 'none',
-        MozUserSelect: 'none',
-        msUserSelect: 'none',
-        pointerEvents: 'none',
-        draggable: false
-    }
+    const options = [isLoggedIn ? 'Start Juicing' : 'Join Jam', 'Learn More', 'Exit'];
 
     useEffect(() => {
         // Start playing audio when component mounts and video is not open
@@ -91,42 +76,26 @@ export default function WelcomeWindow({ position, isDragging, isActive, handleMo
         if (options[index] === 'Exit') {
             handleDismiss('welcomeWindow');
         } else if (options[index] === 'Learn More') {
-            if(isJungle){
-                setTimeout(() => {
-                    document.getElementById("windowOpenAudio").currentTime = 0;
-                    document.getElementById("windowOpenAudio").play();
-                    setOpenWindows(prev => [...prev, 'wutIsJungle']);
-                    setWindowOrder(prev => [...prev.filter(w => w !== 'wutIsJungle'), 'wutIsJungle']);
-                }, 100);
-            } else {
-                if (audioRef.current) {
-                    audioRef.current.volume = 0;
-                    setIsMuted(true);
-                }
-                setTimeout(() => {
-                    document.getElementById("windowOpenAudio").currentTime = 0;
-                    document.getElementById("windowOpenAudio").play();
-                    setOpenWindows(prev => [...prev, 'wutIsJuice']);
-                    setWindowOrder(prev => [...prev.filter(w => w !== 'wutIsJuice'), 'wutIsJuice']);
-                    
-                    setTimeout(() => {
-                        setOpenWindows(prev => [...prev, 'video']);
-                        setWindowOrder(prev => [...prev.filter(w => w !== 'video'), 'video']);
-                    }, 100);
-                }, 100);
+            if (audioRef.current) {
+                audioRef.current.volume = 0;
+                setIsMuted(true);
             }
+            setTimeout(() => {
+                document.getElementById("windowOpenAudio").currentTime = 0;
+                document.getElementById("windowOpenAudio").play();
+                setOpenWindows(prev => [...prev, 'wutIsThis']);
+                setWindowOrder(prev => [...prev.filter(w => w !== 'wutIsThis'), 'wutIsThis']);
+                
+                setTimeout(() => {
+                    setOpenWindows(prev => [...prev, 'video']);
+                    setWindowOrder(prev => [...prev.filter(w => w !== 'video'), 'video']);
+                }, 100);
+            }, 100);
         } else if (options[index] === 'Join Jam') {
             setTimeout(() => {
-                if(isJungle) {
-                    setOpenWindows(prev => [...prev, 'register']);
-                    document.getElementById("windowOpenAudio").currentTime = 0;
-                    document.getElementById("windowOpenAudio").play();
-                    setWindowOrder(prev => [...prev.filter(w => w !== 'register'), 'register']);
-                } else {
-                    const registerButton = document.querySelector('button[data-register-button="true"]');
-                    if (registerButton) {
-                        registerButton.click();
-                    }
+                const registerButton = document.querySelector('button[data-register-button="true"]');
+                if (registerButton) {
+                    registerButton.click();
                 }
             }, 100);
         } else if (options[index] === 'Start Juicing') {
@@ -135,13 +104,6 @@ export default function WelcomeWindow({ position, isDragging, isActive, handleMo
                 document.getElementById("windowOpenAudio").play();
                 setOpenWindows(prev => [...prev, 'juiceWindow']);
                 setWindowOrder(prev => [...prev.filter(w => w !== 'juiceWindow'), 'juiceWindow']);
-            }, 100);
-        } else if (options[index] === 'Start Foraging') {
-            setTimeout(() => {
-                document.getElementById("windowOpenAudio").currentTime = 0;
-                document.getElementById("windowOpenAudio").play();
-                setOpenWindows(prev => [...prev, 'jungleWindow']);
-                setWindowOrder(prev => [...prev.filter(w => w !== 'jungleWindow'), 'jungleWindow']);
             }, 100);
         }
     };
@@ -162,7 +124,7 @@ export default function WelcomeWindow({ position, isDragging, isActive, handleMo
 
     // Update executedOptions when windows are closed
     useEffect(() => {
-        if (!openWindows.includes('wutIsJuice') && !openWindows.includes('video')) {
+        if (!openWindows.includes('wutIsThis') && !openWindows.includes('video')) {
             setExecutedOptions(prev => {
                 const newSet = new Set(prev);
                 newSet.delete('Learn More');
@@ -282,7 +244,7 @@ export default function WelcomeWindow({ position, isDragging, isActive, handleMo
                     gl={{ alpha: true }}
                 >
                     <ambientLight intensity={1} />
-                    {isJungle ? (<JungleShader/>) : (<JuiceShader/>)}
+                    <JuiceShader />
                 </Canvas>
             </div>
             <style>{`
@@ -299,23 +261,13 @@ export default function WelcomeWindow({ position, isDragging, isActive, handleMo
                     paddingBottom: 0,
                     pointerEvents: 'none'
                 }}>
-                  <img src={isJungle ? "/jungle/jungleLogo.svg" : "./logo_transparent.svg"} alt="Logo" width={180} style={{ pointerEvents: 'none' }} />
-
+                    <img src="./logo_transparent.svg" alt="Juice" width={180} style={{ pointerEvents: 'none' }} />
                 </div>
                 <p style={{ 
                     pointerEvents: 'none', 
                     margin: '0 0 16px 0',
                     color: '#000',
-                    textShadow: isJungle ? `
-                        -1px -1px 0 #10c710,
-                        1px -1px 0 #10c710,
-                        -1px 1px 0 #10c710,
-                        1px 1px 0 #10c710,
-                        -2px 0 0 #10c710,
-                        2px 0 0 #10c710,
-                        0 -2px 0 #10c710,
-                        0 2px 0 #10c710
-                    ` : `
+                    textShadow: `
                         -1px -1px 0 #FFE135,
                         1px -1px 0 #FFE135,
                         -1px 1px 0 #FFE135,
@@ -329,10 +281,10 @@ export default function WelcomeWindow({ position, isDragging, isActive, handleMo
                     gap: 4,
                     lineHeight: 0.75
                 }}>
-                    <span>{isJungle ? "Start building your game" : "build a game in 2 months"}</span>
-                    <span>{isJungle ? "earn fruit in the jungle" : "then run in-person popup"}</span>
-                    <span>{isJungle ? "turn that fruit into money" : "game cafe in China"}</span>
-                    <i>{isJungle ? "To get assets and licenses" : "(Flight Stipends Available)"}</i>
+                    <span>build a game in 2 months</span>
+                    <span>then run in-person popup</span>
+                    <span>game cafe in China</span>
+                    <i>(Flight Stipends Available)</i>
                 </p>
                 <div style={{ display: "flex", flexDirection: "column", gap: 12, fontFamily: "monospace", fontSize: "28px", marginTop: 'auto' }}>
                     {options.map((option, index) => (
@@ -343,7 +295,7 @@ export default function WelcomeWindow({ position, isDragging, isActive, handleMo
                             style={{
                                 cursor: 'pointer',
                                 fontSize: 24,
-                                color: selectedOption === index ? isJungle ? '#10c710' : '#FFE135' : '#000',
+                                color: selectedOption === index ? '#FFE135' : '#000',
                                 textShadow: selectedOption === index ? `
                                     -1px -1px 0 #000,
                                     1px -1px 0 #000,
@@ -352,16 +304,7 @@ export default function WelcomeWindow({ position, isDragging, isActive, handleMo
                                     -2px 0 0 #000,
                                     2px 0 0 #000,
                                     0 -2px 0 #000,
-                                    0 2px 0 #000` : isJungle ? `
-                                        -1px -1px 0 #10c710,
-                                        1px -1px 0 #10c710,
-                                        -1px 1px 0 #10c710,
-                                        1px 1px 0 #10c710,
-                                        -2px 0 0 #10c710,
-                                        2px 0 0 #10c710,
-                                        0 -2px 0 #10c710,
-                                        0 2px 0 #10c710
-                                    ` : `
+                                    0 2px 0 #000` : `
                                     -1px -1px 0 #FFE135,
                                     1px -1px 0 #FFE135,
                                     -1px 1px 0 #FFE135,
@@ -385,9 +328,22 @@ export default function WelcomeWindow({ position, isDragging, isActive, handleMo
                 </div>
             </div>
             <img 
-                src={isJungle ? "/jungle/jungleicon.png" : "/juiceboxbuilding.png"}
-                alt={isJungle ? "Jungle Tree" : "Juicebox Building"} 
-                style={logoStyle} 
+                src="/juiceboxbuilding.png"
+                alt="Juicebox Building" 
+                style={{ 
+                    width: '110%',
+                    height: '110%',
+                    imageRendering: 'pixelated', 
+                    marginLeft: '-70px',
+                    marginBottom: '50px',
+                    objectFit: 'contain',
+                    userSelect: 'none',
+                    WebkitUserSelect: 'none',
+                    MozUserSelect: 'none',
+                    msUserSelect: 'none',
+                    pointerEvents: 'none',
+                    draggable: false
+                }} 
                 draggable="false"
             />
         </div>
