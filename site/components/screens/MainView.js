@@ -1,4 +1,4 @@
-import React, { Suspense } from "react";
+import React, { Suspense, useState } from "react";
 import FileIcon from "../FileIcon";
 import WelcomeWindow from "./WelcomeWindow";
 import AchievementsWindow from "./AchievementsWindow";
@@ -84,6 +84,7 @@ export default function MainView({
     x: 400,
     y: 400,
   });
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
   // Constants
   const TOP_BAR_HEIGHT = 36;
@@ -645,6 +646,11 @@ export default function MainView({
     }
   };
 
+  const handleMenuClick = (e) => {
+    setMenuWindowPosition({ x: e.clientX, y: e.clientY });
+    setIsMenuOpen(true);
+  };
+
   return (
     <div
       data-shake-container="true"
@@ -1152,16 +1158,10 @@ export default function MainView({
           />
         )}
 
-        {openWindows.includes("menu") && (
+        {isMenuOpen && (
           <MenuWindow
             position={menuWindowPosition}
-            isDragging={isDragging && activeWindow === "menu"}
-            isActive={windowOrder[windowOrder.length - 1] === "menu"}
-            handleMouseDown={handleMouseDown}
-            handleDismiss={handleDismiss}
-            handleWindowClick={handleWindowClick}
-            BASE_Z_INDEX={getWindowZIndex("menu")}
-            ACTIVE_Z_INDEX={getWindowZIndex("menu")}
+            onDismiss={() => setIsMenuOpen(false)}
           />
         )}
 
@@ -1260,7 +1260,7 @@ export default function MainView({
                   text="Menu"
                   icon="./kudos.png"
                   isSelected={selectedFile === "Menu"}
-                  onClick={handleFileClick("Menu")}
+                  onClick={handleMenuClick}
                   delay={0.5}
                   data-file-id="Menu"
                 />
