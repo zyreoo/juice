@@ -23,6 +23,16 @@ export default function MenuWindow({
   const [approvedHours, setApprovedHours] = useState(0);
   const [rejectedHours, setRejectedHours] = useState(0);
 
+  // Add this near the top of the component, after the useState declarations
+  const [audio] = useState(new Audio('/trapdoor.mp3'));
+  const [clickSound] = useState(new Audio('/click.mp3'));
+
+  // Add this after the other state declarations
+  const [currentMomentIndex, setCurrentMomentIndex] = useState(0);
+
+  // Add this with other state declarations at the top
+  const [videoKey, setVideoKey] = useState(0);
+
   useEffect(() => {
     if (userData?.juiceStretches) {
       let total = 0;
@@ -49,7 +59,7 @@ export default function MenuWindow({
       setApprovedHours(approved);
       setRejectedHours(rejected);
 
-      // Get moments and sort them with oldest first
+      // Get moments and sort them with newest first
       const allMoments = userData.juiceStretches.reduce((acc, stretch) => {
         if (stretch.omgMoments) {
           return [...acc, ...stretch.omgMoments];
@@ -57,10 +67,11 @@ export default function MenuWindow({
         return acc;
       }, []);
 
-      // Sort moments by created_at in ascending order (oldest first)
-      const sortedMoments = allMoments.sort((a, b) => {
-        return new Date(a.created_at) - new Date(b.created_at);
-      });
+      // Sort moments by created_at in descending order (newest first)
+      // Then reverse the array so oldest is on the left
+      const sortedMoments = allMoments
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+        .reverse();
 
       setMoments(sortedMoments);
       setLoading(false);
@@ -68,30 +79,61 @@ export default function MenuWindow({
   }, [userData]);
 
   const handleMomentClick = (moment) => {
-    setSelectedMoment(moment); // Set the selected moment to show details
+    const index = moments.findIndex(m => m.id === moment.id);
+    setCurrentMomentIndex(index);
+    audio.currentTime = 0;
+    audio.play();
+    setSelectedMoment(moment);
   };
 
   const closePopup = () => {
-    setSelectedMoment(null); // Close the popup by resetting selected moment
+    clickSound.currentTime = 0;
+    clickSound.play();
+    setTimeout(() => {
+      setSelectedMoment(null);
+    }, 50); // Small delay to ensure sound starts playing first
   };
 
-  // Add useEffect to handle escape key
+  // Modify the navigateMoments function
+  const navigateMoments = (direction) => {
+    const newIndex = currentMomentIndex + direction;
+    
+    // Check bounds
+    if (newIndex >= 0 && newIndex < moments.length) {
+      audio.currentTime = 0;
+      audio.play();
+      setCurrentMomentIndex(newIndex);
+      setSelectedMoment(moments[newIndex]);
+      setVideoKey(prev => prev + 1);
+    }
+  };
+
+  // Modify the escape key handler useEffect to include arrow keys
   useEffect(() => {
-    const handleEscapeKey = (e) => {
-      if (e.key === "Escape" && selectedMoment) {
-        closePopup();
+    const handleKeyDown = (e) => {
+      if (selectedMoment) {
+        if (e.key === "Escape") {
+          clickSound.currentTime = 0;
+          clickSound.play();
+          setTimeout(() => {
+            setSelectedMoment(null);
+          }, 50);
+        } else if (e.key === "ArrowLeft") {
+          navigateMoments(-1);
+        } else if (e.key === "ArrowRight") {
+          navigateMoments(1);
+        }
       }
     };
 
     if (selectedMoment) {
-      document.addEventListener("keydown", handleEscapeKey);
+      document.addEventListener("keydown", handleKeyDown);
     }
 
-    // Cleanup listener when component unmounts or selectedMoment changes
     return () => {
-      document.removeEventListener("keydown", handleEscapeKey);
+      document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [selectedMoment]);
+  }, [selectedMoment, clickSound, audio, moments, currentMomentIndex]);
 
   return (
     <div
@@ -142,46 +184,58 @@ export default function MenuWindow({
           <div></div>
         </div>
 
-        <h2
+        <div
           style={{
             margin: 0,
             textAlign: "center",
-            flexDirection: "row",
-            fontSize: 32,
-            marginTop: 8,
+            flexDirection: "column",
+            padding: "8px 0 0 0",
           }}
+          className="subtle-gradient-bg"
         >
-          {approvedHours.toFixed(2)}/100{" "}
-          <p style={{ fontSize: 16 }}>approved shipped hours</p>
-        </h2>
-        <div style={{ width: "80%", margin: "auto", textAlign: "center" }}>
-          <div
+          <h2
             style={{
-              height: "12px",
-              width: "100%",
-              background: "#ddd",
-              borderRadius: "6px",
-              overflow: "hidden",
-              marginTop: "5px",
+              margin: 0,
+              textAlign: "center",
+              flexDirection: "row",
+              fontSize: 32,
+              marginTop: 8,
             }}
           >
+            {approvedHours.toFixed(2)}/100{" "}
+            <p style={{ fontSize: 16 }}>approved shipped hours</p>
+          </h2>
+          <div style={{ width: "80%", margin: "auto", textAlign: "center" }}>
             <div
               style={{
-                height: "100%",
-                width: `${(approvedHours / 100) * 100}%`,
-                background: approvedHours >= 100 ? "gold" : "green",
-                transition: "width 0.5s ease-in-out",
+                height: "12px",
+                width: "100%",
+                background: "#ddd",
+                borderRadius: "0px",
+                overflow: "hidden",
+                marginTop: "5px",
               }}
-            />
+            >
+              <div
+                style={{
+                  height: "100%",
+                  width: `${(approvedHours / 100) * 100}%`,
+                  background: approvedHours >= 100 ? "gold" : "green",
+                  transition: "width 0.5s ease-in-out",
+                }}
+              />
+            </div>
           </div>
+
+          <p
+            style={{ margin: 0, textAlign: "center", padding: 10, fontSize: 14 }}
+            className="rainbow-text"
+          >
+            After completing the base 100 hours, each new approved hour will get
+            <br />
+            converted into $5 additional for your stipend!
+          </p>
         </div>
-        <p
-          style={{ margin: 0, textAlign: "center", padding: 10, fontSize: 14 }}
-        >
-          After completing the base 100 hours, each new approved hour will get
-          <br />
-          converted into $5 additional for your stipend!
-        </p>
 
         {/* Displaying the Hours Summary */}
         <div
@@ -219,22 +273,47 @@ export default function MenuWindow({
         <div
           style={{
             textAlign: "center",
-            paddingTop: "5px",
-            paddingBottom: "0px",
+            border: "1px solid #000",
+            width: 208,
+            position: "absolute",
+            bottom: 8,
+            left: 8,
+            borderRadius: 2,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            paddingTop: 2,
+            paddingBottom: 2,
+
           }}
         >
           <span
-            style={{ color: "green", marginRight: "10px", fontSize: "15px" }}
+            style={{ color: "green", display: "flex", flexDirection: "row", gap: 4, marginRight: "10px", fontSize: "12px" }}
           >
-            ⬤ Approved
+            
+            <div style={{width: 12, backgroundColor: "green", height: 12, borderRadius: 2}}>
+
+            </div>
+             Approved
           </span>
           <span
-            style={{ color: "orange", marginRight: "10px", fontSize: "15px" }}
+            style={{ color: "orange", display: "flex", flexDirection: "row", gap: 4, marginRight: "10px", fontSize: "12px" }}
           >
-            ⬤ Pending
+            
+            <div style={{width: 12, backgroundColor: "orange", height: 12, borderRadius: 2}}>
+
+            </div>
+             Pending
           </span>
-          <span style={{ color: "red", fontSize: "15px" }}>⬤ Rejected</span>
-        </div>
+          <span
+            style={{ color: "red", display: "flex", flexDirection: "row", gap: 4, marginRight: "10px", fontSize: "12px" }}
+          >
+            
+            <div style={{width: 12, backgroundColor: "red", height: 12, borderRadius: 2}}>
+
+            </div>
+             Rejected
+          </span>        </div>
 
         <div
           style={{
@@ -263,28 +342,56 @@ export default function MenuWindow({
                 }}
               >
                 {moments.map((moment) => {
-                  let borderColor;
+                  let backgroundColor;
+                  let strokeColor;
                   if (moment.status === "Approved") {
-                    borderColor = "green";
+                    backgroundColor = "green";
+                    strokeColor = "#90EE90";  // Light green
                   } else if (moment.status === "Rejected") {
-                    borderColor = "red";
+                    backgroundColor = "red";
+                    strokeColor = "#FFB6B6";  // Light red
                   } else {
-                    borderColor = "orange";
+                    backgroundColor = "orange";
+                    strokeColor = "#FFD580";  // Light orange
                   }
 
                   return (
                     <div
                       key={moment.id}
-                      onClick={() => handleMomentClick(moment)} // Show the moment details when clicked
+                      onClick={() => handleMomentClick(moment)}
                       style={{
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        backgroundColor: borderColor,
-                        borderRadius: "12px",
+                        backgroundColor: backgroundColor,
+                        borderRadius: "4px",
                         width: "30px",
                         height: "30px",
                         cursor: "pointer",
+                        position: "relative",
+                        boxShadow: `
+                          inset 0 0 0 1px ${strokeColor},
+                          inset 2px 2px 4px rgba(0, 0, 0, 0.05)
+                        `,
+                        transition: "all 0.2s ease",
+                        transform: "scale(1)"
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.filter = "brightness(1.1)";
+                        e.currentTarget.style.transform = "scale(1.1)";
+                        e.currentTarget.style.boxShadow = `
+                          inset 0 0 0 1px ${strokeColor},
+                          inset 2px 2px 4px rgba(0, 0, 0, 0.05),
+                          0 2px 5px rgba(0, 0, 0, 0.2)
+                        `;
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.filter = "brightness(1)";
+                        e.currentTarget.style.transform = "scale(1)";
+                        e.currentTarget.style.boxShadow = `
+                          inset 0 0 0 1px ${strokeColor},
+                          inset 2px 2px 4px rgba(0, 0, 0, 0.05)
+                        `;
                       }}
                     ></div>
                   );
@@ -314,35 +421,125 @@ export default function MenuWindow({
           }}
         >
           <div style={{ flex: 1, marginRight: 16 }}>
-            <video
-              controls
-              style={{
-                width: "100%",
-                borderRadius: 8,
-                backgroundColor: "#000",
-              }}
-            >
-              <source src={selectedMoment.video} type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
+            <div className="video-container">
+              <video
+                key={videoKey}
+                controls
+                autoPlay
+                style={{
+                  width: "100%",
+                  borderRadius: 8,
+                  backgroundColor: "#000",
+                }}
+              >
+                <source src={selectedMoment.video} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            </div>
           </div>
 
           <div style={{ flex: 1 }}>
-            {/* <h3>Description</h3> */}
             <p>{selectedMoment.description}</p>
-            <p style={{ paddingTop: 10 }}>
+            <p style={{ 
+              paddingTop: 10,
+              fontSize: 13,
+              opacity: 0.6
+            }}>
               {new Date(selectedMoment.created_at).toLocaleString()}
             </p>
-            {/* <p style={{ paddingTop: 10 }}>
-              Reviewer Comments:{" "}
-              {selectedMoment.reviewer_comments || "No comments available."}
-            </p> */}
-            <button onClick={closePopup} style={{ marginTop: 10 }}>
-              Close
-            </button>
+            <div style={{ 
+              marginTop: 10,
+              display: 'flex',
+              gap: 8,
+              alignItems: 'center'
+            }}>
+              <button 
+                onClick={() => navigateMoments(-1)}
+                disabled={currentMomentIndex === 0}
+                style={{ opacity: currentMomentIndex === 0 ? 0.5 : 1 }}
+              >
+                ← Prev
+              </button>
+              <button onClick={closePopup}>
+                Close
+              </button>
+              <button 
+                onClick={() => navigateMoments(1)}
+                disabled={currentMomentIndex === moments.length - 1}
+                style={{ opacity: currentMomentIndex === moments.length - 1 ? 0.5 : 1 }}
+              >
+                Next →
+              </button>
+            </div>
           </div>
         </div>
       )}
+
+      {/* Add this style block before the closing div */}
+      <style jsx>{`
+        .subtle-gradient-bg {
+          background-image: linear-gradient(
+            238deg,
+            rgba(255, 255, 255, 0.7) 0%,
+            rgba(240, 240, 255, 0.7) 20%,
+            rgba(255, 240, 255, 0.7) 40%,
+            rgba(255, 240, 240, 0.7) 60%,
+            rgba(255, 240, 230, 0.7) 80%,
+            rgba(255, 255, 255, 0.7) 100%
+          );
+          background-size: 400% 400%;
+          animation: gradient 12s linear infinite;
+          border-bottom: 1px solid #000;
+        }
+
+        .rainbow-text {
+          background-image: linear-gradient(
+            238deg,
+            #000066 0%,
+            #330066 20%,
+            #660066 40%,
+            #660033 60%,
+            #663300 80%,
+            #000066 100%
+          );
+          background-size: 400% 400%;
+          animation: gradient 12s linear infinite;
+          -webkit-background-clip: text;
+          background-clip: text;
+          color: transparent;
+          font-weight: bold;
+        }
+
+        @keyframes gradient {
+          0% {
+            background-position: 0% center;
+          }
+          100% {
+            background-position: -400% center;
+          }
+        }
+
+        .video-container:not(:hover) video::-webkit-media-controls {
+          opacity: 0;
+          transition: opacity 0.3s;
+        }
+
+        .video-container video::-webkit-media-controls {
+          opacity: 1;
+          transition: opacity 0.3s;
+        }
+
+        /* For Firefox */
+        .video-container:not(:hover) video::-moz-media-controls {
+          opacity: 0;
+          transition: opacity 0.3s;
+        }
+
+        .video-container video::-moz-media-controls {
+          opacity: 1;
+          transition: opacity 0.3s;
+        }
+      `}</style>
     </div>
   );
 }

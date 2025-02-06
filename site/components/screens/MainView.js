@@ -349,7 +349,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         case 'wutIsJungle':
         position = wutIsJunglePosition;
         break;
-      case "menu":
+      case "menuWindow":
         position = menuWindowPosition;
         break;
         case 'secondChallenge':
@@ -415,7 +415,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         setjungleWindowPosition(newPosition);
       } else if (activeWindow === "fruitBasketWindow") {
         setFruitBasketWindowPosition(newPosition);
-      } else if (activeWindow === "menu") {
+      } else if (activeWindow === "menuWindow") {
         setMenuWindowPosition(newPosition);
       } else if (activeWindow === 'wutIsJungle') {
         setwutIsJunglePosition(newPosition);
