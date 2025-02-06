@@ -21,6 +21,7 @@ export default async function handler(req, res) {
       })
       .all();
 
+    
     const moments = records.map(record => ({
       id: record.id,
       description: record.fields.description,
