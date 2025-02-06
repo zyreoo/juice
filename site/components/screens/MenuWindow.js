@@ -48,15 +48,20 @@ export default function MenuWindow({
       setApprovedHours(approved);
       setRejectedHours(rejected);
       
-      // Set moments directly from userData
+      // Get moments and sort them with oldest first
       const allMoments = userData.juiceStretches.reduce((acc, stretch) => {
         if (stretch.omgMoments) {
           return [...acc, ...stretch.omgMoments];
         }
         return acc;
       }, []);
-      setMoments(allMoments);
       
+      // Sort moments by created_at in ascending order (oldest first)
+      const sortedMoments = allMoments.sort((a, b) => {
+        return new Date(a.created_at) - new Date(b.created_at);
+      });
+      
+      setMoments(sortedMoments);
       setLoading(false);
     }
   }, [userData]);

@@ -1325,6 +1325,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                   data-file-id="Kudos"
                 />
               )}
+              {isLoggedIn && (
 
               <FileIcon
                 text="Moments"
@@ -1334,6 +1335,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                 delay={0.5}
                 data-file-id="Menu"
               />
+              )}
             </div>
             <div>
               <FileIcon
