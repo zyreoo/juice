@@ -1,77 +1,55 @@
-import React, { Suspense, useState } from "react";
-import FileIcon from "../FileIcon";
-import WelcomeWindow from "./WelcomeWindow";
-import AchievementsWindow from "./AchievementsWindow";
-import WutIsThisWindow from "./WutIsThisWindow";
-import RegisterWindow from "./RegisterWindow";
-import VideoWindow from "./VideoWindow";
-import FactionWindow from "./FactionWindow";
-import FirstChallengeWindow from "./FirstChallengeWindow";
-import JuiceWindow from "./JuiceWindow";
-import KudosWindow from "./KudosWindow";
-import Background from "../Background";
-import ShareSuccessPanel from "./ShareSuccessPanel";
-import FortuneBasket from "./FortuneBasket";
-import ThanksWindow from "./ThanksWindow";
-import JungleWindow from "./JungleWindow";
-import FruitBasketWindow from "./FruitBasketWindow";
+import React, { Suspense } from 'react';
+import FileIcon from '../FileIcon';
+import WelcomeWindow from './WelcomeWindow';
+import AchievementsWindow from './AchievementsWindow';
+import WutIsJuiceWindow from './WutIsJuiceWindow';
+import RegisterWindow from './RegisterWindow';
+import VideoWindow from './VideoWindow';
+import FactionWindow from './FactionWindow';
+import FirstChallengeWindow from './FirstChallengeWindow';
+import JuiceWindow from './JuiceWindow';
+import KudosWindow from './KudosWindow';
+import Background from '../Background';
+import ShareSuccessPanel from './ShareSuccessPanel';
+import FortuneBasket from './FortuneBasket';
+import ThanksWindow from './ThanksWindow';
+import JungleWindow from './JungleWindow';
+import FruitBasketWindow from './FruitBasketWindow';
+import WutIsJungleWindow from './WutIsJungleWindow';
+import SecondChallengeWindow from './SecondChallengeWindow';
 import MenuWindow from "./MenuWindow";
 
-export default function MainView({
-  isLoggedIn,
-  setIsLoggedIn,
-  userData,
-  setUserData,
-}) {
+export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserData, isJungle }) {
   const [time, setTime] = React.useState(new Date());
-  const [timeRemaining, setTimeRemaining] = React.useState("");
+  const [timeRemaining, setTimeRemaining] = React.useState('');
   const [selectedFile, setSelectedFile] = React.useState(null);
   const [isDragging, setIsDragging] = React.useState(false);
   const [activeWindow, setActiveWindow] = React.useState(null);
   const [welcomePosition, setWelcomePosition] = React.useState({ x: 0, y: 0 });
-  const [achievementsPosition, setAchievementsPosition] = React.useState({
-    x: 50,
-    y: 50,
-  });
+  const [achievementsPosition, setAchievementsPosition] = React.useState({ x: 50, y: 50 });
   const [dragStart, setDragStart] = React.useState({ x: 0, y: 0 });
-  const [openWindows, setOpenWindows] = React.useState(["welcomeWindow"]);
-  const [windowOrder, setWindowOrder] = React.useState(["welcomeWindow"]);
+  const [openWindows, setOpenWindows] = React.useState(['welcomeWindow']);
+  const [windowOrder, setWindowOrder] = React.useState(['welcomeWindow']);
   const [selectedRank, setSelectedRank] = React.useState(1);
-  const [wutIsThisPosition, setWutIsThisPosition] = React.useState({
-    x: 100,
-    y: 100,
-  });
-  const [registerPosition, setRegisterPosition] = React.useState({
-    x: 150,
-    y: 150,
-  });
+  const [wutIsJuicePosition, setWutIsJuicePosition] = React.useState({ x: 100, y: 100 });
+  const [wutIsJunglePosition, setwutIsJunglePosition] = React.useState({ x: 100, y: 100 });
+  const [registerPosition, setRegisterPosition] = React.useState({ x: 150, y: 150 });
   const [videoPosition, setVideoPosition] = React.useState({ x: 200, y: 200 });
-  const [factionPosition, setFactionPosition] = React.useState({
-    x: 250,
-    y: 250,
+  const [factionPosition, setFactionPosition] = React.useState({ x: 250, y: 250 });
+  const [firstChallengePosition, setFirstChallengePosition] = React.useState({ x: 300, y: 300 });
+  const [juiceWindowPosition, setJuiceWindowPosition] = React.useState({ x: 0, y: 0 });
+  const [jungleWindowPosition, setjungleWindowPosition] = React.useState({ x: 0, y: 0 });
+  const [fruitBasketWindowPosition, setFruitBasketWindowPosition] = React.useState({ x: 0, y: 0})
+  const [fortuneBasketPosition, setFortuneBasketPosition] = React.useState({ 
+    x: Math.max(0, window.innerWidth / 2 - 150), 
+    y: Math.max(0, window.innerHeight / 2 - 110)
   });
-  const [firstChallengePosition, setFirstChallengePosition] = React.useState({
-    x: 300,
-    y: 300,
-  });
-  const [juiceWindowPosition, setJuiceWindowPosition] = React.useState({
-    x: 0,
-    y: 0,
-  });
-  const [jungleWindowPosition, setjungleWindowPosition] = React.useState({
-    x: 0,
-    y: 0,
-  });
-  const [fruitBasketWindowPosition, setFruitBasketWindowPosition] =
-    React.useState({ x: 0, y: 0 });
-  const [fortuneBasketPosition, setFortuneBasketPosition] = React.useState({
-    x: Math.max(0, window.innerWidth / 2 - 150),
-    y: Math.max(0, window.innerHeight / 2 - 110),
-  });
+
   const [menuWindowPosition, setMenuWindowPosition] = React.useState({
     x: 0,
     y: 0,
-  });
+    });
+
   const [isShaking, setIsShaking] = React.useState(false);
   const collectSoundRef = React.useRef(null);
   const [tickets, setTickets] = React.useState([]);
@@ -80,10 +58,8 @@ export default function MainView({
   const [kudosPosition, setKudosPosition] = React.useState({ x: 350, y: 350 });
   const [isJuicing, setIsJuicing] = React.useState(false);
   const juicerSoundRef = React.useRef(null);
-  const [thanksPosition, setThanksPosition] = React.useState({
-    x: 400,
-    y: 400,
-  });
+  const [thanksPosition, setThanksPosition] = React.useState({ x: 400, y: 400 });
+  const [secondChallengePosition, setSecondChallengePosition] = React.useState({ x: 350, y: 350 });
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
   // Constants
@@ -91,7 +67,8 @@ export default function MainView({
   const WINDOW_HEIGHTS = {
     welcomeWindow: 160,
     achievements: 320,
-    wutIsThis: 470,
+    wutIsJuice: 470,
+    wutIsJungle: 470,
     register: 200,
     video: 397,
     faction: 200,
@@ -100,7 +77,8 @@ export default function MainView({
     fruitBasketWindow: 300,
     fortuneBasket: 220,
     thanks: 300,
-    menuWindow: 470,
+    secondChallenge: 300,
+    menuWindow: 470
   };
   const BASE_Z_INDEX = 1;
 
@@ -114,17 +92,13 @@ export default function MainView({
 
       if (diff > 0) {
         const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const hours = Math.floor(
-          (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-        );
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-        setTimeRemaining(
-          `${days} Days, ${hours} Hours, ${minutes} Minutes, ${seconds} Seconds`
-        );
+        setTimeRemaining(`${days} Days, ${hours} Hours, ${minutes} Minutes, ${seconds} Seconds`);
       } else {
-        setTimeRemaining("Event has started!");
+        setTimeRemaining('Event has started!');
       }
     }, 1000);
 
@@ -156,18 +130,18 @@ export default function MainView({
           ]);
         }
       } else if (fileId === "file1") {
-        if (!openWindows.includes("wutIsThis")) {
-          setOpenWindows((prev) => [...prev, "wutIsThis"]);
+        if (!openWindows.includes("wutIsJuice")) {
+          setOpenWindows((prev) => [...prev, "wutIsJuice"]);
           setWindowOrder((prev) => [
-            ...prev.filter((w) => w !== "wutIsThis"),
-            "wutIsThis",
+            ...prev.filter((w) => w !== "wutIsJuice"),
+            "wutIsJuice",
           ]);
           document.getElementById("windowOpenAudio").currentTime = 0;
           document.getElementById("windowOpenAudio").play();
         } else {
           setWindowOrder((prev) => [
-            ...prev.filter((w) => w !== "wutIsThis"),
-            "wutIsThis",
+            ...prev.filter((w) => w !== "wutIsJuice"),
+            "wutIsJuice",
           ]);
         }
       } else if (fileId === "Register") {
@@ -304,9 +278,18 @@ export default function MainView({
             ...prev.filter((w) => w !== "fruitBasketWindow"),
             "fruitBasketWindow",
           ]);
-        }
+      }
+    } else if (fileId === "wutIsJungle") {
+      if (!openWindows.includes('wutIsJungle')) {
+        setOpenWindows(prev => [...prev, 'wutIsJungle']);
+        setWindowOrder(prev => [...prev.filter(w => w !== 'wutIsJungle'), 'wutIsJungle']);
+        document.getElementById("windowOpenAudio").currentTime = 0;
+        document.getElementById("windowOpenAudio").play();
+      } else {
+        setWindowOrder(prev => [...prev.filter(w => w !== 'wutIsJungle'), 'wutIsJungle']);
       }
     }
+  }
     setSelectedFile(fileId);
   };
 
@@ -329,8 +312,8 @@ export default function MainView({
       case "achievements":
         position = achievementsPosition;
         break;
-      case "wutIsThis":
-        position = wutIsThisPosition;
+      case "wutIsJuice":
+        position = wutIsJuicePosition;
         break;
       case "register":
         position = registerPosition;
@@ -362,9 +345,15 @@ export default function MainView({
         break;
       case "fruitBasketWindow":
         position = fruitBasketWindowPosition;
+        break
+        case 'wutIsJungle':
+        position = wutIsJunglePosition;
         break;
       case "menu":
         position = menuWindowPosition;
+        break;
+        case 'secondChallenge':
+          position = secondChallengePosition;
         break;
       default:
         console.log("Unknown window name:", windowName);
@@ -403,8 +392,8 @@ export default function MainView({
         setWelcomePosition(newPosition);
       } else if (activeWindow === "achievements") {
         setAchievementsPosition(newPosition);
-      } else if (activeWindow === "wutIsThis") {
-        setWutIsThisPosition(newPosition);
+      } else if (activeWindow === "wutIsJuice") {
+        setwutIsJuicePosition(newPosition);
       } else if (activeWindow === "register") {
         setRegisterPosition(newPosition);
       } else if (activeWindow === "video") {
@@ -428,6 +417,10 @@ export default function MainView({
         setFruitBasketWindowPosition(newPosition);
       } else if (activeWindow === "menu") {
         setMenuWindowPosition(newPosition);
+      } else if (activeWindow === 'wutIsJungle') {
+        setwutIsJunglePosition(newPosition);
+      } else if (activeWindow === 'secondChallenge') {
+        setSecondChallengePosition(newPosition);
       }
     }
   };
@@ -787,17 +780,56 @@ export default function MainView({
             transform: rotateZ(0deg) scale(1);
           }
         }
-        @keyframes rainbow {
-          0% {
-            background-position: 0% 50%;
+       @keyframes rainbow {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        @keyframes rainbowGlass {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        .rainbow-glass-panel {
+          background: linear-gradient(90deg, rgba(255, 220, 180, 0.4), rgba(255, 180, 220, 0.4), rgba(180, 220, 255, 0.4), rgba(180, 255, 220, 0.4));
+          background-size: 300% 100%;
+          animation: rainbowGlass 3s linear infinite;
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+          border: 1px solid rgba(255, 255, 255, 0.4);
+          box-shadow: 0 2px 30px rgba(255, 255, 255, 0.2);
+        }
+        @keyframes buttonBounce {
+          0%, 100% { 
+            transform: scale(1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
           }
-          50% {
-            background-position: 100% 50%;
-          }
-          100% {
-            background-position: 0%, 50%;
+          50% { 
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
           }
         }
+        .bounce-button {
+          animation: buttonBounce 2s ease-in-out infinite;
+          transform-origin: center;
+        }
+        @keyframes floatBoat1 {
+          0% { transform: translate(-50%, 100%); }
+          100% { transform: translate(150%, -100%) rotate(45deg); }
+        }
+        @keyframes floatBoat2 {
+          0% { transform: translate(150%, 100%) rotate(-45deg); }
+          100% { transform: translate(-50%, -100%) rotate(45deg); }
+        }
+        .floating-boat {
+          position: absolute;
+          font-size: 24px;
+          opacity: 0.3;
+          pointer-events: none;
+          z-index: 0;
+        }
+        .boat1 { animation: floatBoat1 8s linear infinite; }
+        .boat2 { animation: floatBoat2 10s linear infinite; }
       `}</style>
       <div
         style={{
@@ -984,16 +1016,29 @@ export default function MainView({
           />
         )}
 
-        {openWindows.includes("wutIsThis") && (
-          <WutIsThisWindow
-            position={wutIsThisPosition}
+        {openWindows.includes("wutIsJuice") && (
+          <WutIsJuiceWindow
+            position={wutIsJuicePosition}
             isDragging={isDragging}
-            isActive={windowOrder[windowOrder.length - 1] === "wutIsThis"}
+            isActive={windowOrder[windowOrder.length - 1] === "wutIsJuice"}
             handleMouseDown={handleMouseDown}
             handleDismiss={handleDismiss}
             handleWindowClick={handleWindowClick}
-            BASE_Z_INDEX={getWindowZIndex("wutIsThis")}
-            ACTIVE_Z_INDEX={getWindowZIndex("wutIsThis")}
+            BASE_Z_INDEX={getWindowZIndex("wutIsJuice")}
+            ACTIVE_Z_INDEX={getWindowZIndex("wutIsJuice")}
+          />
+        )}
+
+{openWindows.includes('wutIsJungle') && (
+          <WutIsJungleWindow 
+            position={wutIsJunglePosition}
+            isDragging={isDragging}
+            isActive={windowOrder[windowOrder.length - 1] === 'wutIsJungle'}
+            handleMouseDown={handleMouseDown}
+            handleDismiss={handleDismiss}
+            handleWindowClick={handleWindowClick}
+            BASE_Z_INDEX={getWindowZIndex('wutIsJungle')}
+            ACTIVE_Z_INDEX={getWindowZIndex('wutIsJungle')}
           />
         )}
 
@@ -1158,6 +1203,21 @@ export default function MainView({
           />
         )}
 
+{openWindows.includes('secondChallenge') && (
+          <SecondChallengeWindow 
+            position={secondChallengePosition}
+            isDragging={isDragging && activeWindow === 'secondChallenge'}
+            isActive={windowOrder[windowOrder.length - 1] === 'secondChallenge'}
+            handleMouseDown={handleMouseDown}
+            handleDismiss={handleDismiss}
+            handleWindowClick={handleWindowClick}
+            BASE_Z_INDEX={getWindowZIndex('secondChallenge')}
+            ACTIVE_Z_INDEX={getWindowZIndex('secondChallenge')}
+            userData={userData}
+            setUserData={setUserData}
+          />
+        )}
+        
         {isMenuOpen && (
           <MenuWindow
             position={menuWindowPosition}
@@ -1197,14 +1257,14 @@ export default function MainView({
                   data-file-id="Jungle"
                 />
               )}
-              <FileIcon
+                    {isJungle || (<FileIcon 
                 text="Achievements"
                 icon="achievmentsicon.png"
                 isSelected={selectedFile === "Achievements"}
                 onClick={handleFileClick("Achievements")}
                 delay={0.1}
                 data-file-id="Achievements"
-              />
+                />)}
               <FileIcon
                 text="Fortune Basket"
                 icon="./fortunecookieicon.png"
@@ -1228,9 +1288,7 @@ export default function MainView({
               <FileIcon
                 text={isLoggedIn ? "Juicer" : "Register"}
                 icon={isLoggedIn ? "./juicerRest.png" : "registericon.png"}
-                isSelected={
-                  selectedFile === (isLoggedIn ? "Juicer" : "Register")
-                }
+                isSelected={selectedFile === (isLoggedIn ? "Juicer" : "Register")}
                 onClick={handleFileClick(isLoggedIn ? "Juicer" : "Register")}
                 delay={0.2}
                 data-file-id={isLoggedIn ? "Juicer" : "Register"}
@@ -1254,8 +1312,9 @@ export default function MainView({
                   data-file-id="Kudos"
                 />
               )}
+
               {
-                //isLoggedIn && (
+                isLoggedIn && (
                 <FileIcon
                   text="Menu"
                   icon="./kudos.png"
@@ -1264,189 +1323,159 @@ export default function MainView({
                   delay={0.5}
                   data-file-id="Menu"
                 />
+              )
               }
             </div>
             <div>
               <FileIcon
-                text="wutIsThis.txt"
+                text="wutIsJuice.txt"
                 icon="./texticon.png"
                 isSelected={selectedFile === "file1"}
                 onClick={handleFileClick("file1")}
                 delay={0}
                 data-file-id="file1"
               />
+                                  <FileIcon 
+                        text="wutIsJungle.txt" 
+                        icon="./texticon.png"
+                        isSelected={selectedFile === "wutIsJungle"}
+                        onClick={handleFileClick("wutIsJungle")}
+                        delay={0}
+                        data-file-id="wutIsJungle"
+                    />
             </div>
           </div>
         </div>
 
-        <div
-          style={{ position: "absolute", top: TOP_BAR_HEIGHT + 8, right: 8 }}
-        >
-          <div
-            className="panel-pop"
-            style={{
-              width: 332,
-              backgroundColor: "rgba(255, 220, 180, 0.8)",
-              backdropFilter:
-                "blur(8px) saturate(200%) sepia(50%) hue-rotate(-15deg) brightness(1.1)",
-              WebkitBackdropFilter:
-                "blur(8px) saturate(200%) sepia(50%) hue-rotate(-15deg) brightness(1.1)",
-              border: "1px solid rgba(255, 220, 180, 0.4)",
-              borderRadius: 8,
-              padding: 12,
-              boxShadow: "0 1px 25px rgba(255, 160, 60, 0.3)",
-            }}
-          >
-            <p style={{ color: "rgba(0, 0, 0, 0.8)", margin: "0 0 8px 0" }}>
-              {timeRemaining}
-            </p>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-between",
-              }}
-            >
-              <p style={{ color: "rgba(0, 0, 0, 0.8)", margin: 0 }}>
-                World Start Call (2/1/25)
-              </p>
-              <p style={{ color: "rgba(0, 0, 0, 0.8)", margin: 0 }}>
-                7:30 PM EST SAT
-              </p>
-            </div>
+        <div style={{position: "absolute", top: TOP_BAR_HEIGHT + 8, right: 8}}>
 
-            <button
-              data-register-button="true"
-              onClick={isRsvped ? undefined : handleRsvp}
-              style={{
-                marginTop: 8,
-                padding: "4px 12px",
-                backgroundColor: isRsvped ? "#4CAF50" : "#3870FF",
-                color: "#fff",
-                border: "none",
-                borderRadius: 4,
-                cursor: isRsvped ? "default" : "pointer",
-              }}
-            >
-              {isRsvped ? "Sent Google Calendar Invite" : "RSVP for Call"}
-            </button>
-          </div>
-          {isLoggedIn && !userData?.achievements?.includes("pr_submitted") && (
-            <div
-              className="panel-pop"
-              style={{
-                width: 332,
-                marginTop: 8,
-                backgroundColor: "rgba(255, 220, 180, 0.8)",
-                backdropFilter:
-                  "blur(8px) saturate(200%) sepia(50%) hue-rotate(-15deg) brightness(1.1)",
-                WebkitBackdropFilter:
-                  "blur(8px) saturate(200%) sepia(50%) hue-rotate(-15deg) brightness(1.1)",
-                border: "1px solid rgba(255, 220, 180, 0.4)",
-                borderRadius: 8,
-                padding: 12,
-                boxShadow: "0 1px 25px rgba(255, 160, 60, 0.3)",
-              }}
-            >
-              <p style={{ color: "rgba(0, 0, 0, 0.8)", margin: "0 0 8px 0" }}>
-                First Challenge Reveals Itself...
-              </p>
-              <button
-                onClick={handleFirstChallengeOpen}
+ 
+
+{(isLoggedIn && !userData?.achievements?.includes("pr_submitted")) && !isJungle && (
+                <div 
+                    className="panel-pop"
+                    style={{
+                        width: 332,
+                        marginTop: 8,
+                        backgroundColor: 'rgba(255, 220, 180, 0.8)',
+                        backdropFilter: 'blur(8px) saturate(200%) sepia(50%) hue-rotate(-15deg) brightness(1.1)',
+                        WebkitBackdropFilter: 'blur(8px) saturate(200%) sepia(50%) hue-rotate(-15deg) brightness(1.1)',
+                        border: "1px solid rgba(255, 220, 180, 0.4)",
+                        borderRadius: 8,
+                        padding: 12,
+                        boxShadow: '0 1px 25px rgba(255, 160, 60, 0.3)'
+                    }}>
+                        <p style={{ color: "rgba(0, 0, 0, 0.8)", margin: "0 0 8px 0" }}>First Challenge Reveals Itself...</p>
+                        <button 
+                            onClick={handleFirstChallengeOpen}
+                            style={{
+                                padding: "4px 12px",
+                                backgroundColor: "#FF4002",
+                                color: "#fff",
+                                border: "none",
+                                borderRadius: 4,
+                                cursor: "pointer"
+                            }}>Uncover Challenge</button>
+                    </div>
+            )}
+
+            {(isLoggedIn && userData?.achievements?.includes("pr_submitted")) && !isJungle && (
+                <div 
+                    className="panel-pop rainbow-glass-panel"
+                    style={{
+                        width: 332,
+                        marginTop: 8,
+                        borderRadius: 8,
+                        padding: 12,
+                        position: 'relative',
+                        overflow: 'hidden'
+                    }}>
+                    <div style={{ position: 'relative', zIndex: 1 }}>
+                        <p style={{ 
+                            color: "rgba(255, 255, 255, 1.0)", 
+                            margin: "0 0 8px 0",
+                            textShadow: `
+                                -1px -1px 0 #000,
+                                1px -1px 0 #000,
+                                -1px 1px 0 #000,
+                                1px 1px 0 #000`
+                        }}>Second Challenge Reveals Itself...</p>
+                        <button 
+                            onClick={handleSecondChallengeOpen}
+                            disabled={userData.achievements.includes("poc_submitted")}
+                            style={{
+                                padding: "4px 12px",
+                                backgroundColor: "#FFE600",
+                                color: "#000",
+                                opacity: userData.achievements.includes("poc_submitted") ? 0.7 : 1.0,
+                                border: "2px solid #000",
+                                borderRadius: 4,
+                                cursor: "pointer",
+                                fontWeight: "bold",
+                                animation: !userData.achievements.includes("poc_submitted") ? "buttonBounce 2s ease-in-out infinite" : "",
+                                transition: "transform 0.2s ease, box-shadow 0.2s ease"
+                            }}>{userData.achievements.includes("poc_submitted") ? "Itch Submitted" : "Uncover Challenge"}</button>
+                    </div>
+                    <div className="floating-boat boat1" style={{ left: '0', top: '50%' }}>⛵️</div>
+                    <div className="floating-boat boat2" style={{ right: '0', top: '30%' }}>⛵️</div>
+                    <div className="floating-boat boat1" style={{ left: '30%', top: '70%', animationDelay: '4s' }}>⛵️</div>
+                </div>
+            )}
+
+          {isLoggedIn && tickets.some(t => !t.used) && <div 
+                className="panel-pop"
                 style={{
-                  padding: "4px 12px",
-                  backgroundColor: "rgba(0, 0, 0, 0.8)",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: 4,
-                  backgroundColor: "#FF4002",
-                  cursor: "pointer",
-                }}
-              >
-                Uncover Challenge
-              </button>
-            </div>
-          )}
-
-          {/* {isLoggedIn && (
-              <>
-              {userData?.achievements?.length > 1 &&
-                <div className="panel-pop">
-                    <ShareSuccessPanel />
-                </div>}
-              </>
-            )} */}
-
-          {isLoggedIn && tickets.some((t) => !t.used) && (
-            <div
-              className="panel-pop"
-              style={{
-                width: 332,
-                marginTop: 8,
-                backgroundColor: "rgba(255, 220, 180, 0.8)",
-                backdropFilter:
-                  "blur(8px) saturate(200%) sepia(50%) hue-rotate(-15deg) brightness(1.1)",
-                WebkitBackdropFilter:
-                  "blur(8px) saturate(200%) sepia(50%) hue-rotate(-15deg) brightness(1.1)",
-                border: "1px solid rgba(255, 220, 180, 0.4)",
-                borderRadius: 8,
-                padding: 12,
-                boxShadow: "0 1px 25px rgba(255, 160, 60, 0.3)",
-              }}
-            >
-              <p style={{ color: "rgba(0, 0, 0, 0.8)", margin: "0 0 8px 0" }}>
-                You found {tickets.filter((t) => !t.used).length} special ticket
-                {tickets.filter((t) => !t.used).length !== 1 ? "s" : ""}...
-              </p>
-              <button
-                onClick={handleFactionOpen}
-                style={{
-                  padding: "4px 12px",
-                  backgroundColor: "rgba(0, 0, 0, 0.8)",
-                  color: "#fff",
-                  border: "none",
-                  backgroundColor: "#FF6000",
-                  borderRadius: 4,
-                  cursor: "pointer",
-                }}
-              >
-                Grab Your Tickets
-              </button>
-            </div>
-          )}
+                    width: 332,
+                    marginTop: 8,
+                    backgroundColor: 'rgba(255, 220, 180, 0.8)',
+                    backdropFilter: 'blur(8px) saturate(200%) sepia(50%) hue-rotate(-15deg) brightness(1.1)',
+                    WebkitBackdropFilter: 'blur(8px) saturate(200%) sepia(50%) hue-rotate(-15deg) brightness(1.1)',
+                    border: "1px solid rgba(255, 220, 180, 0.4)",
+                    borderRadius: 8,
+                    padding: 12,
+                    boxShadow: '0 1px 25px rgba(255, 160, 60, 0.3)'
+                }}>
+                <p style={{ color: "rgba(0, 0, 0, 0.8)", margin: "0 0 8px 0" }}>
+                    You found {tickets.filter(t => !t.used).length} special ticket{tickets.filter(t => !t.used).length !== 1 ? 's' : ''}...
+                </p>
+                <button 
+                    onClick={handleFactionOpen}
+                    style={{
+                        padding: "4px 12px",
+                        backgroundColor: "rgba(0, 0, 0, 0.8)",
+                        color: "#fff",
+                        border: "none",
+                        backgroundColor: "#FF6000",
+                        borderRadius: 4,
+                        cursor: "pointer"
+                    }}>Grab Your Tickets</button>
+            </div>}
+            
         </div>
 
         {/* background goes here */}
-        <div
-          onClick={() => setSelectedFile(null)}
-          style={{
-            width: "100vw",
-            height: "100vh",
-            overflow: "hidden",
-            display: "flex",
-            margin: 0,
-            cursor: "default",
-          }}
-        >
-          <Background />
+        <div 
+            onClick={() => setSelectedFile(null)}
+            style={{width: "100vw", height: "100vh", overflow: "hidden", display: "flex", margin: 0, cursor: "default"}}>
+            <Background />
         </div>
 
-        <div style={{ position: "absolute", bottom: 8, left: 8 }}>
-          <FileIcon
-            text="Thanks"
-            icon="./heart.png"
-            isSelected={selectedFile === "Thanks"}
-            onClick={handleFileClick("Thanks")}
-            delay={0.6}
-            data-file-id="Thanks"
-          />
+        <div style={{position: "absolute", bottom: 8, left: 8}}>
+            <FileIcon 
+                text="Thanks" 
+                icon="./heart.png"
+                isSelected={selectedFile === "Thanks"}
+                onClick={handleFileClick("Thanks")}
+                delay={0.6}
+                data-file-id="Thanks"
+            />
         </div>
 
         {/* Add audio elements */}
         <audio id="juicerAudio" src="./juicer.mp3" preload="auto"></audio>
         <audio id="collectAudio" src="./collect.mp3" preload="auto"></audio>
-        <audio id="windowOpenAudio" src="./sounds/windowOpenSound.wav" />
+        <audio id="windowOpenAudio" src="./sounds/windowOpenSound.wav"/>
       </div>
     </div>
   );
-}
+} 
