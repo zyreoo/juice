@@ -25,19 +25,36 @@ export default async function handler(req, res) {
 
     const userData = records[0].fields;
 
-    // Get juiceStretches for this user
+    // Get juiceStretches for this user that have OMG moments, with specific fields
     const juiceStretches = await base('juiceStretches').select({
-      filterByFormula: `{email (from Signups)} = '${userData.email}'`,
+      filterByFormula: `AND(
+        {email (from Signups)} = '${userData.email}',
+        NOT({omgMoments} = '')
+      )`,
+      fields: ['ID', 'startTime', 'endTime', 'timeWorkedHours', 'timeWorkedSeconds', 'totalPauseTimeSeconds', 'Review', 'omgMoments']
     }).firstPage();
 
-    // Calculate total duration in hours
+    // Calculate total duration in hours and prepare juice stretch data
     let totalHours = 0;
-    juiceStretches.forEach(record => {
-      const stretchTime = record.fields.timeWorkedSeconds == undefined ? 0 : record.fields.timeWorkedSeconds
+    userData.juiceStretches = await Promise.all(juiceStretches.map(async record => {
+      const stretchTime = record.fields.timeWorkedSeconds ?? 0;
       totalHours += Math.round(stretchTime / 3600 * 100) / 100;
-    });
 
-    userData.totalJuiceHours = totalHours; // Rounded to 2 decimal places
+      // Get specific fields from OMG moments for this stretch
+      const omgMomentIds = record.fields.omgMoments || [];
+      const omgMoments = await Promise.all(omgMomentIds.map(async omgId => {
+        const omgRecord = await base('omgMoments').find(omgId);
+        const { created_at, kudos, video, description } = omgRecord.fields;
+        return { created_at, kudos, video, description };
+      }));
+
+      return {
+        ...record.fields,
+        omgMoments
+      };
+    }));
+
+    userData.totalJuiceHours = totalHours;
 
     // Get juiceStretches for this user
     const jungleStretches = await base('jungleStretches').select({
