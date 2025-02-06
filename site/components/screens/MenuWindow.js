@@ -30,13 +30,14 @@ export default function MenuWindow({
       let approved = 0;
       let rejected = 0;
 
-      userData.juiceStretches.forEach(stretch => {
-        const stretchHours = Math.round((stretch.timeWorkedSeconds || 0) / 3600 * 100) / 100;
+      userData.juiceStretches.forEach((stretch) => {
+        const stretchHours =
+          Math.round(((stretch.timeWorkedSeconds || 0) / 3600) * 100) / 100;
         total += stretchHours;
 
-        if (stretch.Review === 'Approved') {
+        if (stretch.Review === "Approved") {
           approved += stretchHours;
-        } else if (stretch.Review === 'Rejected') {
+        } else if (stretch.Review === "Rejected") {
           rejected += stretchHours;
         } else {
           pending += stretchHours;
@@ -47,7 +48,7 @@ export default function MenuWindow({
       setPendingHours(pending);
       setApprovedHours(approved);
       setRejectedHours(rejected);
-      
+
       // Get moments and sort them with oldest first
       const allMoments = userData.juiceStretches.reduce((acc, stretch) => {
         if (stretch.omgMoments) {
@@ -55,12 +56,12 @@ export default function MenuWindow({
         }
         return acc;
       }, []);
-      
+
       // Sort moments by created_at in ascending order (oldest first)
       const sortedMoments = allMoments.sort((a, b) => {
         return new Date(a.created_at) - new Date(b.created_at);
       });
-      
+
       setMoments(sortedMoments);
       setLoading(false);
     }
@@ -77,18 +78,18 @@ export default function MenuWindow({
   // Add useEffect to handle escape key
   useEffect(() => {
     const handleEscapeKey = (e) => {
-      if (e.key === 'Escape' && selectedMoment) {
+      if (e.key === "Escape" && selectedMoment) {
         closePopup();
       }
     };
 
     if (selectedMoment) {
-      document.addEventListener('keydown', handleEscapeKey);
+      document.addEventListener("keydown", handleEscapeKey);
     }
 
     // Cleanup listener when component unmounts or selectedMoment changes
     return () => {
-      document.removeEventListener('keydown', handleEscapeKey);
+      document.removeEventListener("keydown", handleEscapeKey);
     };
   }, [selectedMoment]);
 
@@ -141,12 +142,44 @@ export default function MenuWindow({
           <div></div>
         </div>
 
-        <h2 style={{ margin: 0, textAlign: "center", flexDirection: "row", fontSize: 32, marginTop: 8 }}>
-          {approvedHours.toFixed(2)}/100 <p style={{fontSize: 16}} >approved shipped hours</p>
+        <h2
+          style={{
+            margin: 0,
+            textAlign: "center",
+            flexDirection: "row",
+            fontSize: 32,
+            marginTop: 8,
+          }}
+        >
+          {approvedHours.toFixed(2)}/100{" "}
+          <p style={{ fontSize: 16 }}>approved shipped hours</p>
         </h2>
-
-        <p style={{ margin: 0, textAlign: "center", padding: 10, fontSize: 14 }}>
-          After completing the base 100 hours, each new approved hour will get<br/>
+        <div style={{ width: "80%", margin: "auto", textAlign: "center" }}>
+          <div
+            style={{
+              height: "12px",
+              width: "100%",
+              background: "#ddd",
+              borderRadius: "6px",
+              overflow: "hidden",
+              marginTop: "5px",
+            }}
+          >
+            <div
+              style={{
+                height: "100%",
+                width: `${(approvedHours / 100) * 100}%`,
+                background: approvedHours >= 100 ? "gold" : "green",
+                transition: "width 0.5s ease-in-out",
+              }}
+            />
+          </div>
+        </div>
+        <p
+          style={{ margin: 0, textAlign: "center", padding: 10, fontSize: 14 }}
+        >
+          After completing the base 100 hours, each new approved hour will get
+          <br />
           converted into $5 additional for your stipend!
         </p>
 
@@ -161,10 +194,22 @@ export default function MenuWindow({
             borderTop: "1px solid #000",
           }}
         >
-          <div>Total Hours: <br/>{totalHours.toFixed(2)} hrs</div>
-          <div>Pending Hours: <br/>{pendingHours.toFixed(2)} hrs</div>
-          <div>Approved Hours: <br/>{approvedHours.toFixed(2)} hrs</div>
-          <div>Rejected Hours: <br/>{rejectedHours.toFixed(2)} hrs</div>
+          <div>
+            Total Hours: <br />
+            {totalHours.toFixed(2)} hrs
+          </div>
+          <div>
+            Pending Hours: <br />
+            {pendingHours.toFixed(2)} hrs
+          </div>
+          <div>
+            Approved Hours: <br />
+            {approvedHours.toFixed(2)} hrs
+          </div>
+          <div>
+            Rejected Hours: <br />
+            {rejectedHours.toFixed(2)} hrs
+          </div>
         </div>
 
         <div
@@ -241,7 +286,7 @@ export default function MenuWindow({
             borderRadius: 8,
             display: "flex",
             flexDirection: "row",
-            border: "1px solid #000"
+            border: "1px solid #000",
           }}
         >
           <div style={{ flex: 1, marginRight: 16 }}>
@@ -262,7 +307,7 @@ export default function MenuWindow({
             {/* <h3>Description</h3> */}
             <p>{selectedMoment.description}</p>
             <p style={{ paddingTop: 10 }}>
-             {new Date(selectedMoment.created_at).toLocaleString()}
+              {new Date(selectedMoment.created_at).toLocaleString()}
             </p>
             {/* <p style={{ paddingTop: 10 }}>
               Reviewer Comments:{" "}
