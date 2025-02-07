@@ -50,7 +50,7 @@ export default function Home() {
 
   const handleAuthentication = async (token) => {
     try {
-      const response = await fetch("/api/user", {
+      const response = await fetch("https://sww48o88cs88sg8k84g4s4kg.a.selfhosted.hackclub.com/api/user", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
