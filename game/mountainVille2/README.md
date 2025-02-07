@@ -1,6 +1,6 @@
-# World Run
+# I don't know yet
 
-**Team Members:** [William ngome, John ngome]
+**Team Members:** Reem Khalifa
 
 **How would you pitch your game in one line?**
 [example format: "It's like [Super Mario ] meets [Super Bingo] but with [different characters, different weapons, special powers, powerups and different locations in 2D]
