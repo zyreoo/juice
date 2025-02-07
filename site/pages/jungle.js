@@ -79,7 +79,7 @@ export default function Home() {
       // Don't set isLoggedIn until we verify the token
 
       // Fetch user data
-      fetch("/api/user", {
+      fetch("https://sww48o88cs88sg8k84g4s4kg.a.selfhosted.hackclub.com/api/user", {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
