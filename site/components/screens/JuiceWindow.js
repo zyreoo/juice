@@ -195,6 +195,7 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
             formData.append('token', userData.token);
             formData.append('stretchId', currentStretchId);
             formData.append('stopTime', stopTime.toISOString());
+            formData.append("isJuice", true);
 
             const uploadResponse = await fetch('https://sww48o88cs88sg8k84g4s4kg.a.selfhosted.hackclub.com/api/video/upload', {
                 method: 'POST',
@@ -221,7 +222,6 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
                     throw new Error('Failed to resume juice stretch');
                 }
                 const data = await response.json();
-                console.log(data.newPauseTime)
                 setTotalPauseTimeSeconds(data.newPauseTime)
                 setIsPaused(false);
             } catch (error) {
@@ -229,7 +229,7 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
             }
 
             // Fetch updated user data to get new total time
-            const userResponse = await fetch('/api/user', {
+            const userResponse = await fetch('https://sww48o88cs88sg8k84g4s4kg.a.selfhosted.hackclub.com/api/user', {
                 headers: {
                     'Authorization': `Bearer ${userData.token}`
                 }
@@ -407,8 +407,8 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
                             }
                             <div style={{display: "flex", flexDirection: "column", gap: 4}}>
                                 <p>Current Session: {timeJuiced}</p>
-                                <p>Total Time Juiced: {userData?.totalStretchHours ? 
-                                    `${Math.floor(userData.totalStretchHours)} hours ${Math.round((userData.totalStretchHours % 1) * 60)} min` : 
+                                <p>Total Time Juiced: {userData?.totalJuiceHours ? 
+                                    `${Math.floor(userData.totalJuiceHours)} hours ${Math.round((userData.totalJuiceHours % 1) * 60)} min` : 
                                     "0 hours 0 min"}</p>
                             </div>
                             
