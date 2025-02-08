@@ -1,5 +1,4 @@
-# Game Name
-Wild Wild...Wait, What?!
+# Wild Wild...Wait, What?!
 
 **Team Members:** [Sarah Ngai, Scarlett Huang]
 
