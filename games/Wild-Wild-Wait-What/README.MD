@@ -1,4 +1,4 @@
-Wild Wild...Wait, What?!
+# Wild Wild...Wait, What?!
 Team Members: [Sarah Ngai, Scarlett Huang]
 
 How would you pitch your game in one line? [Shooting platformer game. As a cowboy. Out of hell!]
