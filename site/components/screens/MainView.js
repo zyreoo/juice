@@ -9,6 +9,7 @@ import FactionWindow from './FactionWindow';
 import FirstChallengeWindow from './FirstChallengeWindow';
 import JuiceWindow from './JuiceWindow';
 import KudosWindow from './KudosWindow';
+import GalleryWindow from './GalleryWindow';
 import Background from '../Background';
 import ShareSuccessPanel from './ShareSuccessPanel';
 import FortuneBasket from './FortuneBasket';
@@ -56,6 +57,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
   const [isRsvped, setIsRsvped] = React.useState(false);
   const [showCookies, setShowCookies] = React.useState(false);
   const [kudosPosition, setKudosPosition] = React.useState({ x: 350, y: 350 });
+  const [GalleryPosition, setGalleryPosition] = React.useState({ x: 400, y: 400 });
+
   const [isJuicing, setIsJuicing] = React.useState(false);
   const juicerSoundRef = React.useRef(null);
   const [thanksPosition, setThanksPosition] = React.useState({ x: 400, y: 400 });
@@ -78,7 +81,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
     fortuneBasket: 220,
     thanks: 300,
     secondChallenge: 300,
-    menuWindow: 470
+    menuWindow: 470,
+    galleryWindow: 397
   };
   const BASE_Z_INDEX = 1;
 
@@ -279,7 +283,23 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
             "fruitBasketWindow",
           ]);
         }
-      } else if (fileId === "wutIsJungle") {
+      }   else if (fileId === "Gallery") {
+        if (!openWindows.includes("Gallery")) {
+          setOpenWindows((prev) => [...prev, "Gallery"]);
+          setWindowOrder((prev) => [
+            ...prev.filter((w) => w !== "Gallery"),
+            "gallery",
+          ]);
+          document.getElementById("windowOpenAudio").currentTime = 0;
+          document.getElementById("windowOpenAudio").play();
+        } else {
+          setWindowOrder((prev) => [
+            ...prev.filter((w) => w !== "gallery"),
+            "gallery",
+          ]);
+        }
+      } 
+       else if (fileId === "wutIsJungle") {
         if (!openWindows.includes('wutIsJungle')) {
           setOpenWindows(prev => [...prev, 'wutIsJungle']);
           setWindowOrder(prev => [...prev.filter(w => w !== 'wutIsJungle'), 'wutIsJungle']);
@@ -337,6 +357,9 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
       case "kudos":
         position = kudosPosition;
         break;
+      case "Gallery":
+         position = GalleryPosition;
+         break;
       case "thanks":
         position = thanksPosition;
         break;
@@ -409,6 +432,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         setFortuneBasketPosition(newPosition);
       } else if (activeWindow === "kudos") {
         setKudosPosition(newPosition);
+      } else if (activeWindow === "Gallery") {
+        setGalleryPosition(newPosition);
       } else if (activeWindow === "thanks") {
         setThanksPosition(newPosition);
       } else if (activeWindow === "jungleWindow") {
@@ -918,6 +943,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                 {userData?.totalKudos || 0}
               </p>
             </div>
+            
             <div
               style={{
                 display: "flex",
@@ -1194,6 +1220,18 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
             ACTIVE_Z_INDEX={getWindowZIndex("kudos")}
           />
         )}
+           {openWindows.includes("Gallery") && (
+          <GalleryWindow
+            position={GalleryPosition}
+            isDragging={isDragging && activeWindow === "Gallery"}
+            isActive={windowOrder[windowOrder.length - 1] === "Gallery"}
+            handleMouseDown={handleMouseDown}
+            handleDismiss={handleDismiss}
+            handleWindowClick={handleWindowClick}
+            BASE_Z_INDEX={getWindowZIndex("Gallery")}
+            ACTIVE_Z_INDEX={getWindowZIndex("Gallery")}
+          />
+        )}
 
         {openWindows.includes("thanks") && (
           <ThanksWindow
@@ -1323,6 +1361,17 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                   onClick={handleFileClick("Kudos")}
                   delay={0.5}
                   data-file-id="Kudos"
+                />
+              )}
+                 {isLoggedIn && (
+                <FileIcon
+                  text="Gallery"
+                  icon="./kudos.png"
+                  style={{ backgroundColor: "#000", color: "#fff" }}
+                  isSelected={selectedFile === "Gallery"}
+                  onClick={handleFileClick("Gallery")}
+                  delay={0.5}
+                  data-file-id="Gallery"
                 />
               )}
               {isLoggedIn && (

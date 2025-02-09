@@ -25,12 +25,13 @@ export default async function handler(req, res) {
     const games = records.map(record => ({
       email: record.fields.email,
       itchurl: record.fields.itchurl,
-      gamename: record.fields.gamename
+      gamename: record.fields.gamename,
+      thumbnail: record.fields.thumbnail[0].url
     }));
 
     res.status(200).json(games);
   } catch (error) {
-    console.error('Error fetching OMG moments:', error);
-    res.status(500).json({ message: 'Error fetching OMG moments' });
+    console.error('Error fetching gallery records:', error);
+    res.status(500).json({ message: 'Error fetching gallery records' });
   }
 } 
