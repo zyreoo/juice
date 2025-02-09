@@ -30,8 +30,6 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
         './whisper6.mp3',
         './whisper7.mp3',
         './whisper8.mp3',
-        './whisper9.mp3',
-        './whisper10.mp3',
         './whisper11.mp3',
         './whisper12.mp3',
         './whisper13.mp3',
