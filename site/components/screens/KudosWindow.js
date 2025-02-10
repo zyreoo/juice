@@ -400,49 +400,22 @@ export default function KudosWindow({ position, isDragging, isActive, handleMous
                                             ←
                                         </button>
                                         
-                                        {[...Array(totalPages)].map((_, index) => {
-                                            if (totalPages > 5) {
-                                                if (index === 0 || index === totalPages - 1 || (index >= currentPage - 2 && index <= currentPage)) {
-                                                    return (
-                                                        <button
-                                                            key={index + 1}
-                                                            onClick={() => handlePageChange(index + 1)}
-                                                            style={{
-                                                                padding: "4px 8px",
-                                                                backgroundColor: currentPage === index + 1 ? "#3870FF" : "white",
-                                                                color: currentPage === index + 1 ? "white" : "black",
-                                                                border: "1px solid #3870FF",
-                                                                borderRadius: 4,
-                                                                cursor: "pointer"
-                                                            }}
-                                                        >
-                                                            {index + 1}
-                                                        </button>
-                                                    );
-                                                } else if (index === currentPage - 3 || index === currentPage + 1) {
-                                                    return <span key={index} style={{ padding: "4px 8px" }}>...</span>;
-                                                } else {
-                                                    return null;
-                                                }
-                                            } else {
-                                                return (
-                                                    <button
-                                                        key={index + 1}
-                                                        onClick={() => handlePageChange(index + 1)}
-                                                        style={{
-                                                            padding: "4px 8px",
-                                                            backgroundColor: currentPage === index + 1 ? "#3870FF" : "white",
-                                                            color: currentPage === index + 1 ? "white" : "black",
-                                                            border: "1px solid #3870FF",
-                                                            borderRadius: 4,
-                                                            cursor: "pointer"
-                                                        }}
-                                                    >
-                                                        {index + 1}
-                                                    </button>
-                                                );
-                                            }
-                                        })}
+                                        {[...Array(totalPages)].map((_, index) => (
+                                            <button
+                                                key={index + 1}
+                                                onClick={() => handlePageChange(index + 1)}
+                                                style={{
+                                                    padding: "4px 8px",
+                                                    backgroundColor: currentPage === index + 1 ? "#3870FF" : "white",
+                                                    color: currentPage === index + 1 ? "white" : "black",
+                                                    border: "1px solid #3870FF",
+                                                    borderRadius: 4,
+                                                    cursor: "pointer"
+                                                }}
+                                            >
+                                                {index + 1}
+                                            </button>
+                                        ))}
                                         
                                         <button
                                             onClick={() => handlePageChange(currentPage + 1)}
