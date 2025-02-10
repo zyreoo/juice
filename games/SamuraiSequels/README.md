@@ -1,4 +1,4 @@
-# Samurai Sequels
+# Dominire
 
 **Team Members:** BurntRanch, Pulkit, Toni500
 
