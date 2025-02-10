@@ -278,12 +278,14 @@ export default function GalleryWindow({ position, isDragging, isActive, handleMo
                                     width: "100%"
                                 }}>
                                     {currentMoments.map(moment => (
+                                       
                                         <div key={moment.id} style={{
                                             display: "flex",
                                             flexDirection: "column",
                                             gap: 8,
                                             position: "relative"
                                         }}>
+                                             <a href={moment.itchurl}>
                                             <img src={moment.thumbnail}
                                              
                                                 style={{
@@ -314,7 +316,9 @@ export default function GalleryWindow({ position, isDragging, isActive, handleMo
                                                 <p style={{ margin: "4px 0", fontSize: "0.8em" }}>
                                                     {moment.gamename}
                                                 </p>
+                                                
                                             </div>
+                                            </a>
                                         </div>
                                     ))}
                                 </div>

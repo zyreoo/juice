@@ -1366,7 +1366,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                  {isLoggedIn && (
                 <FileIcon
                   text="Gallery"
-                  icon="./kudos.png"
+                  icon="./gallery.png"
                   style={{ backgroundColor: "#000", color: "#fff" }}
                   isSelected={selectedFile === "Gallery"}
                   onClick={handleFileClick("Gallery")}
