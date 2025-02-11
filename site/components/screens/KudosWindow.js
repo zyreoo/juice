@@ -206,7 +206,7 @@ export default function KudosWindow({ position, isDragging, isActive, handleMous
                 </button>
             );
 
-            if (currentPage > halfMaxButtons + 2) {
+            if (currentPage > halfMaxButtons + 1) {
                 buttons.push(<span key="start-ellipsis">...</span>);
             }
 
@@ -232,7 +232,7 @@ export default function KudosWindow({ position, isDragging, isActive, handleMous
                 );
             }
 
-            if (currentPage < totalPages - halfMaxButtons - 1) {
+            if (currentPage < totalPages - halfMaxButtons) {
                 buttons.push(<span key="end-ellipsis">...</span>);
             }
 
