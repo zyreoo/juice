@@ -1564,7 +1564,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                       setWindowOrder(prev => [...prev.filter(w => w !== "postcard"), "postcard"]);
                     }
                   }}
-                  src="./Envelope.png"
+                  src="./envelope.png"
                 />
               </div>
             }
