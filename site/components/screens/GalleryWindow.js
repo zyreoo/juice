@@ -8,13 +8,13 @@ export default function GalleryWindow({ position, isDragging, isActive, handleMo
     const momentsPerPage = 9;
 
     useEffect(() => {
-        // Check sessionStorage for cached moments
-        const cachedMoments = sessionStorage.getItem('cachedGallery');
+        // // Check sessionStorage for cached moments
+        // const cachedMoments = sessionStorage.getItem('cachedGallery');
 
-        if (cachedMoments) {
-            setMoments(JSON.parse(cachedMoments));
-            setLoading(false);
-        } else {
+        // if (cachedMoments) {
+        //     setMoments(JSON.parse(cachedMoments));
+        //     setLoading(false);
+        // } else {
             const fetchMoments = async () => {
                 try {
                     const response = await fetch('/api/get-gallery');
@@ -24,7 +24,7 @@ export default function GalleryWindow({ position, isDragging, isActive, handleMo
                     const data = await response.json();
                     
                     // Store fetched moments in cache
-                    sessionStorage.setItem('cachedGallery', JSON.stringify(data));
+                    // sessionStorage.setItem('cachedGallery', JSON.stringify(data));
                     setMoments(data);
                 } catch (err) {
                     setError(err.message);
@@ -34,7 +34,6 @@ export default function GalleryWindow({ position, isDragging, isActive, handleMo
             };
 
             fetchMoments();
-        }
     }, []);
 
     // Calculate pagination

@@ -9,20 +9,27 @@ const base = new Airtable({
 function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
-
+let cacheOfGames = {}
+const cacheEvery = 1000 * 60 * 10
+const cacheAirtable = 10_000 
+let last_airtable_cache = -1
+let last_cache = {}
 async function getItchGameInfo(gameUrl, retries = 5, delayMs = 2000) {
+  if ((last_cache[gameUrl] || -1) > -1 && Date.now() - (last_cache[gameUrl] || -1)  < cacheEvery) {
+    return cacheOfGames[gameUrl];
+  }
+  last_cache[gameUrl] = Date.now()
+  cacheOfGames[gameUrl] = null
   try {
     const response = await fetch(gameUrl, {
       headers: { "User-Agent": "Mozilla/5.0" },
       timeout: 10000, 
     });
-
     if (response.status === 429) {
       console.warn(`Rate limited (429) on ${gameUrl}. Waiting ${delayMs}ms`);
       await delay(delayMs);
       return getItchGameInfo(gameUrl, retries - 1, delayMs * 2); // Exponential backoff
     }
-
     if (!response.ok) {
       throw new Error(`HTTP Error: ${response.status}`);
     }
@@ -36,10 +43,12 @@ async function getItchGameInfo(gameUrl, retries = 5, delayMs = 2000) {
       html.match(/<meta property="og:image" content="(.*?)"/),
       html.match(/<meta name="twitter:image" content="(.*?)"/),
       html.match(/<meta property="og:image:url" content="(.*?)"/),
-    ];
 
+    ];
+    let di = 0;
     for (const match of metaTags) {
       if (match && match[1]) {
+        console.log(di, match[0], match[1])
         thumbnail = match[1];
         break;
       }
@@ -47,11 +56,12 @@ async function getItchGameInfo(gameUrl, retries = 5, delayMs = 2000) {
 
     if (!thumbnail) {
       const imgMatch = html.match(/<img.*?src=["'](https:\/\/.*?\.itch\.zone\/.*?)["']/);
-      if (imgMatch && imgMatch[1]) {
+      if (imgMatch && imgMatch[1] && !thumbnail) {
         thumbnail = imgMatch[1];
       }
     }
-
+    console.log(title, thumbnail)
+    cacheOfGames[gameUrl] = { title, thumbnail };
     return { title, thumbnail };
 
   } catch (error) {
@@ -88,21 +98,25 @@ async function handler(req, res) {
   if (req.method !== 'GET') {
     return res.status(405).json({ message: 'Method not allowed' });
   }
-
+if(last_airtable_cache > -1 && Date.now() - last_airtable_cache < cacheAirtable && last_cache) {
+  return res.status(200).json(last_cache);
+}
+last_airtable_cache = Date.now()
   try {
     const juiceStart = new Date(Date.now() - 1000000 * 60 * 60 * 1000).toISOString();
 
     const records = await base('Ships')
       .select({
         filterByFormula: `IS_AFTER({created_at}, '${juiceStart}')`,
-        sort: [{ field: 'created_at', direction: 'desc' }]
+        sort: [{ field: 'created_at', direction: 'desc' }],
+        fields: ['Link', 'created_at']
       })
       .all();
-
     function ensureValidUrl(gameUrl) {
       if (!gameUrl.startsWith("http://") && !gameUrl.startsWith("https://")) {
         gameUrl = "https://" + gameUrl;
       }
+      
       return gameUrl;
     }
 
@@ -127,12 +141,12 @@ async function handler(req, res) {
           }
         });
       }
+      last_cache = games;
       return games;
     }
-
     const games = await processGamesInBatches(records);
 
-    res.status(200).json(games);
+    res.status(201).json(games);
   } catch (error) {
     console.error('Error fetching gallery records:', error);
     res.status(500).json({ message: 'Error fetching gallery records' });
