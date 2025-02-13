@@ -324,7 +324,12 @@ export default function PostcardWindow({ position, isDragging, isActive, handleM
                                             flex: 1,
                                             whiteSpace: 'nowrap',
                                             padding: '4px 8px',
-                                            fontSize: '14px'
+                                            fontSize: '14px',
+                                            backgroundColor: '#ff0000',
+                                            color: 'white',
+                                            border: 'none',
+                                            borderRadius: '4px',
+                                            cursor: 'pointer'
                                         }}
                                     >
                                         mail it to my home 💮

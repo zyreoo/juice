@@ -1535,39 +1535,53 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
 
         </div>
 
-        {userData?.Postcards?.length > 0 && 
-              <div style={{position: "absolute", bottom: 0, right: 16}}>
-                <img 
-                  style={{
-                    width: 96,
-                    animation: "jiggleEnvelope 1.2s linear infinite",
-                    transformOrigin: '50% 50%',
-                    transition: 'all 1.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
-                    cursor: 'pointer',
-                    position: 'relative',
-                    filter: 'drop-shadow(0 0 5px rgba(255,255,255,0.1))'
-                  }} 
-                  onMouseEnter={(e) => {
-                    e.target.style.width = '128px';
-                    e.target.style.animation = "jiggleEnvelopeIntense 0.8s linear infinite, rainbowShadow 8s linear infinite";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.width = '96px';
-                    e.target.style.animation = "jiggleEnvelope 1.2s linear infinite";
-                  }}
-                  onClick={() => {
-                    if (!openWindows.includes("postcard")) {
-                      setOpenWindows(prev => [...prev, "postcard"]);
-                      setWindowOrder(prev => [...prev.filter(w => w !== "postcard"), "postcard"]);
-                      document.getElementById("mailAudio").play();
-                    } else {
-                      setWindowOrder(prev => [...prev.filter(w => w !== "postcard"), "postcard"]);
-                    }
-                  }}
-                  src="./envelope.png"
-                />
-              </div>
-            }
+        <div style={{position: "absolute", display: 'flex', gap: 8, flexDirection: 'column', alignItems: "end", bottom: 0, right: 16}}>
+
+          <div style={{display: 'flex', flexDirection: "column", gap: 8}}>
+            <div style={{width: 256, backgroundColor: "#fff", borderRadius: 4, padding: 4}}>
+            <p>a Hack Clubber published a game on Itch.io 5min ago</p>
+            </div> 
+            {/* <div style={{width: 256, transform: "scale(0.9)", opacity: 0.9, backgroundColor: "#fff", borderRadius: 4, padding: 4}}>
+            <p>a Hack Clubber published a game on Itch.io 5min ago</p>
+            </div>   
+            <div style={{width: 256, transform: "scale(0.8)", opacity: 0.8, backgroundColor: "#fff", borderRadius: 4, padding: 4}}>
+            <p>a Hack Clubber published a game on Itch.io 5min ago</p>
+            </div>    */}
+          </div>
+          {userData?.Postcards?.length > 0 && 
+      
+          <img 
+            style={{
+              width: 96,
+              animation: "jiggleEnvelope 1.2s linear infinite",
+              transformOrigin: '50% 50%',
+              transition: 'all 1.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
+              cursor: 'pointer',
+              position: 'relative',
+              filter: 'drop-shadow(0 0 5px rgba(255,255,255,0.1))'
+            }} 
+            onMouseEnter={(e) => {
+              e.target.style.width = '128px';
+              e.target.style.animation = "jiggleEnvelopeIntense 0.8s linear infinite, rainbowShadow 8s linear infinite";
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.width = '96px';
+              e.target.style.animation = "jiggleEnvelope 1.2s linear infinite";
+            }}
+            onClick={() => {
+              if (!openWindows.includes("postcard")) {
+                setOpenWindows(prev => [...prev, "postcard"]);
+                setWindowOrder(prev => [...prev.filter(w => w !== "postcard"), "postcard"]);
+                document.getElementById("mailAudio").play();
+              } else {
+                setWindowOrder(prev => [...prev.filter(w => w !== "postcard"), "postcard"]);
+              }
+            }}
+            src="./envelope.png"
+          />
+          }
+        </div>
+            
 
         {/* background goes here */}
         <div 
