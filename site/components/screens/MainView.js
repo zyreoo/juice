@@ -1445,8 +1445,9 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                   data-file-id="Gallery"
                 />
               )}
-              {isLoggedIn && (
+              
               {isLoggedIn && !isJungle && (
+
 
               <FileIcon
                 text="Moments"
