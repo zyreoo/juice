@@ -19,6 +19,7 @@ import WutIsJungleWindow from './WutIsJungleWindow';
 import SecondChallengeWindow from './SecondChallengeWindow';
 import MenuWindow from "./MenuWindow";
 import PostcardWindow from './PostcardWindow';
+import WutIsRelayWindow from './WutIsRelayWindow';
 
 export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserData, isJungle }) {
   const [time, setTime] = React.useState(new Date());
@@ -66,6 +67,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
     x: window.innerWidth / 2,
     y: window.innerHeight / 2
   });
+  const [wutIsRelayPosition, setWutIsRelayPosition] = React.useState({ x: 100, y: 100 });
 
   // Constants
   const TOP_BAR_HEIGHT = 36;
@@ -83,7 +85,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
     fortuneBasket: 220,
     thanks: 300,
     secondChallenge: 300,
-    menuWindow: 470
+    menuWindow: 470,
+    wutIsRelay: 470,
   };
   const BASE_Z_INDEX = 1;
 
@@ -360,6 +363,9 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         case 'secondChallenge':
           position = secondChallengePosition;
         break;
+      case 'wutIsRelay':
+        position = wutIsRelayPosition;
+        break;
       default:
         console.log("Unknown window name:", windowName);
         position = { x: 0, y: 0 };
@@ -426,6 +432,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         setwutIsJunglePosition(newPosition);
       } else if (activeWindow === 'secondChallenge') {
         setSecondChallengePosition(newPosition);
+      } else if (activeWindow === 'wutIsRelay') {
+        setWutIsRelayPosition(newPosition);
       }
     }
   };
@@ -541,6 +549,17 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
       setWindowOrder(prev => [...prev.filter(w => w !== 'secondChallenge'), 'secondChallenge']);
     } else {
       setWindowOrder(prev => [...prev.filter(w => w !== 'secondChallenge'), 'secondChallenge']);
+    }
+  };
+
+  const handleRelayOpen = () => {
+    if (!openWindows.includes('Relay')) {
+      setOpenWindows(prev => [...prev, 'Relay']);
+      document.getElementById("windowOpenAudio").currentTime = 0;
+      document.getElementById("windowOpenAudio").play();
+      setWindowOrder(prev => [...prev.filter(w => w !== 'Relay'), 'Relay']);
+    } else {
+      setWindowOrder(prev => [...prev.filter(w => w !== 'Relay'), 'Relay']);
     }
   };
 
@@ -1309,6 +1328,19 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
           />
         )}
 
+        {openWindows.includes('wutIsRelay') && (
+          <WutIsRelayWindow
+            position={wutIsRelayPosition}
+            isDragging={isDragging && activeWindow === 'wutIsRelay'}
+            isActive={windowOrder[windowOrder.length - 1] === 'wutIsRelay'}
+            handleMouseDown={handleMouseDown}
+            handleDismiss={handleDismiss}
+            handleWindowClick={handleWindowClick}
+            BASE_Z_INDEX={getWindowZIndex('wutIsRelay')}
+            ACTIVE_Z_INDEX={getWindowZIndex('wutIsRelay')}
+          />
+        )}
+
         <div
           style={{
             position: "absolute",
@@ -1503,6 +1535,55 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                     <div className="floating-boat boat1" style={{ left: '30%', top: '70%', animationDelay: '4s' }}>⛵️</div>
                 </div>
             )}
+
+{ !isJungle && (
+                <div 
+                    className="panel-pop rainbow-glass-panel"
+                    style={{
+                        width: 332,
+                        marginTop: 8,
+                        borderRadius: 8,
+                        padding: 12,
+                        position: 'relative',
+                        overflow: 'hidden'
+                    }}>
+                        <div style={{ position: 'relative', zIndex: 1 }}>
+                            <p style={{ 
+                                color: "rgba(255, 255, 255, 1.0)", 
+                                margin: "0 0 8px 0",
+                                textShadow: `
+                                    -1px -1px 0 #000,
+                                    1px -1px 0 #000,
+                                    -1px 1px 0 #000,
+                                    1px 1px 0 #000`
+                            }}>Talen's Relay</p>
+                            <button 
+                                onClick={() => {
+                                    if (!openWindows.includes('wutIsRelay')) {
+                                        setOpenWindows(prev => [...prev, 'wutIsRelay']);
+                                        setWindowOrder(prev => [...prev.filter(w => w !== 'wutIsRelay'), 'wutIsRelay']);
+                                        document.getElementById("windowOpenAudio").currentTime = 0;
+                                        document.getElementById("windowOpenAudio").play();
+                                    } else {
+                                        setWindowOrder(prev => [...prev.filter(w => w !== 'wutIsRelay'), 'wutIsRelay']);
+                                    }
+                                }}
+                                style={{
+                                    padding: "4px 12px",
+                                    backgroundColor: "#FFE600",
+                                    color: "#000",
+                                    border: "2px solid #000",
+                                    borderRadius: 4,
+                                    cursor: "pointer",
+                                    fontWeight: "bold",
+                                    transition: "transform 0.2s ease, box-shadow 0.2s ease"
+                                }}>Join Relay Call</button>
+                        </div>
+                        <div className="floating-boat boat1" style={{ left: '0', top: '50%' }}>⛵️</div>
+                        <div className="floating-boat boat2" style={{ right: '0', top: '30%' }}>⛵️</div>
+                        <div className="floating-boat boat1" style={{ left: '30%', top: '70%', animationDelay: '4s' }}>⛵️</div>
+                    </div>
+                )}
 
           {isLoggedIn && tickets.some(t => !t.used) && <div 
                 className="panel-pop"
