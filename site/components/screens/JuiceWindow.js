@@ -18,24 +18,38 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
     const expSoundRef = useRef(null);
     const congratsSoundRef = useRef(null);
     const whisperAudioRefs = useRef([]);
-
+    const idleWhisperAudioRefs = useRef([]);
+    const nonWhisperIdleAudioRefs = useRef([]);
 
     // temporary whisper audio files
     const whisperAudioFiles = [
         './whisper1.mp3',
         './whisper2.mp3',
-        './whisper3.mp3',
-        './whisper4.mp3',
-        './whisper5.mp3',
-        './whisper6.mp3',
-        './whisper7.mp3',
-        './whisper8.mp3',
-        './whisper11.mp3',
-        './whisper12.mp3',
-        './whisper13.mp3',
-        './whisper14.mp3',
-        './whisper15.mp3'
+        '/juice-whispers/whisper3.mp3',
+        '/juice-whispers/whisper4.mp3',
+        '/juice-whispers/whisper5.mp3',
+        '/juice-whispers/whisper6.mp3',
+        '/juice-whispers/whisper7.mp3',
+        '/juice-whispers/whisper8.mp3',
+        '/juice-whispers/whisper11.mp3',
+        '/juice-whispers/whisper12.mp3',
+        '/juice-whispers/whisper13.mp3',
+        '/juice-whispers/whisper14.mp3',
+        '/juice-whispers/whisper15.mp3'
     ];
+
+    const idleWhisperAudioFiles = [
+        './idleWhisper1.mp3',
+        './idleWhisper2.mp3',
+        './idleWhisper3.mp3',
+    ];
+
+    const nonWhisperIdleAudioFiles = [
+        './nonWhisperIdle1.mp3',
+    ];
+
+    let whisperCount = 0;
+
     const [juicerImage, setJuicerImage] = useState('/juicerRest.png');
 
     // Add play click function
@@ -69,6 +83,19 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
         whisperAudioRefs.current = whisperAudioFiles.map((file) => {
             const audio = new Audio(file);
             audio.volume = 0.5;
+            audio.onerror = (e) => console.error('Error loading whisper audio:', e);
+            return audio;
+        });
+        idleWhisperAudioRefs.current = idleWhisperAudioFiles.map((file) => {
+            const audio = new Audio(file);
+            audio.volume = 0.5;
+            audio.onerror = (e) => console.error('Error loading idle whisper audio:', e);
+            return audio;
+        });
+        nonWhisperIdleAudioRefs.current = nonWhisperIdleAudioFiles.map((file) => {
+            const audio = new Audio(file);
+            audio.volume = 0.5;
+            audio.onerror = (e) => console.error('Error loading non-whisper idle audio:', e);
             return audio;
         });
     }, []);
@@ -78,6 +105,22 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
         const selectedAudio = whisperAudioRefs.current[randomIndex];
         selectedAudio.currentTime = 0;
         selectedAudio.play().catch(e => console.error('Error playing whisper audio (whisper to yourself for now :P) :', e));
+    };
+
+    const playRandomIdleWhisper = () => {
+        if (whisperCount < 3) {
+            const randomIndex = Math.floor(Math.random() * idleWhisperAudioRefs.current.length);
+            const selectedAudio = idleWhisperAudioRefs.current[randomIndex];
+            selectedAudio.currentTime = 0;
+            selectedAudio.play().catch(e => console.error('Error playing idle whisper audio:', e));
+            whisperCount++;
+        } else {
+            const randomIndex = Math.floor(Math.random() * nonWhisperIdleAudioRefs.current.length);
+            const selectedAudio = nonWhisperIdleAudioRefs.current[randomIndex];
+            selectedAudio.currentTime = 0;
+            selectedAudio.play().catch(e => console.error('Error playing non-whisper idle audio:', e));
+            whisperCount = 0;
+        }
     };
 
     useEffect(() => {
@@ -127,6 +170,18 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
             clearInterval(whisperInterval)
         };
     }, [isJuicingLocal, startTime, stopTime, isPaused, isWhisperEnabled]);
+
+    useEffect(() => {
+        let idleWhisperInterval;
+        if (!isJuicingLocal && isWhisperEnabled || isPaused && isWhisperEnabled) {
+            idleWhisperInterval = setInterval(() => {
+                playRandomIdleWhisper();
+            }, 5 * 60 * 1000);
+        }
+        return () => {
+            clearInterval(idleWhisperInterval);
+        };
+    }, [isJuicingLocal, isPaused, isWhisperEnabled]);
 
     // Load data
     useEffect(() => {

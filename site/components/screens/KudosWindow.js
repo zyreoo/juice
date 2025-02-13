@@ -164,99 +164,6 @@ export default function KudosWindow({ position, isDragging, isActive, handleMous
         setCurrentPage(pageNumber);
     };
 
-    const renderPaginationButtons = () => {
-        const buttons = [];
-        const maxButtonsToShow = 5;
-        const halfMaxButtons = Math.floor(maxButtonsToShow / 2);
-
-        if (totalPages <= maxButtonsToShow) {
-            for (let i = 1; i <= totalPages; i++) {
-                buttons.push(
-                    <button
-                        key={i}
-                        onClick={() => handlePageChange(i)}
-                        style={{
-                            padding: "4px 8px",
-                            backgroundColor: currentPage === i ? "#3870FF" : "white",
-                            color: currentPage === i ? "white" : "black",
-                            border: "1px solid #3870FF",
-                            borderRadius: 4,
-                            cursor: "pointer"
-                        }}
-                    >
-                        {i}
-                    </button>
-                );
-            }
-        } else {
-            buttons.push(
-                <button
-                    key={1}
-                    onClick={() => handlePageChange(1)}
-                    style={{
-                        padding: "4px 8px",
-                        backgroundColor: currentPage === 1 ? "#3870FF" : "white",
-                        color: currentPage === 1 ? "white" : "black",
-                        border: "1px solid #3870FF",
-                        borderRadius: 4,
-                        cursor: "pointer"
-                    }}
-                >
-                    1
-                </button>
-            );
-
-            if (currentPage > halfMaxButtons + 1) {
-                buttons.push(<span key="start-ellipsis">...</span>);
-            }
-
-            const startPage = Math.max(2, currentPage - halfMaxButtons);
-            const endPage = Math.min(totalPages - 1, currentPage + halfMaxButtons);
-
-            for (let i = startPage; i <= endPage; i++) {
-                buttons.push(
-                    <button
-                        key={i}
-                        onClick={() => handlePageChange(i)}
-                        style={{
-                            padding: "4px 8px",
-                            backgroundColor: currentPage === i ? "#3870FF" : "white",
-                            color: currentPage === i ? "white" : "black",
-                            border: "1px solid #3870FF",
-                            borderRadius: 4,
-                            cursor: "pointer"
-                        }}
-                    >
-                        {i}
-                    </button>
-                );
-            }
-
-            if (currentPage < totalPages - halfMaxButtons) {
-                buttons.push(<span key="end-ellipsis">...</span>);
-            }
-
-            buttons.push(
-                <button
-                    key={totalPages}
-                    onClick={() => handlePageChange(totalPages)}
-                    style={{
-                        padding: "4px 8px",
-                        backgroundColor: currentPage === totalPages ? "#3870FF" : "white",
-                        color: currentPage === totalPages ? "white" : "black",
-                        border: "1px solid #3870FF",
-                        borderRadius: 4,
-                        cursor: "pointer"
-                    }}
-                >
-                    {totalPages}
-                </button>
-            );
-        }
-
-        return buttons;
-    };
-
     return (
         <div style={{
             position: "absolute", 
@@ -493,7 +400,22 @@ export default function KudosWindow({ position, isDragging, isActive, handleMous
                                             ←
                                         </button>
                                         
-                                        {renderPaginationButtons()}
+                                        {[...Array(totalPages)].map((_, index) => (
+                                            <button
+                                                key={index + 1}
+                                                onClick={() => handlePageChange(index + 1)}
+                                                style={{
+                                                    padding: "4px 8px",
+                                                    backgroundColor: currentPage === index + 1 ? "#3870FF" : "white",
+                                                    color: currentPage === index + 1 ? "white" : "black",
+                                                    border: "1px solid #3870FF",
+                                                    borderRadius: 4,
+                                                    cursor: "pointer"
+                                                }}
+                                            >
+                                                {index + 1}
+                                            </button>
+                                        ))}
                                         
                                         <button
                                             onClick={() => handlePageChange(currentPage + 1)}
@@ -515,4 +437,4 @@ export default function KudosWindow({ position, isDragging, isActive, handleMous
             </div>
         </div>
     );
-}
+} 
