@@ -25,17 +25,17 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
     const whisperAudioFiles = [
         './whisper1.mp3',
         './whisper2.mp3',
-        '/juice-whispers/whisper3.mp3',
-        '/juice-whispers/whisper4.mp3',
-        '/juice-whispers/whisper5.mp3',
-        '/juice-whispers/whisper6.mp3',
-        '/juice-whispers/whisper7.mp3',
-        '/juice-whispers/whisper8.mp3',
-        '/juice-whispers/whisper11.mp3',
-        '/juice-whispers/whisper12.mp3',
-        '/juice-whispers/whisper13.mp3',
-        '/juice-whispers/whisper14.mp3',
-        '/juice-whispers/whisper15.mp3'
+        './whisper3.mp3',
+        './whisper4.mp3',
+        './whisper5.mp3',
+        './whisper6.mp3',
+        './whisper7.mp3',
+        './whisper8.mp3',
+        './whisper11.mp3',
+        './whisper12.mp3',
+        './whisper13.mp3',
+        './whisper14.mp3',
+        './whisper15.mp3'
     ];
 
     const idleWhisperAudioFiles = [
