@@ -36,19 +36,19 @@ export default async function handler(req, res) {
     const jungleBossesFoughtIds = jungleBossesFoughtRecords.map(jungleBossFought => jungleBossFought.fields.jungleBoss[0])
     console.log(jungleBossesFoughtIds)
 
-    // Filter jungle bosses not fought
-    const jungleBossesNotFought = records.filter(record => 
-      !jungleBossesFoughtIds.includes(record.id)
-    );
+    // Filter jungle bosses not fought and sort by hours
+    const jungleBossesNotFought = records
+      .filter(record => !jungleBossesFoughtIds.includes(record.id) && record.fields.hours)
+      .sort((a, b) => a.fields.hours - b.fields.hours);
 
+    console.log(jungleBossesNotFought);
     if (!jungleBossesNotFought || jungleBossesNotFought.length === 0) {
       return res.status(200).json({ message: 'No jungle bosses left to fight' });
     }
 
     // Calculate time to fight the next boss not fought
-    console.log(signupRecord.fields.totalJungleHours - jungleBossesNotFought[0].fields.hours)
     res.status(200).json({ 
-      timeToNextBoss: jungleBossesNotFought[0].fields.hours - signupRecord.fields.totalJungleHours
+      timeToNextBoss: jungleBossesNotFought[0].fields.hours - signupRecord.fields.totalJungleHours, boss: jungleBossesNotFought[0].fields
     });
   } catch (error) {
     console.error('Error resuming jungle stretch:', error);
