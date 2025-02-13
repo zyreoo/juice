@@ -134,6 +134,22 @@ export async function getUserData(req, res) {
     // Calculate total kudos
     userData.totalKudos = omgMoments.reduce((sum, moment) => sum + (moment.fields.kudos || 0), 0);
 
+    // Get postcard data directly from the user record's linked Postcards
+    if (records[0].fields.Postcards) {
+      const postcardRecords = await Promise.all(
+        records[0].fields.Postcards.map(postcardId => 
+          base('Postcards').find(postcardId)
+        )
+      );
+
+      userData.Postcards = postcardRecords.map(record => ({
+        id: record.id,
+        ...record.fields
+      }));
+    } else {
+      userData.Postcards = [];
+    }
+
     res.status(200).json({ userData });
   } catch (error) {
     console.error('Error fetching user data:', error);
