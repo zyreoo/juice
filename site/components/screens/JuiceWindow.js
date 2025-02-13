@@ -34,9 +34,7 @@ export default function JuiceWindow({ position, isDragging, isActive, handleMous
         './whisper12.mp3',
         './whisper13.mp3',
         './whisper14.mp3',
-        './whisper15.mp3',
-        './whisper16.mp3',
-
+        './whisper15.mp3'
     ];
     const [juicerImage, setJuicerImage] = useState('/juicerRest.png');
 

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 
 export default function JungleWindow({ position, isDragging, isActive, handleMouseDown, handleDismiss, handleWindowClick, BASE_Z_INDEX, ACTIVE_Z_INDEX, userData, setUserData, startJuicing, playCollectSound, isJuicing }) {
     const [isForagingLocal, setIsForagingLocal] = useState(false);
-    const [isFightingBoss, setIsFightingBoss] = useState(false);
+    const [bossBeingFought, setbossBeingFought] = useState(undefined);
     const [showExplanation, setShowExplanation] = useState(false);
     const [currentStretchId, setCurrentStretchId] = useState(null);
     const [timeForaged, setTimeForaged] = useState('0:00');
@@ -415,7 +415,7 @@ export default function JungleWindow({ position, isDragging, isActive, handleMou
         if (!userData) return;
 
         try {
-            const response = await fetch('/api/get-time-to-next-boss', {
+            const response = await fetch('/api/get-next-boss', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -439,7 +439,7 @@ export default function JungleWindow({ position, isDragging, isActive, handleMou
             if (timeToNextBoss > 0) {
                 alert(`You're not strong enough to fight the boss yet! You need to forage more in the jungle for ${timeToNextBoss} more hours.`);
             } else {
-                setIsFightingBoss(true);
+                setbossBeingFought(data.boss);
             }
         } catch (error) {
             console.error('Error fetching time to next boss:', error);
@@ -468,7 +468,7 @@ export default function JungleWindow({ position, isDragging, isActive, handleMou
                 throw new Error('Failed to fight Boss');
             }
             alert("BOSS SLAYED! Go redeem your prize!")
-            setIsFightingBoss(false)
+            setbossBeingFought(undefined)
         } catch (error) {
             console.error('Error fighting boss:', error);
         }
@@ -535,20 +535,19 @@ export default function JungleWindow({ position, isDragging, isActive, handleMou
                         </div>
                     ) 
                     : 
-                    isFightingBoss ? (
+                    !(bossBeingFought == undefined) ? (
                         <>
                             <h1 style={{fontSize: 32, lineHeight: 1}}>Jungle (v0.1)</h1>
                             {isJuicing &&
-                            <p>You reached the Mossy Golem</p>
+                            <p>You reached the {bossBeingFought.Name}</p>
                             }
                             <div style={{display: "flex", flexDirection: "column", gap: 4}}>
-                                <p>This beast is a tough one! Your game must have the following features for this boss to be defeated: Working player movement,
-                                    camera controls, interactions with objects in the scene, and a bit of custom art.   
+                                <p>This beast is a tough one! Your game must have the following features for this boss to be defeated: {bossBeingFought.features}   
                                 </p>
                                 <p>In order to defeat this monstrosity, you have to upload your game to <a href="https://itch.io">Itch.io</a> 
-                                {" "}and publish your files to <a href='https://github.com'>Github</a>. Also please make sure to commit regularly from now on,
-                                because future bosses will be a lot tougher!</p>
-                                <p>Defeating this stony figure will allow you to REDEEM your tokens collected BEFORE the 3h mark required for this boss</p>
+                                {" "}and publish your files to <a href='https://github.com'>Github</a>. 
+                                {bossBeingFought.Name == "Moss Golem" && <span> Also please make sure to commit regularly from now on, because future bosses will be a lot tougher!</span>}</p>
+                                <p>Defeating this stony figure will allow you to REDEEM your tokens collected BEFORE the {bossBeingFought.hours}h mark required for this boss</p>
                             </div>
 
                             <div style={{
@@ -557,7 +556,7 @@ export default function JungleWindow({ position, isDragging, isActive, handleMou
                                 alignItems: "center",
                             }}>
                                 <img 
-                                    src="/jungle/mossgolem.gif"
+                                    src={bossBeingFought.imageUrl}
                                     alt="Jungle"
                                     style={{
                                         width: "150px",

@@ -19,6 +19,7 @@ import FruitBasketWindow from './FruitBasketWindow';
 import WutIsJungleWindow from './WutIsJungleWindow';
 import SecondChallengeWindow from './SecondChallengeWindow';
 import MenuWindow from "./MenuWindow";
+import PostcardWindow from './PostcardWindow';
 
 export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserData, isJungle }) {
   const [time, setTime] = React.useState(new Date());
@@ -64,6 +65,10 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
   const [thanksPosition, setThanksPosition] = React.useState({ x: 400, y: 400 });
   const [secondChallengePosition, setSecondChallengePosition] = React.useState({ x: 350, y: 350 });
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const [postcardPosition, setPostcardPosition] = React.useState({ 
+    x: window.innerWidth / 2,
+    y: window.innerHeight / 2
+  });
 
   // Constants
   const TOP_BAR_HEIGHT = 36;
@@ -104,7 +109,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
       } else {
         setTimeRemaining('Event has started!');
       }
-    }, 1000);
+    }, []);
 
     return () => clearInterval(timer);
   }, []);
@@ -464,6 +469,15 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
   const handleDismiss = (windowName) => {
     setOpenWindows((prev) => prev.filter((window) => window !== windowName));
     setWindowOrder((prev) => prev.filter((w) => w !== windowName));
+
+    // Stop any audio when postcard window is closed
+    if (windowName === "postcard") {
+        const audio = document.querySelector('audio[src="./song.mp3"]');
+        if (audio) {
+            audio.pause();
+            audio.currentTime = 0;
+        }
+    }
 
     if (windowName === "register" && isLoggedIn) {
       // Any additional UI updates can go here
@@ -860,6 +874,48 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         }
         .boat1 { animation: floatBoat1 8s linear infinite; }
         .boat2 { animation: floatBoat2 10s linear infinite; }
+        @keyframes jiggleEnvelope {
+          0% { transform: rotate(0deg) scale(1); }
+          15% { transform: rotate(-0.5deg) scale(0.998); }
+          30% { transform: rotate(0.8deg) scale(1.001); }
+          45% { transform: rotate(-0.7deg) scale(0.999); }
+          60% { transform: rotate(0.3deg) scale(1.002); }
+          75% { transform: rotate(-0.5deg) scale(0.998); }
+          85% { transform: rotate(0.4deg) scale(1.001); }
+          100% { transform: rotate(0deg) scale(1); }
+        }
+        @keyframes jiggleEnvelopeIntense {
+          0% { transform: rotate(0deg) scale(1); }
+          15% { transform: rotate(-2deg) scale(0.99); }
+          30% { transform: rotate(3deg) scale(1.02); }
+          45% { transform: rotate(-2.5deg) scale(0.98); }
+          60% { transform: rotate(2deg) scale(1.03); }
+          75% { transform: rotate(-3deg) scale(0.99); }
+          85% { transform: rotate(2.5deg) scale(1.02); }
+          100% { transform: rotate(0deg) scale(1); }
+        }
+        @keyframes rainbowOverlay {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
+        }
+        @keyframes rainbowShadow {
+          0% { 
+            filter: drop-shadow(0 0 8px rgba(255,0,0,0.1)) 
+                   drop-shadow(0 0 12px rgba(255,0,255,0.1));
+          }
+          33% { 
+            filter: drop-shadow(0 0 8px rgba(0,255,0,0.1))
+                   drop-shadow(0 0 12px rgba(255,255,0,0.1));
+          }
+          66% { 
+            filter: drop-shadow(0 0 8px rgba(0,0,255,0.1))
+                   drop-shadow(0 0 12px rgba(0,255,255,0.1));
+          }
+          100% { 
+            filter: drop-shadow(0 0 8px rgba(255,0,0,0.1))
+                   drop-shadow(0 0 12px rgba(255,0,255,0.1));
+          }
+        }
       `}</style>
       <div
         style={{
@@ -1015,6 +1071,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
 
         {openWindows.includes("welcomeWindow") && (
           <WelcomeWindow
+            isJungle={isJungle}
             position={welcomePosition}
             isDragging={isDragging}
             isActive={windowOrder[windowOrder.length - 1] === "welcomeWindow"}
@@ -1276,6 +1333,20 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
           />
         )}
 
+        {openWindows.includes("postcard") && (
+          <PostcardWindow
+            position={postcardPosition}
+            isDragging={isDragging && activeWindow === "postcard"}
+            isActive={windowOrder[windowOrder.length - 1] === "postcard"}
+            handleMouseDown={handleMouseDown}
+            handleDismiss={handleDismiss}
+            handleWindowClick={handleWindowClick}
+            BASE_Z_INDEX={getWindowZIndex("postcard")}
+            ACTIVE_Z_INDEX={getWindowZIndex("postcard")}
+            userData={userData}
+          />
+        )}
+
         <div
           style={{
             position: "absolute",
@@ -1375,6 +1446,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                 />
               )}
               {isLoggedIn && (
+              {isLoggedIn && !isJungle && (
 
               <FileIcon
                 text="Moments"
@@ -1510,8 +1582,42 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                         cursor: "pointer"
                     }}>Grab Your Tickets</button>
             </div>}
-            
+
         </div>
+
+        {userData?.Postcards?.length > 0 && 
+              <div style={{position: "absolute", bottom: 0, right: 16}}>
+                <img 
+                  style={{
+                    width: 96,
+                    animation: "jiggleEnvelope 1.2s linear infinite",
+                    transformOrigin: '50% 50%',
+                    transition: 'all 1.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                    cursor: 'pointer',
+                    position: 'relative',
+                    filter: 'drop-shadow(0 0 5px rgba(255,255,255,0.1))'
+                  }} 
+                  onMouseEnter={(e) => {
+                    e.target.style.width = '128px';
+                    e.target.style.animation = "jiggleEnvelopeIntense 0.8s linear infinite, rainbowShadow 8s linear infinite";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.width = '96px';
+                    e.target.style.animation = "jiggleEnvelope 1.2s linear infinite";
+                  }}
+                  onClick={() => {
+                    if (!openWindows.includes("postcard")) {
+                      setOpenWindows(prev => [...prev, "postcard"]);
+                      setWindowOrder(prev => [...prev.filter(w => w !== "postcard"), "postcard"]);
+                      document.getElementById("mailAudio").play();
+                    } else {
+                      setWindowOrder(prev => [...prev.filter(w => w !== "postcard"), "postcard"]);
+                    }
+                  }}
+                  src="./envelope.png"
+                />
+              </div>
+            }
 
         {/* background goes here */}
         <div 
@@ -1535,6 +1641,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         <audio id="juicerAudio" src="./juicer.mp3" preload="auto"></audio>
         <audio id="collectAudio" src="./collect.mp3" preload="auto"></audio>
         <audio id="windowOpenAudio" src="./sounds/windowOpenSound.wav"/>
+        <audio id="mailAudio" src="/youGotMail.mp3" />
       </div>
     </div>
   );
