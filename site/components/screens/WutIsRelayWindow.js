@@ -14,6 +14,19 @@ export default function WutIsJungleWindow({ position, isDragging, isActive, hand
         }
     };
 
+    const handleRelayClick = () => {
+        const now = new Date();
+        const startTime = new Date();
+        startTime.setUTCHours(21, 0, 0, 0); // 9 PM GMT
+
+        // If current time is after 9 PM GMT, use the live link
+        const relayLink = now >= startTime ? 
+            'https://hackclub.zoom.us/j/85023610589' : 
+            'YOUR_RSVP_LINK';
+
+        window.open(relayLink, '_blank');
+    };
+
     return (
         <div style={{
             transform: `translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px))`,
@@ -86,24 +99,33 @@ export default function WutIsJungleWindow({ position, isDragging, isActive, hand
                         <p>The relay is a way for all of us to improve our games, have a good time, and play each other's games!</p>
                         <p>In the relay we'll have a Sprinting period (1 hour), where we'll be each developing our games and asking for any help we need in the relay zoom call.</p>
                         <p>After the sprinting period, there'll also be a refuel period (~ 15 minutes), where we'll be playing each other's games and giving feedback.</p>
-                        <p>Oh also, did I mention that it's on for 24 HOURS? That's right, you can join the relay at any time and stay as long as you want and I'll even be there the whole time!</p>
+                        <p>Oh also, did I mention that it's on for <b style={{ animation: 'steamGrantFlash 1s infinite'}}>24 HOURS</b>? That's right, you can join the relay at any time and stay as long as you want and I'll even be there the whole time!</p>
                         <p>If you want to join, just click the button below and we'll see you there!</p>
                         
                         <button 
-                            onClick={() => window.open('YOUR_LINK_HERE', '_blank')}
+                            onClick={handleRelayClick}
                             style={{
-                                padding: '8px 16px',
-                                backgroundColor: '#FF6000',
-                                color: 'white',
+                                padding: 0,
+                                backgroundColor: 'transparent',
                                 border: 'none',
                                 borderRadius: '4px',
                                 cursor: 'pointer',
-                                fontWeight: 'bold',
                                 alignSelf: 'center',
-                                marginTop: '8px'
+                                marginTop: '8px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px'
                             }}
                         >
-                            Join the Relay!
+                            <img 
+                                src="./joinButton.png" 
+                                alt="relay icon" 
+                                style={{
+                                    width: '64px',
+                                    height: '32px',
+                                    imageRendering: 'pixelated'
+                                }}
+                            />
                         </button>
                     </div>
                 </div>
