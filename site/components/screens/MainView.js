@@ -692,9 +692,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
   // Add this function to check relay time
   const isRelayTime = () => {
     const now = new Date();
-    const relayStart = new Date('2025-02-14T13:00:00.000Z'); // 9 PM GMT on Feb 14th, 2025
-    const relayEnd = new Date('2025-02-15T13:00:00.000Z'); // 9 PM GMT on Feb 15th, 2025
-    return now.getTime() >= relayStart.getTime() && now.getTime() <= relayEnd.getTime();
+    const relayTime = new Date('2025-02-14T21:00:00.000Z'); // 9 PM GMT on Feb 14th, 2025
+    return now.getTime() >= relayTime.getTime();
   };
 
   // Add these functions at the top of your component
