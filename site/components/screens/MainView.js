@@ -20,6 +20,7 @@ import WutIsJungleWindow from './WutIsJungleWindow';
 import SecondChallengeWindow from './SecondChallengeWindow';
 import MenuWindow from "./MenuWindow";
 import PostcardWindow from './PostcardWindow';
+import WutIsRelayWindow from './WutIsRelayWindow';
 
 export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserData, isJungle }) {
   const [time, setTime] = React.useState(new Date());
@@ -69,6 +70,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
     x: window.innerWidth / 2,
     y: window.innerHeight / 2
   });
+  const [wutIsRelayPosition, setWutIsRelayPosition] = React.useState({ x: 100, y: 100 });
 
   // Constants
   const TOP_BAR_HEIGHT = 36;
@@ -87,6 +89,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
     thanks: 300,
     secondChallenge: 300,
     menuWindow: 470,
+    wutIsRelay: 470,
     galleryWindow: 397
   };
   const BASE_Z_INDEX = 1;
@@ -373,8 +376,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         break;
       case "fruitBasketWindow":
         position = fruitBasketWindowPosition;
-        break
-        case 'wutIsJungle':
+        break;
+      case 'wutIsJungle':
         position = wutIsJunglePosition;
         break;
       case "menuWindow":
@@ -382,6 +385,9 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         break;
         case 'secondChallenge':
           position = secondChallengePosition;
+        break;
+      case 'wutIsRelay':
+        position = wutIsRelayPosition;
         break;
       default:
         console.log("Unknown window name:", windowName);
@@ -451,6 +457,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         setwutIsJunglePosition(newPosition);
       } else if (activeWindow === 'secondChallenge') {
         setSecondChallengePosition(newPosition);
+      } else if (activeWindow === 'wutIsRelay') {
+        setWutIsRelayPosition(newPosition);
       }
     }
   };
@@ -566,6 +574,15 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
       setWindowOrder(prev => [...prev.filter(w => w !== 'secondChallenge'), 'secondChallenge']);
     } else {
       setWindowOrder(prev => [...prev.filter(w => w !== 'secondChallenge'), 'secondChallenge']);
+    }
+  };
+
+  const handleRelayClick = () => {
+    if (!openWindows.includes('wutIsRelay')) {
+        setOpenWindows([...openWindows, 'wutIsRelay']);
+        setWindowOrder([...windowOrder, 'wutIsRelay']);
+    } else {
+        handleWindowClick('wutIsRelay')();
     }
   };
 
@@ -687,6 +704,49 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
       collectAudio.play();
     }
   };
+
+  // Add this function inside MainView component to check if it's before 9pm GMT on Feb 14th
+  const isBeforeRelayTime = () => {
+    const now = new Date();
+    const relayTime = new Date('2025-02-14T21:00:00.000Z'); 
+    return now.getTime() < relayTime.getTime();
+  };
+
+  // Add this function to check relay time
+  const isRelayTime = () => {
+    const now = new Date();
+    const relayTime = new Date('2025-02-14T21:00:00.000Z'); // 9 PM GMT on Feb 14th, 2025
+    return now.getTime() >= relayTime.getTime();
+  };
+
+  // Add this function near the other utility functions in MainView
+  const getRelayState = () => {
+    const now = new Date();
+    const relayStart = new Date('2025-02-14T21:00:00.000Z'); // 9 PM GMT on Feb 14th, 2025
+    const relayEnd = new Date('2025-02-15T21:00:00.000Z');   // 9 PM GMT on Feb 15th, 2025
+
+    if (now > relayEnd) {
+        return null; // Only return null after the relay ends
+    }
+
+    if (now < relayStart) {
+        return 'upcoming'; // New state for before the relay starts
+    }
+
+    // During the relay, return the current state
+    const hoursSinceStart = (now - relayStart) / (1000 * 60 * 60);
+    const currentHour = Math.floor(hoursSinceStart) % 1.25; // 1.25 hours per cycle (1 hour sprint + 15 min refuel)
+    
+    return currentHour < 1 ? 'sprinting' : 'refueling';
+  };
+
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+        setTime(new Date());
+    }, 20000); // Update every second
+
+    return () => clearInterval(timer);
+  }, []);
 
   return (
     <div
@@ -1347,6 +1407,19 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
           />
         )}
 
+        {openWindows.includes('wutIsRelay') && (
+          <WutIsRelayWindow
+            position={wutIsRelayPosition}
+            isDragging={isDragging && activeWindow === 'wutIsRelay'}
+            isActive={windowOrder[windowOrder.length - 1] === 'wutIsRelay'}
+            handleMouseDown={handleMouseDown}
+            handleDismiss={handleDismiss}
+            handleWindowClick={handleWindowClick}
+            BASE_Z_INDEX={getWindowZIndex('wutIsRelay')}
+            ACTIVE_Z_INDEX={getWindowZIndex('wutIsRelay')}
+          />
+        )}
+
         <div
           style={{
             position: "absolute",
@@ -1554,6 +1627,107 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                     <div className="floating-boat boat1" style={{ left: '30%', top: '70%', animationDelay: '4s' }}>⛵️</div>
                 </div>
             )}
+
+{getRelayState() !== null && (
+    <div 
+        onClick={handleRelayClick}
+        className="panel-pop rainbow-glass-panel"
+        style={{
+            width: 332,
+            marginTop: 8,
+            borderRadius: 8,
+            padding: 12,
+            position: 'relative',
+            overflow: 'hidden',
+            cursor: 'pointer',
+            backgroundColor: getRelayState() === 'sprinting' 
+                ? 'rgba(0, 255, 0, 0.1)' 
+                : getRelayState() === 'refueling' 
+                    ? 'rgba(0, 0, 255, 0.1)' 
+                    : 'transparent'
+        }}>
+            <div style={{ position: 'relative', zIndex: 1 }}>
+                <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '8px',
+                    marginBottom: '8px'
+                }}>
+                    <p style={{ 
+                        color: "rgba(255, 255, 255, 1.0)", 
+                        margin: 0,
+                        textShadow: `
+                            -1px -1px 0 #000,
+                            1px -1px 0 #000,
+                            -1px 1px 0 #000,
+                            1px 1px 0 #000`
+                    }}>
+                        Juice Relay
+                    </p>
+                    {getRelayState() && (
+                        <span style={{ 
+                            color: "rgba(255, 255, 255, 0.8)",
+                            fontSize: "0.9em",
+                            textShadow: `
+                                -1px -1px 0 #000,
+                                1px -1px 0 #000,
+                                -1px 1px 0 #000,
+                                1px 1px 0 #000`
+                        }}>
+                            • Currently {getRelayState()}
+                        </span>
+                    )}
+                </div>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                    <button
+                        onClick={() => {
+                            if (!openWindows.includes("wutIsRelay")) {
+                                setOpenWindows((prev) => [...prev, "wutIsRelay"]);
+                                const audio = document.getElementById("windowOpenAudio");
+                                if (audio) {
+                                    audio.currentTime = 0;
+                                    audio.play();
+                                }
+                            }
+                        }}
+                        style={{
+                            padding: "4px 12px",
+                            backgroundColor: "#0DF2F1",
+                            color: "#000",
+                            border: "2px solid #000",
+                            borderRadius: 4,
+                            cursor: "pointer",
+                            fontWeight: "bold",
+                            transition: "transform 0.2s ease, box-shadow 0.2s ease"
+                        }}
+                    >
+                        What's Relay?
+                    </button>
+                    {isRelayTime() && (
+                        <button
+                            onClick={() => window.open('https://hackclub.zoom.us/j/85023610589', '_blank')}
+                            style={{
+                                padding: "4px 12px",
+                                backgroundColor: "#0DF2F1",
+                                color: "#000",
+                                border: "2px solid #000",
+                                borderRadius: 4,
+                                cursor: "pointer",
+                                fontWeight: "bold",
+                                transition: "transform 0.2s ease, box-shadow 0.2s ease"
+                            }}
+                        >
+                            Join Zoom Call
+                        </button>
+                    )}
+                </div>
+            </div>
+            <div className="floating-boat boat1" style={{ left: '0', top: '50%' }}>🏃‍♂️</div>
+            <div className="floating-boat boat2" style={{ right: '0', top: '30%' }}>🏃‍♂️</div>
+            <div className="floating-boat boat1" style={{ left: '30%', top: '70%', animationDelay: '4s' }}>🏃‍♂️</div>
+            <div className="floating-boat boat2" style={{ left: '30%', top: '70%', animationDelay: '4s' }}>🏃‍♂️</div>
+        </div>
+    )}
 
           {isLoggedIn && tickets.some(t => !t.used) && <div 
                 className="panel-pop"
