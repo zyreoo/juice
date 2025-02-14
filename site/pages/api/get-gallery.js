@@ -26,6 +26,12 @@ export default async function handler(req, res) {
       return gameUrl;
     }
 
+    function getPlatforms(record) {
+      // Get the Platforms field which is a multiple select
+      const platforms = record.fields.Platforms || [];
+      // Default to Web if no platforms specified
+      return platforms.length > 0 ? platforms : ['Web'];
+    }
 
     const games = await Promise.all(
       records.map(async (record) => {
@@ -33,7 +39,9 @@ export default async function handler(req, res) {
           email: record.fields.user,
           itchurl: record.fields.Link,
           gamename: record.fields.gameName,
-          thumbnail: record.fields.gameImage
+          thumbnail: record.fields.gameImage,
+          platforms: getPlatforms(record),
+          description: record.fields.description || ''
         };
       })
     );

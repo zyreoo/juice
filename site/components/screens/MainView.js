@@ -1589,9 +1589,9 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         <div style={{position: "absolute", display: 'flex', gap: 8, flexDirection: 'column', alignItems: "end", bottom: 0, right: 16}}>
 
           <div style={{display: 'flex', flexDirection: "column", gap: 8}}>
-            <div style={{width: 256, backgroundColor: "#fff", borderRadius: 4, padding: 4}}>
+            {/* <div style={{width: 256, backgroundColor: "#fff", borderRadius: 4, padding: 4}}>
             <p>a Hack Clubber published a game on Itch.io 5min ago</p>
-            </div> 
+            </div>  */}
             {/* <div style={{width: 256, transform: "scale(0.9)", opacity: 0.9, backgroundColor: "#fff", borderRadius: 4, padding: 4}}>
             <p>a Hack Clubber published a game on Itch.io 5min ago</p>
             </div>   
