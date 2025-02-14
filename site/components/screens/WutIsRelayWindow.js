@@ -9,6 +9,28 @@ export default function WutIsRelayWindow({ position, isDragging, isActive, handl
         return now.getTime() >= relayTime.getTime();
     };
 
+    const formatLocalTime = () => {
+        const relayStart = new Date('2025-02-15T00:00:00.000Z'); // This is 7PM EST / 12AM GMT
+        const relayEnd = new Date('2025-02-16T00:00:00.000Z');   // This is 7PM EST / 12AM GMT next day
+        
+        const startOptions = { 
+            hour: 'numeric', 
+            minute: 'numeric', 
+            timeZoneName: 'short'
+        };
+        
+        const dateOptions = {
+            month: 'short',
+            day: 'numeric'
+        };
+
+        const localStartTime = relayStart.toLocaleTimeString(undefined, startOptions);
+        const startDate = relayStart.toLocaleDateString(undefined, dateOptions);
+        const endDate = relayEnd.toLocaleDateString(undefined, dateOptions);
+        
+        return `It's on from ${localStartTime} ${startDate} to ${localStartTime} ${endDate}`;
+    };
+
     return (
         <div 
             style={{
@@ -76,7 +98,7 @@ export default function WutIsRelayWindow({ position, isDragging, isActive, handl
                         <p>In the relay we'll have a Sprinting period (1 hour), where we'll be each developing our games and asking for any help we need in the relay zoom call.</p>
                         <p>After the sprinting period, there's a refuel period (~ 15 minutes), where we'll be playing each other's games and giving feedback.</p>
                         <p><b style={{ animation: 'steamGrantFlash 1s infinite'}}>Oh, and did I mention that it's on for 24 HOURS?</b> That's right, you can join the relay at any time and stay as long as you want and I'll even be there the whole time!</p>
-                        
+                        <p>{formatLocalTime()}</p>
                         {isRelayTime() === true && (
                             <a 
                                 href="https://hackclub.zoom.us/j/85023610589"
