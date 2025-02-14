@@ -9,6 +9,7 @@ import FactionWindow from './FactionWindow';
 import FirstChallengeWindow from './FirstChallengeWindow';
 import JuiceWindow from './JuiceWindow';
 import KudosWindow from './KudosWindow';
+import GalleryWindow from './GalleryWindow';
 import Background from '../Background';
 import ShareSuccessPanel from './ShareSuccessPanel';
 import FortuneBasket from './FortuneBasket';
@@ -58,6 +59,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
   const [isRsvped, setIsRsvped] = React.useState(false);
   const [showCookies, setShowCookies] = React.useState(false);
   const [kudosPosition, setKudosPosition] = React.useState({ x: 350, y: 350 });
+  const [GalleryPosition, setGalleryPosition] = React.useState({ x: 400, y: 400 });
+
   const [isJuicing, setIsJuicing] = React.useState(false);
   const juicerSoundRef = React.useRef(null);
   const [thanksPosition, setThanksPosition] = React.useState({ x: 400, y: 400 });
@@ -87,6 +90,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
     secondChallenge: 300,
     menuWindow: 470,
     wutIsRelay: 470,
+    galleryWindow: 397
   };
   const BASE_Z_INDEX = 1;
 
@@ -287,7 +291,23 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
             "fruitBasketWindow",
           ]);
         }
-      } else if (fileId === "wutIsJungle") {
+      }   else if (fileId === "Gallery") {
+        if (!openWindows.includes("Gallery")) {
+          setOpenWindows((prev) => [...prev, "Gallery"]);
+          setWindowOrder((prev) => [
+            ...prev.filter((w) => w !== "Gallery"),
+            "gallery",
+          ]);
+          document.getElementById("windowOpenAudio").currentTime = 0;
+          document.getElementById("windowOpenAudio").play();
+        } else {
+          setWindowOrder((prev) => [
+            ...prev.filter((w) => w !== "gallery"),
+            "gallery",
+          ]);
+        }
+      } 
+       else if (fileId === "wutIsJungle") {
         if (!openWindows.includes('wutIsJungle')) {
           setOpenWindows(prev => [...prev, 'wutIsJungle']);
           setWindowOrder(prev => [...prev.filter(w => w !== 'wutIsJungle'), 'wutIsJungle']);
@@ -345,6 +365,9 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
       case "kudos":
         position = kudosPosition;
         break;
+      case "Gallery":
+         position = GalleryPosition;
+         break;
       case "thanks":
         position = thanksPosition;
         break;
@@ -420,6 +443,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         setFortuneBasketPosition(newPosition);
       } else if (activeWindow === "kudos") {
         setKudosPosition(newPosition);
+      } else if (activeWindow === "Gallery") {
+        setGalleryPosition(newPosition);
       } else if (activeWindow === "thanks") {
         setThanksPosition(newPosition);
       } else if (activeWindow === "jungleWindow") {
@@ -1034,6 +1059,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                 {userData?.totalKudos || 0}
               </p>
             </div>
+            
             <div
               style={{
                 display: "flex",
@@ -1311,6 +1337,18 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
             ACTIVE_Z_INDEX={getWindowZIndex("kudos")}
           />
         )}
+           {openWindows.includes("Gallery") && (
+          <GalleryWindow
+            position={GalleryPosition}
+            isDragging={isDragging && activeWindow === "Gallery"}
+            isActive={windowOrder[windowOrder.length - 1] === "Gallery"}
+            handleMouseDown={handleMouseDown}
+            handleDismiss={handleDismiss}
+            handleWindowClick={handleWindowClick}
+            BASE_Z_INDEX={getWindowZIndex("Gallery")}
+            ACTIVE_Z_INDEX={getWindowZIndex("Gallery")}
+          />
+        )}
 
         {openWindows.includes("thanks") && (
           <ThanksWindow
@@ -1469,7 +1507,20 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                   data-file-id="Kudos"
                 />
               )}
+                 {isLoggedIn && (
+                <FileIcon
+                  text="Gallery"
+                  icon="./gallery.png"
+                  style={{ backgroundColor: "#000", color: "#fff" }}
+                  isSelected={selectedFile === "Gallery"}
+                  onClick={handleFileClick("Gallery")}
+                  delay={0.5}
+                  data-file-id="Gallery"
+                />
+              )}
+              
               {isLoggedIn && !isJungle && (
+
 
               <FileIcon
                 text="Moments"
@@ -1709,39 +1760,53 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
 
         </div>
 
-        {userData?.Postcards?.length > 0 && 
-              <div style={{position: "absolute", bottom: 0, right: 16}}>
-                <img 
-                  style={{
-                    width: 96,
-                    animation: "jiggleEnvelope 1.2s linear infinite",
-                    transformOrigin: '50% 50%',
-                    transition: 'all 1.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
-                    cursor: 'pointer',
-                    position: 'relative',
-                    filter: 'drop-shadow(0 0 5px rgba(255,255,255,0.1))'
-                  }} 
-                  onMouseEnter={(e) => {
-                    e.target.style.width = '128px';
-                    e.target.style.animation = "jiggleEnvelopeIntense 0.8s linear infinite, rainbowShadow 8s linear infinite";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.width = '96px';
-                    e.target.style.animation = "jiggleEnvelope 1.2s linear infinite";
-                  }}
-                  onClick={() => {
-                    if (!openWindows.includes("postcard")) {
-                      setOpenWindows(prev => [...prev, "postcard"]);
-                      setWindowOrder(prev => [...prev.filter(w => w !== "postcard"), "postcard"]);
-                      document.getElementById("mailAudio").play();
-                    } else {
-                      setWindowOrder(prev => [...prev.filter(w => w !== "postcard"), "postcard"]);
-                    }
-                  }}
-                  src="./envelope.png"
-                />
-              </div>
-            }
+        <div style={{position: "absolute", display: 'flex', gap: 8, flexDirection: 'column', alignItems: "end", bottom: 0, right: 16}}>
+
+          <div style={{display: 'flex', flexDirection: "column", gap: 8}}>
+            {/* <div style={{width: 256, backgroundColor: "#fff", borderRadius: 4, padding: 4}}>
+            <p>a Hack Clubber published a game on Itch.io 5min ago</p>
+            </div>  */}
+            {/* <div style={{width: 256, transform: "scale(0.9)", opacity: 0.9, backgroundColor: "#fff", borderRadius: 4, padding: 4}}>
+            <p>a Hack Clubber published a game on Itch.io 5min ago</p>
+            </div>   
+            <div style={{width: 256, transform: "scale(0.8)", opacity: 0.8, backgroundColor: "#fff", borderRadius: 4, padding: 4}}>
+            <p>a Hack Clubber published a game on Itch.io 5min ago</p>
+            </div>    */}
+          </div>
+          {userData?.Postcards?.length > 0 && 
+      
+          <img 
+            style={{
+              width: 96,
+              animation: "jiggleEnvelope 1.2s linear infinite",
+              transformOrigin: '50% 50%',
+              transition: 'all 1.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
+              cursor: 'pointer',
+              position: 'relative',
+              filter: 'drop-shadow(0 0 5px rgba(255,255,255,0.1))'
+            }} 
+            onMouseEnter={(e) => {
+              e.target.style.width = '128px';
+              e.target.style.animation = "jiggleEnvelopeIntense 0.8s linear infinite, rainbowShadow 8s linear infinite";
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.width = '96px';
+              e.target.style.animation = "jiggleEnvelope 1.2s linear infinite";
+            }}
+            onClick={() => {
+              if (!openWindows.includes("postcard")) {
+                setOpenWindows(prev => [...prev, "postcard"]);
+                setWindowOrder(prev => [...prev.filter(w => w !== "postcard"), "postcard"]);
+                document.getElementById("mailAudio").play();
+              } else {
+                setWindowOrder(prev => [...prev.filter(w => w !== "postcard"), "postcard"]);
+              }
+            }}
+            src="./envelope.png"
+          />
+          }
+        </div>
+            
 
         {/* background goes here */}
         <div 
