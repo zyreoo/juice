@@ -710,22 +710,29 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
   // Add this function inside MainView component to check if it's before 9pm GMT on Feb 14th
   const isBeforeRelayTime = () => {
     const now = new Date();
-    const relayTime = new Date('2025-02-14T21:00:00.000Z'); 
+    const relayTime = new Date('2025-02-15T00:00:00.000Z'); 
     return now.getTime() < relayTime.getTime();
   };
 
   // Add this function to check relay time
   const isRelayTime = () => {
     const now = new Date();
-    const relayTime = new Date('2025-02-14T21:00:00.000Z'); // 9 PM GMT on Feb 14th, 2025
+    const relayTime = new Date('2025-02-15T00:00:00.000Z'); // 9 PM GMT on Feb 14th, 2025
     return now.getTime() >= relayTime.getTime();
   };
 
   const getRelayState = () => {
     const now = new Date();
-     const relayStart = new Date('2025-02-15T00:00:00.000Z'); // Midnight GMT on Feb 14th, 2025
-     const relayEnd = new Date('2025-02-16T00:00:00.000Z'); // Midnight GMT on Feb 15th, 2025
-    
+    const relayStart = new Date('2025-02-15T00:00:00.000Z'); // Midnight GMT on Feb 15th, 2025
+    const relayEnd = new Date('2025-02-16T00:00:00.000Z');   // Midnight GMT on Feb 16th, 2025
+
+    if (now > relayEnd) {
+        return null; // Only return null after the relay ends
+    }
+
+    if (now < relayStart) {
+        return 'upcoming'; // New state for before the relay starts
+    }
 
     // During the relay, return the current state
     const hoursSinceStart = (now - relayStart) / (1000 * 60 * 60);
@@ -745,8 +752,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
   React.useEffect(() => {
     const timer = setInterval(() => {
         const now = new Date();
-        const relayStart = new Date('2025-02-14T19:00:00.000Z');
-        const relayEnd = new Date('2025-02-15T19:00:00.000Z');
+        const relayStart = new Date('2025-02-15T00:00:00.000Z');
+        const relayEnd = new Date('2025-02-16T00:00:00.000Z');
         
         if (now >= relayStart && now <= relayEnd) {
             const totalSeconds = 24 * 60 * 60; // 24 hours in seconds
@@ -1679,10 +1686,70 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                         -1px 1px 0 #000,
                         1px 1px 0 #000`
                 }}>
-                    Juice relay, currently {getRelayState()}
+                    Juice Relay
                 </p>
+                {getRelayState() && (
+                    <span style={{ 
+                        color: "rgba(255, 255, 255, 0.8)",
+                        fontSize: "0.9em",
+                        textShadow: `
+                            -1px -1px 0 #000,
+                            1px -1px 0 #000,
+                            -1px 1px 0 #000,
+                            1px 1px 0 #000`
+                    }}>
+                        • Currently {getRelayState()}
+                    </span>
+                )}
+            </div>
+            <div style={{ display: 'flex', gap: '10px' }}>
+                <button
+                    onClick={() => {
+                        if (!openWindows.includes("wutIsRelay")) {
+                            setOpenWindows((prev) => [...prev, "wutIsRelay"]);
+                            const audio = document.getElementById("windowOpenAudio");
+                            if (audio) {
+                                audio.currentTime = 0;
+                                audio.play();
+                            }
+                        }
+                    }}
+                    style={{
+                        padding: "4px 12px",
+                        backgroundColor: "#0DF2F1",
+                        color: "#000",
+                        border: "2px solid #000",
+                        borderRadius: 4,
+                        cursor: "pointer",
+                        fontWeight: "bold",
+                        transition: "transform 0.2s ease, box-shadow 0.2s ease"
+                    }}
+                >
+                    What's Relay?
+                </button>
+                {isRelayTime() && (
+                    <button
+                        onClick={() => window.open('https://hackclub.zoom.us/j/85023610589', '_blank')}
+                        style={{
+                            padding: "4px 12px",
+                            backgroundColor: "#0DF2F1",
+                            color: "#000",
+                            border: "2px solid #000",
+                            borderRadius: 4,
+                            cursor: "pointer",
+                            fontWeight: "bold",
+                            transition: "transform 0.2s ease, box-shadow 0.2s ease"
+                        }}
+                    >
+                        Join Zoom Call
+                    </button>
+                )}
             </div>
         </div>
+        <div className="floating-boat boat1" style={{ left: '0', top: '50%' }}>🏃‍♂️</div>
+        <div className="floating-boat boat2" style={{ right: '0', top: '30%' }}>🏃‍♂️</div>
+        <div className="floating-boat boat1" style={{ left: '30%', top: '70%', animationDelay: '4s' }}>🏃‍♂️</div>
+        <div className="floating-boat boat2" style={{ left: '30%', top: '70%', animationDelay: '4s' }}>🏃‍♂️</div>
     </div>
 )}
 
