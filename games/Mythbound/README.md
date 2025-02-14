@@ -3,6 +3,7 @@
 [James Tan](https://github.com/sasutski)
 
 **How would you pitch your game in one line?**
+
 It's like *Ghostlore* meets *Hyper Light Drifter*, but with a survival twist and folklore-inspired shapeshifting.
 
 **What is the key mechanic(s) that make it fun?**
