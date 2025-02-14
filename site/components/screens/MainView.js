@@ -1729,7 +1729,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                 </button>
                 {isRelayTime() && (
                     <button
-                        onClick={() => window.open('https://hackclub.zoom.us/j/85023610589', '_blank')}
+                        onClick={() => window.open('https://hack.af/z-join?id=jdw8go', '_blank')}
                         style={{
                             padding: "4px 12px",
                             backgroundColor: "#0DF2F1",
