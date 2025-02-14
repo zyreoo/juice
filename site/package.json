@@ -23,7 +23,7 @@
     "gsap": "^3.12.5",
     "hls.js": "^1.5.20",
     "next": "15.1.6",
-    "pnpm": "^10.3.0",
+    "pnpm": "^10.4.0",
     "react": "^18.2.0",
     "react-confetti": "^6.2.2",
     "react-device-detect": "^2.2.3",

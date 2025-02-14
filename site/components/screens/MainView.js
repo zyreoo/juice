@@ -682,6 +682,50 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
     }
   };
 
+  // Add this function inside MainView component to check if it's before 9pm GMT on Feb 14th
+  const isBeforeRelayTime = () => {
+    const now = new Date();
+    const relayTime = new Date('2025-02-14T13:00:00.000Z'); 
+    return now.getTime() < relayTime.getTime();
+  };
+
+  // Add this function to check relay time
+  const isRelayTime = () => {
+    const now = new Date();
+    const relayStart = new Date('2025-02-14T13:00:00.000Z'); // 9 PM GMT on Feb 14th, 2025
+    const relayEnd = new Date('2025-02-15T13:00:00.000Z'); // 9 PM GMT on Feb 15th, 2025
+    return now.getTime() >= relayStart.getTime() && now.getTime() <= relayEnd.getTime();
+  };
+
+  // Add these functions at the top of your component
+  const getRelayState = () => {
+    const now = new Date();
+    const relayStart = new Date('2025-02-14T13:00:00.000Z'); // 9 PM GMT on Feb 14th, 2025
+    const relayEnd = new Date('2025-02-15T13:00:00.000Z'); // 9 PM GMT on Feb 15th, 2025
+
+    // If before start or after end, return null
+    if (now < relayStart || now > relayEnd) {
+        return null;
+    }
+
+    // Calculate minutes since relay started
+    const minutesSinceStart = Math.floor((now - relayStart) / (1000 * 60));
+    
+    // Each cycle is 75 minutes (60 min sprint + 15 min refuel)
+    const cyclePosition = minutesSinceStart % 75;
+    
+    // First 60 minutes of cycle is sprinting, last 15 is refueling
+    return cyclePosition < 60 ? 'sprinting' : 'refueling';
+  };
+
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+        setTime(new Date());
+    }, 20000); // Update every second
+
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <div
       data-shake-container="true"
@@ -1545,43 +1589,93 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                         borderRadius: 8,
                         padding: 12,
                         position: 'relative',
-                        overflow: 'hidden'
+                        overflow: 'hidden',
+                        backgroundColor: getRelayState() === 'sprinting' 
+                            ? 'rgba(0, 255, 0, 0.1)' 
+                            : getRelayState() === 'refueling' 
+                                ? 'rgba(0, 0, 255, 0.1)' 
+                                : 'transparent'
                     }}>
                         <div style={{ position: 'relative', zIndex: 1 }}>
-                            <p style={{ 
-                                color: "rgba(255, 255, 255, 1.0)", 
-                                margin: "0 0 8px 0",
-                                textShadow: `
-                                    -1px -1px 0 #000,
-                                    1px -1px 0 #000,
-                                    -1px 1px 0 #000,
-                                    1px 1px 0 #000`
-                            }}>Talen's Relay</p>
-                            <button 
-                                onClick={() => {
-                                    if (!openWindows.includes('wutIsRelay')) {
-                                        setOpenWindows(prev => [...prev, 'wutIsRelay']);
-                                        setWindowOrder(prev => [...prev.filter(w => w !== 'wutIsRelay'), 'wutIsRelay']);
-                                        document.getElementById("windowOpenAudio").currentTime = 0;
-                                        document.getElementById("windowOpenAudio").play();
-                                    } else {
-                                        setWindowOrder(prev => [...prev.filter(w => w !== 'wutIsRelay'), 'wutIsRelay']);
-                                    }
-                                }}
-                                style={{
-                                    padding: "4px 12px",
-                                    backgroundColor: "#FFE600",
-                                    color: "#000",
-                                    border: "2px solid #000",
-                                    borderRadius: 4,
-                                    cursor: "pointer",
-                                    fontWeight: "bold",
-                                    transition: "transform 0.2s ease, box-shadow 0.2s ease"
-                                }}>Join Relay Call</button>
+                            <div style={{ 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                gap: '8px',
+                                marginBottom: '8px'
+                            }}>
+                                <p style={{ 
+                                    color: "rgba(255, 255, 255, 1.0)", 
+                                    margin: 0,
+                                    textShadow: `
+                                        -1px -1px 0 #000,
+                                        1px -1px 0 #000,
+                                        -1px 1px 0 #000,
+                                        1px 1px 0 #000`
+                                }}>
+                                    Juice Relay
+                                </p>
+                                {getRelayState() && (
+                                    <span style={{ 
+                                        color: "rgba(255, 255, 255, 0.8)",
+                                        fontSize: "0.9em",
+                                        textShadow: `
+                                            -1px -1px 0 #000,
+                                            1px -1px 0 #000,
+                                            -1px 1px 0 #000,
+                                            1px 1px 0 #000`
+                                    }}>
+                                        • Currently {getRelayState()}
+                                    </span>
+                                )}
+                            </div>
+                            <div style={{ display: 'flex', gap: '10px' }}>
+                                <button
+                                    onClick={() => {
+                                        if (!openWindows.includes("wutIsRelay")) {
+                                            setOpenWindows((prev) => [...prev, "wutIsRelay"]);
+                                            const audio = document.getElementById("windowOpenAudio");
+                                            if (audio) {
+                                                audio.currentTime = 0;
+                                                audio.play();
+                                            }
+                                        }
+                                    }}
+                                    style={{
+                                        padding: "4px 12px",
+                                        backgroundColor: "#0DF2F1",
+                                        color: "#000",
+                                        border: "2px solid #000",
+                                        borderRadius: 4,
+                                        cursor: "pointer",
+                                        fontWeight: "bold",
+                                        transition: "transform 0.2s ease, box-shadow 0.2s ease"
+                                    }}
+                                >
+                                    What's Relay?
+                                </button>
+                                {isRelayTime() && (
+                                    <button
+                                        onClick={() => window.open('https://hackclub.zoom.us/j/85023610589', '_blank')}
+                                        style={{
+                                            padding: "4px 12px",
+                                            backgroundColor: "#0DF2F1",
+                                            color: "#000",
+                                            border: "2px solid #000",
+                                            borderRadius: 4,
+                                            cursor: "pointer",
+                                            fontWeight: "bold",
+                                            transition: "transform 0.2s ease, box-shadow 0.2s ease"
+                                        }}
+                                    >
+                                        Join Zoom Call
+                                    </button>
+                                )}
+                            </div>
                         </div>
-                        <div className="floating-boat boat1" style={{ left: '0', top: '50%' }}>⛵️</div>
-                        <div className="floating-boat boat2" style={{ right: '0', top: '30%' }}>⛵️</div>
-                        <div className="floating-boat boat1" style={{ left: '30%', top: '70%', animationDelay: '4s' }}>⛵️</div>
+                        <div className="floating-boat boat1" style={{ left: '0', top: '50%' }}>🏃‍♂️</div>
+                        <div className="floating-boat boat2" style={{ right: '0', top: '30%' }}>🏃‍♂️</div>
+                        <div className="floating-boat boat1" style={{ left: '30%', top: '70%', animationDelay: '4s' }}>🏃‍♂️</div>
+                        <div className="floating-boat boat2" style={{ left: '30%', top: '70%', animationDelay: '4s' }}>🏃‍♂️</div>
                     </div>
                 )}
 
