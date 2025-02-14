@@ -1,6 +1,9 @@
 # Mythbound
 **Team Members:** 
-[James Tan](https://github.com/sasutski)
+
+[James Tan](https://github.com/Sasutski)
+
+[Vann Xyn](https://github.com/Vann-Man)
 
 **How would you pitch your game in one line?**
 
