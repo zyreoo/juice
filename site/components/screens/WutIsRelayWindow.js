@@ -101,7 +101,7 @@ export default function WutIsRelayWindow({ position, isDragging, isActive, handl
                         <p>{formatLocalTime()}</p>
                         {isRelayTime() === true && (
                             <a 
-                                href="https://hackclub.zoom.us/j/85023610589"
+                                href="https://hack.af/z-join?id=jdw8go"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 style={{
