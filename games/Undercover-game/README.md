@@ -1,6 +1,6 @@
 # Undercover-game
 
-**Author:** [@glassybridge](https://github.com/glassybridge)
+**Author:** Leul Adane([@glassybridge](https://github.com/glassybridge))
 
 **How would you pitch your game in one line?**
 
