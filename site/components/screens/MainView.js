@@ -353,8 +353,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         break;
       case "fruitBasketWindow":
         position = fruitBasketWindowPosition;
-        break
-        case 'wutIsJungle':
+        break;
+      case 'wutIsJungle':
         position = wutIsJunglePosition;
         break;
       case "menuWindow":
@@ -552,14 +552,12 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
     }
   };
 
-  const handleRelayOpen = () => {
-    if (!openWindows.includes('Relay')) {
-      setOpenWindows(prev => [...prev, 'Relay']);
-      document.getElementById("windowOpenAudio").currentTime = 0;
-      document.getElementById("windowOpenAudio").play();
-      setWindowOrder(prev => [...prev.filter(w => w !== 'Relay'), 'Relay']);
+  const handleRelayClick = () => {
+    if (!openWindows.includes('wutIsRelay')) {
+        setOpenWindows([...openWindows, 'wutIsRelay']);
+        setWindowOrder([...windowOrder, 'wutIsRelay']);
     } else {
-      setWindowOrder(prev => [...prev.filter(w => w !== 'Relay'), 'Relay']);
+        handleWindowClick('wutIsRelay')();
     }
   };
 
@@ -685,7 +683,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
   // Add this function inside MainView component to check if it's before 9pm GMT on Feb 14th
   const isBeforeRelayTime = () => {
     const now = new Date();
-    const relayTime = new Date('2025-02-14T13:00:00.000Z'); 
+    const relayTime = new Date('2025-02-14T21:00:00.000Z'); 
     return now.getTime() < relayTime.getTime();
   };
 
@@ -696,25 +694,25 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
     return now.getTime() >= relayTime.getTime();
   };
 
-  // Add these functions at the top of your component
+  // Add this function near the other utility functions in MainView
   const getRelayState = () => {
     const now = new Date();
-    const relayStart = new Date('2025-02-14T13:00:00.000Z'); // 9 PM GMT on Feb 14th, 2025
-    const relayEnd = new Date('2025-02-15T13:00:00.000Z'); // 9 PM GMT on Feb 15th, 2025
+    const relayStart = new Date('2025-02-14T21:00:00.000Z'); // 9 PM GMT on Feb 14th, 2025
+    const relayEnd = new Date('2025-02-15T21:00:00.000Z');   // 9 PM GMT on Feb 15th, 2025
 
-    // If before start or after end, return null
-    if (now < relayStart || now > relayEnd) {
-        return null;
+    if (now > relayEnd) {
+        return null; // Only return null after the relay ends
     }
 
-    // Calculate minutes since relay started
-    const minutesSinceStart = Math.floor((now - relayStart) / (1000 * 60));
+    if (now < relayStart) {
+        return 'upcoming'; // New state for before the relay starts
+    }
+
+    // During the relay, return the current state
+    const hoursSinceStart = (now - relayStart) / (1000 * 60 * 60);
+    const currentHour = Math.floor(hoursSinceStart) % 1.25; // 1.25 hours per cycle (1 hour sprint + 15 min refuel)
     
-    // Each cycle is 75 minutes (60 min sprint + 15 min refuel)
-    const cyclePosition = minutesSinceStart % 75;
-    
-    // First 60 minutes of cycle is sprinting, last 15 is refueling
-    return cyclePosition < 60 ? 'sprinting' : 'refueling';
+    return currentHour < 1 ? 'sprinting' : 'refueling';
   };
 
   React.useEffect(() => {
@@ -1579,104 +1577,106 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                 </div>
             )}
 
-{ !isJungle && (
-                <div 
-                    className="panel-pop rainbow-glass-panel"
-                    style={{
-                        width: 332,
-                        marginTop: 8,
-                        borderRadius: 8,
-                        padding: 12,
-                        position: 'relative',
-                        overflow: 'hidden',
-                        backgroundColor: getRelayState() === 'sprinting' 
-                            ? 'rgba(0, 255, 0, 0.1)' 
-                            : getRelayState() === 'refueling' 
-                                ? 'rgba(0, 0, 255, 0.1)' 
-                                : 'transparent'
+{getRelayState() !== null && (
+    <div 
+        onClick={handleRelayClick}
+        className="panel-pop rainbow-glass-panel"
+        style={{
+            width: 332,
+            marginTop: 8,
+            borderRadius: 8,
+            padding: 12,
+            position: 'relative',
+            overflow: 'hidden',
+            cursor: 'pointer',
+            backgroundColor: getRelayState() === 'sprinting' 
+                ? 'rgba(0, 255, 0, 0.1)' 
+                : getRelayState() === 'refueling' 
+                    ? 'rgba(0, 0, 255, 0.1)' 
+                    : 'transparent'
+        }}>
+            <div style={{ position: 'relative', zIndex: 1 }}>
+                <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '8px',
+                    marginBottom: '8px'
+                }}>
+                    <p style={{ 
+                        color: "rgba(255, 255, 255, 1.0)", 
+                        margin: 0,
+                        textShadow: `
+                            -1px -1px 0 #000,
+                            1px -1px 0 #000,
+                            -1px 1px 0 #000,
+                            1px 1px 0 #000`
                     }}>
-                        <div style={{ position: 'relative', zIndex: 1 }}>
-                            <div style={{ 
-                                display: 'flex', 
-                                alignItems: 'center', 
-                                gap: '8px',
-                                marginBottom: '8px'
-                            }}>
-                                <p style={{ 
-                                    color: "rgba(255, 255, 255, 1.0)", 
-                                    margin: 0,
-                                    textShadow: `
-                                        -1px -1px 0 #000,
-                                        1px -1px 0 #000,
-                                        -1px 1px 0 #000,
-                                        1px 1px 0 #000`
-                                }}>
-                                    Juice Relay
-                                </p>
-                                {getRelayState() && (
-                                    <span style={{ 
-                                        color: "rgba(255, 255, 255, 0.8)",
-                                        fontSize: "0.9em",
-                                        textShadow: `
-                                            -1px -1px 0 #000,
-                                            1px -1px 0 #000,
-                                            -1px 1px 0 #000,
-                                            1px 1px 0 #000`
-                                    }}>
-                                        • Currently {getRelayState()}
-                                    </span>
-                                )}
-                            </div>
-                            <div style={{ display: 'flex', gap: '10px' }}>
-                                <button
-                                    onClick={() => {
-                                        if (!openWindows.includes("wutIsRelay")) {
-                                            setOpenWindows((prev) => [...prev, "wutIsRelay"]);
-                                            const audio = document.getElementById("windowOpenAudio");
-                                            if (audio) {
-                                                audio.currentTime = 0;
-                                                audio.play();
-                                            }
-                                        }
-                                    }}
-                                    style={{
-                                        padding: "4px 12px",
-                                        backgroundColor: "#0DF2F1",
-                                        color: "#000",
-                                        border: "2px solid #000",
-                                        borderRadius: 4,
-                                        cursor: "pointer",
-                                        fontWeight: "bold",
-                                        transition: "transform 0.2s ease, box-shadow 0.2s ease"
-                                    }}
-                                >
-                                    What's Relay?
-                                </button>
-                                {isRelayTime() && (
-                                    <button
-                                        onClick={() => window.open('https://hackclub.zoom.us/j/85023610589', '_blank')}
-                                        style={{
-                                            padding: "4px 12px",
-                                            backgroundColor: "#0DF2F1",
-                                            color: "#000",
-                                            border: "2px solid #000",
-                                            borderRadius: 4,
-                                            cursor: "pointer",
-                                            fontWeight: "bold",
-                                            transition: "transform 0.2s ease, box-shadow 0.2s ease"
-                                        }}
-                                    >
-                                        Join Zoom Call
-                                    </button>
-                                )}
-                            </div>
-                        </div>
-                        <div className="floating-boat boat1" style={{ left: '0', top: '50%' }}>🏃‍♂️</div>
-                        <div className="floating-boat boat2" style={{ right: '0', top: '30%' }}>🏃‍♂️</div>
-                        <div className="floating-boat boat1" style={{ left: '30%', top: '70%', animationDelay: '4s' }}>🏃‍♂️</div>
-                        <div className="floating-boat boat2" style={{ left: '30%', top: '70%', animationDelay: '4s' }}>🏃‍♂️</div>
-                    </div>
-                )}
+                        Juice Relay
+                    </p>
+                    {getRelayState() && (
+                        <span style={{ 
+                            color: "rgba(255, 255, 255, 0.8)",
+                            fontSize: "0.9em",
+                            textShadow: `
+                                -1px -1px 0 #000,
+                                1px -1px 0 #000,
+                                -1px 1px 0 #000,
+                                1px 1px 0 #000`
+                        }}>
+                            • Currently {getRelayState()}
+                        </span>
+                    )}
+                </div>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                    <button
+                        onClick={() => {
+                            if (!openWindows.includes("wutIsRelay")) {
+                                setOpenWindows((prev) => [...prev, "wutIsRelay"]);
+                                const audio = document.getElementById("windowOpenAudio");
+                                if (audio) {
+                                    audio.currentTime = 0;
+                                    audio.play();
+                                }
+                            }
+                        }}
+                        style={{
+                            padding: "4px 12px",
+                            backgroundColor: "#0DF2F1",
+                            color: "#000",
+                            border: "2px solid #000",
+                            borderRadius: 4,
+                            cursor: "pointer",
+                            fontWeight: "bold",
+                            transition: "transform 0.2s ease, box-shadow 0.2s ease"
+                        }}
+                    >
+                        What's Relay?
+                    </button>
+                    {isRelayTime() && (
+                        <button
+                            onClick={() => window.open('https://hackclub.zoom.us/j/85023610589', '_blank')}
+                            style={{
+                                padding: "4px 12px",
+                                backgroundColor: "#0DF2F1",
+                                color: "#000",
+                                border: "2px solid #000",
+                                borderRadius: 4,
+                                cursor: "pointer",
+                                fontWeight: "bold",
+                                transition: "transform 0.2s ease, box-shadow 0.2s ease"
+                            }}
+                        >
+                            Join Zoom Call
+                        </button>
+                    )}
+                </div>
+            </div>
+            <div className="floating-boat boat1" style={{ left: '0', top: '50%' }}>🏃‍♂️</div>
+            <div className="floating-boat boat2" style={{ right: '0', top: '30%' }}>🏃‍♂️</div>
+            <div className="floating-boat boat1" style={{ left: '30%', top: '70%', animationDelay: '4s' }}>🏃‍♂️</div>
+            <div className="floating-boat boat2" style={{ left: '30%', top: '70%', animationDelay: '4s' }}>🏃‍♂️</div>
+        </div>
+    )}
 
           {isLoggedIn && tickets.some(t => !t.used) && <div 
                 className="panel-pop"

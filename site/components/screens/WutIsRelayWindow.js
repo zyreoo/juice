@@ -5,7 +5,7 @@ export default function WutIsRelayWindow({ position, isDragging, isActive, handl
 
     const isRelayTime = () => {
         const now = new Date();
-        const relayTime = new Date('2025-02-14T13:00:00.000Z'); // 9 PM GMT on Feb 14th, 2025
+        const relayTime = new Date('2025-02-14T21:00:00.000Z'); // 9 PM GMT on Feb 14th, 2025
         return now.getTime() >= relayTime.getTime();
     };
 
@@ -17,6 +17,8 @@ export default function WutIsRelayWindow({ position, isDragging, isActive, handl
                 left: "50%",
                 position: "absolute", 
                 zIndex: isActive ? ACTIVE_Z_INDEX : BASE_Z_INDEX,
+                pointerEvents: isActive ? 'auto' : 'none',
+                visibility: isActive ? 'visible' : 'hidden'
             }}
         >
             <div 
