@@ -1,4 +1,4 @@
-**Game Name:** Spinellow
+# Spinellow
 
 **Team Members:** GabriGua, pulvis16, Paolo08, PaoloSp8
 
