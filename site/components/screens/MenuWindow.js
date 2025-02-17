@@ -23,10 +23,6 @@ export default function MenuWindow({
   const [approvedHours, setApprovedHours] = useState(0);
   const [rejectedHours, setRejectedHours] = useState(0);
 
-  // Add this near the top of the component, after the useState declarations
-  const [audio] = useState(new Audio('/trapdoor.mp3'));
-  const [clickSound] = useState(new Audio('/click.mp3'));
-
   // Add this after the other state declarations
   const [currentMomentIndex, setCurrentMomentIndex] = useState(0);
 
@@ -81,59 +77,45 @@ export default function MenuWindow({
   const handleMomentClick = (moment) => {
     const index = moments.findIndex(m => m.id === moment.id);
     setCurrentMomentIndex(index);
-    audio.currentTime = 0;
-    audio.play();
     setSelectedMoment(moment);
   };
 
   const closePopup = () => {
-    clickSound.currentTime = 0;
-    clickSound.play();
-    setTimeout(() => {
-      setSelectedMoment(null);
-    }, 50); // Small delay to ensure sound starts playing first
+    setSelectedMoment(null);
   };
 
-  // Modify the navigateMoments function
   const navigateMoments = (direction) => {
     const newIndex = currentMomentIndex + direction;
     
     // Check bounds
     if (newIndex >= 0 && newIndex < moments.length) {
-      audio.currentTime = 0;
-      audio.play();
-      setCurrentMomentIndex(newIndex);
-      setSelectedMoment(moments[newIndex]);
-      setVideoKey(prev => prev + 1);
+        setCurrentMomentIndex(newIndex);
+        setSelectedMoment(moments[newIndex]);
+        setVideoKey(prev => prev + 1);
     }
   };
 
-  // Modify the escape key handler useEffect to include arrow keys
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (selectedMoment) {
-        if (e.key === "Escape") {
-          clickSound.currentTime = 0;
-          clickSound.play();
-          setTimeout(() => {
-            setSelectedMoment(null);
-          }, 50);
-        } else if (e.key === "ArrowLeft") {
-          navigateMoments(-1);
-        } else if (e.key === "ArrowRight") {
-          navigateMoments(1);
+        if (selectedMoment) {
+            if (e.key === "Escape") {
+                setSelectedMoment(null);
+            } else if (e.key === "ArrowLeft") {
+                navigateMoments(-1);
+            } else if (e.key === "ArrowRight") {
+                navigateMoments(1);
+            }
         }
-      }
     };
 
     if (selectedMoment) {
-      document.addEventListener("keydown", handleKeyDown);
+        document.addEventListener("keydown", handleKeyDown);
     }
 
     return () => {
-      document.removeEventListener("keydown", handleKeyDown);
+        document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [selectedMoment, clickSound, audio, moments, currentMomentIndex]);
+  }, [selectedMoment, moments, currentMomentIndex]);
 
   return (
     <div
