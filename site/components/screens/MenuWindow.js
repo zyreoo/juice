@@ -326,10 +326,12 @@ export default function MenuWindow({
                 {moments.map((moment) => {
                   let backgroundColor;
                   let strokeColor;
-                  if (moment.status === "Accepted") {
+                  const stretchReview = moment.stretch?.Review?.[0] || "Pending";
+                  
+                  if (stretchReview === "Accepted") {
                     backgroundColor = "green";
                     strokeColor = "#90EE90";  // Light green
-                  } else if (moment.status === "Rejected") {
+                  } else if (stretchReview === "Rejected") {
                     backgroundColor = "red";
                     strokeColor = "#FFB6B6";  // Light red
                   } else {
