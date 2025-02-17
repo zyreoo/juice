@@ -9,6 +9,7 @@ import FactionWindow from './FactionWindow';
 import FirstChallengeWindow from './FirstChallengeWindow';
 import JuiceWindow from './JuiceWindow';
 import KudosWindow from './KudosWindow';
+import GalleryWindow from './GalleryWindow';
 import Background from '../Background';
 import ShareSuccessPanel from './ShareSuccessPanel';
 import FortuneBasket from './FortuneBasket';
@@ -19,6 +20,7 @@ import WutIsJungleWindow from './WutIsJungleWindow';
 import SecondChallengeWindow from './SecondChallengeWindow';
 import MenuWindow from "./MenuWindow";
 import PostcardWindow from './PostcardWindow';
+import WutIsRelayWindow from './WutIsRelayWindow';
 
 export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserData, isJungle }) {
   const [time, setTime] = React.useState(new Date());
@@ -57,6 +59,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
   const [isRsvped, setIsRsvped] = React.useState(false);
   const [showCookies, setShowCookies] = React.useState(false);
   const [kudosPosition, setKudosPosition] = React.useState({ x: 350, y: 350 });
+  const [GalleryPosition, setGalleryPosition] = React.useState({ x: 400, y: 400 });
+
   const [isJuicing, setIsJuicing] = React.useState(false);
   const juicerSoundRef = React.useRef(null);
   const [thanksPosition, setThanksPosition] = React.useState({ x: 400, y: 400 });
@@ -66,6 +70,9 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
     x: window.innerWidth / 2,
     y: window.innerHeight / 2
   });
+  const [wutIsRelayPosition, setWutIsRelayPosition] = React.useState({ x: 100, y: 100 });
+
+  const [relayCountdown, setRelayCountdown] = React.useState('');
 
   // Constants
   const TOP_BAR_HEIGHT = 36;
@@ -83,7 +90,9 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
     fortuneBasket: 220,
     thanks: 300,
     secondChallenge: 300,
-    menuWindow: 470
+    menuWindow: 470,
+    wutIsRelay: 470,
+    galleryWindow: 397
   };
   const BASE_Z_INDEX = 1;
 
@@ -284,7 +293,23 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
             "fruitBasketWindow",
           ]);
         }
-      } else if (fileId === "wutIsJungle") {
+      }   else if (fileId === "Gallery") {
+        if (!openWindows.includes("Gallery")) {
+          setOpenWindows((prev) => [...prev, "Gallery"]);
+          setWindowOrder((prev) => [
+            ...prev.filter((w) => w !== "Gallery"),
+            "gallery",
+          ]);
+          document.getElementById("windowOpenAudio").currentTime = 0;
+          document.getElementById("windowOpenAudio").play();
+        } else {
+          setWindowOrder((prev) => [
+            ...prev.filter((w) => w !== "gallery"),
+            "gallery",
+          ]);
+        }
+      } 
+       else if (fileId === "wutIsJungle") {
         if (!openWindows.includes('wutIsJungle')) {
           setOpenWindows(prev => [...prev, 'wutIsJungle']);
           setWindowOrder(prev => [...prev.filter(w => w !== 'wutIsJungle'), 'wutIsJungle']);
@@ -342,6 +367,9 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
       case "kudos":
         position = kudosPosition;
         break;
+      case "Gallery":
+         position = GalleryPosition;
+         break;
       case "thanks":
         position = thanksPosition;
         break;
@@ -350,8 +378,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         break;
       case "fruitBasketWindow":
         position = fruitBasketWindowPosition;
-        break
-        case 'wutIsJungle':
+        break;
+      case 'wutIsJungle':
         position = wutIsJunglePosition;
         break;
       case "menuWindow":
@@ -359,6 +387,9 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         break;
         case 'secondChallenge':
           position = secondChallengePosition;
+        break;
+      case 'wutIsRelay':
+        position = wutIsRelayPosition;
         break;
       default:
         console.log("Unknown window name:", windowName);
@@ -414,6 +445,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         setFortuneBasketPosition(newPosition);
       } else if (activeWindow === "kudos") {
         setKudosPosition(newPosition);
+      } else if (activeWindow === "Gallery") {
+        setGalleryPosition(newPosition);
       } else if (activeWindow === "thanks") {
         setThanksPosition(newPosition);
       } else if (activeWindow === "jungleWindow") {
@@ -426,6 +459,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         setwutIsJunglePosition(newPosition);
       } else if (activeWindow === 'secondChallenge') {
         setSecondChallengePosition(newPosition);
+      } else if (activeWindow === 'wutIsRelay') {
+        setWutIsRelayPosition(newPosition);
       }
     }
   };
@@ -541,6 +576,15 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
       setWindowOrder(prev => [...prev.filter(w => w !== 'secondChallenge'), 'secondChallenge']);
     } else {
       setWindowOrder(prev => [...prev.filter(w => w !== 'secondChallenge'), 'secondChallenge']);
+    }
+  };
+
+  const handleRelayClick = () => {
+    if (!openWindows.includes('wutIsRelay')) {
+        setOpenWindows([...openWindows, 'wutIsRelay']);
+        setWindowOrder([...windowOrder, 'wutIsRelay']);
+    } else {
+        handleWindowClick('wutIsRelay')();
     }
   };
 
@@ -662,6 +706,72 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
       collectAudio.play();
     }
   };
+
+  // Add this function inside MainView component to check if it's before 9pm GMT on Feb 14th
+  const isBeforeRelayTime = () => {
+    const now = new Date();
+    const relayTime = new Date('2025-02-15T00:00:00.000Z'); 
+    return now.getTime() < relayTime.getTime();
+  };
+
+  // Add this function to check relay time
+  const isRelayTime = () => {
+    const now = new Date();
+    const relayTime = new Date('2025-02-15T00:00:00.000Z'); // 9 PM GMT on Feb 14th, 2025
+    return now.getTime() >= relayTime.getTime();
+  };
+
+  const getRelayState = () => {
+    const now = new Date();
+    const relayStart = new Date('2025-02-15T00:00:00.000Z'); // Midnight GMT on Feb 15th, 2025
+    const relayEnd = new Date('2025-02-16T00:00:00.000Z');   // Midnight GMT on Feb 16th, 2025
+
+    if (now > relayEnd) {
+        return null; // Only return null after the relay ends
+    }
+
+    if (now < relayStart) {
+        return 'upcoming'; // New state for before the relay starts
+    }
+
+    // During the relay, return the current state
+    const hoursSinceStart = (now - relayStart) / (1000 * 60 * 60);
+    const currentHour = Math.floor(hoursSinceStart) % 1.25; // 1.25 hours per cycle (1 hour sprint + 15 min refuel)
+    
+    return currentHour < 1 ? 'sprinting' : 'refueling';
+  };
+
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+        setTime(new Date());
+    }, 20000); // Update every second
+
+    return () => clearInterval(timer);
+  }, []);
+
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+        const now = new Date();
+        const relayStart = new Date('2025-02-15T00:00:00.000Z');
+        const relayEnd = new Date('2025-02-16T00:00:00.000Z');
+        
+        if (now >= relayStart && now <= relayEnd) {
+            const totalSeconds = 24 * 60 * 60; // 24 hours in seconds
+            const elapsedSeconds = Math.floor((now - relayStart) / 1000);
+            const remainingSeconds = Math.max(0, totalSeconds - elapsedSeconds);
+            
+            const hours = Math.floor(remainingSeconds / 3600);
+            const minutes = Math.floor((remainingSeconds % 3600) / 60);
+            const seconds = remainingSeconds % 60;
+            
+            setRelayCountdown(
+                `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+            );
+        }
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   return (
     <div
@@ -974,6 +1084,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                 {userData?.totalKudos || 0}
               </p>
             </div>
+            
             <div
               style={{
                 display: "flex",
@@ -1251,6 +1362,18 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
             ACTIVE_Z_INDEX={getWindowZIndex("kudos")}
           />
         )}
+           {openWindows.includes("Gallery") && (
+          <GalleryWindow
+            position={GalleryPosition}
+            isDragging={isDragging && activeWindow === "Gallery"}
+            isActive={windowOrder[windowOrder.length - 1] === "Gallery"}
+            handleMouseDown={handleMouseDown}
+            handleDismiss={handleDismiss}
+            handleWindowClick={handleWindowClick}
+            BASE_Z_INDEX={getWindowZIndex("Gallery")}
+            ACTIVE_Z_INDEX={getWindowZIndex("Gallery")}
+          />
+        )}
 
         {openWindows.includes("thanks") && (
           <ThanksWindow
@@ -1306,6 +1429,19 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
             BASE_Z_INDEX={getWindowZIndex("postcard")}
             ACTIVE_Z_INDEX={getWindowZIndex("postcard")}
             userData={userData}
+          />
+        )}
+
+        {openWindows.includes('wutIsRelay') && (
+          <WutIsRelayWindow
+            position={wutIsRelayPosition}
+            isDragging={isDragging && activeWindow === 'wutIsRelay'}
+            isActive={windowOrder[windowOrder.length - 1] === 'wutIsRelay'}
+            handleMouseDown={handleMouseDown}
+            handleDismiss={handleDismiss}
+            handleWindowClick={handleWindowClick}
+            BASE_Z_INDEX={getWindowZIndex('wutIsRelay')}
+            ACTIVE_Z_INDEX={getWindowZIndex('wutIsRelay')}
           />
         )}
 
@@ -1396,7 +1532,20 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                   data-file-id="Kudos"
                 />
               )}
+                 {isLoggedIn && (
+                <FileIcon
+                  text="Gallery"
+                  icon="./gallery.png"
+                  style={{ backgroundColor: "#000", color: "#fff" }}
+                  isSelected={selectedFile === "Gallery"}
+                  onClick={handleFileClick("Gallery")}
+                  delay={0.5}
+                  data-file-id="Gallery"
+                />
+              )}
+              
               {isLoggedIn && !isJungle && (
+
 
               <FileIcon
                 text="Moments"
@@ -1479,8 +1628,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                             textShadow: `
                                 -1px -1px 0 #000,
                                 1px -1px 0 #000,
-                                -1px 1px 0 #000,
-                                1px 1px 0 #000`
+                                -1px 1px 0 #000`
                         }}>Second Challenge Reveals Itself...</p>
                         <button 
                             onClick={handleSecondChallengeOpen}
@@ -1503,6 +1651,107 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                     <div className="floating-boat boat1" style={{ left: '30%', top: '70%', animationDelay: '4s' }}>⛵️</div>
                 </div>
             )}
+
+{getRelayState() !== null && (
+    <div 
+        onClick={handleRelayClick}
+        className="panel-pop rainbow-glass-panel"
+        style={{
+            width: 332,
+            marginTop: 8,
+            borderRadius: 8,
+            padding: 12,
+            position: 'relative',
+            overflow: 'hidden',
+            cursor: 'pointer',
+            backgroundColor: getRelayState() === 'sprinting' 
+                ? 'rgba(0, 255, 0, 0.1)' 
+                : getRelayState() === 'refueling' 
+                    ? 'rgba(0, 0, 255, 0.1)' 
+                    : 'transparent'
+        }}>
+        <div style={{ position: 'relative', zIndex: 1 }}>
+            <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '8px',
+                marginBottom: '8px'
+            }}>
+                <p style={{ 
+                    color: "rgba(255, 255, 255, 1.0)", 
+                    margin: 0,
+                    textShadow: `
+                        -1px -1px 0 #000,
+                        1px -1px 0 #000,
+                        -1px 1px 0 #000,
+                        1px 1px 0 #000`
+                }}>
+                    Juice Relay
+                </p>
+                {getRelayState() && (
+                    <span style={{ 
+                        color: "rgba(255, 255, 255, 0.8)",
+                        fontSize: "0.9em",
+                        textShadow: `
+                            -1px -1px 0 #000,
+                            1px -1px 0 #000,
+                            -1px 1px 0 #000,
+                            1px 1px 0 #000`
+                    }}>
+                        • Currently {getRelayState()}
+                    </span>
+                )}
+            </div>
+            <div style={{ display: 'flex', gap: '10px' }}>
+                <button
+                    onClick={() => {
+                        if (!openWindows.includes("wutIsRelay")) {
+                            setOpenWindows((prev) => [...prev, "wutIsRelay"]);
+                            const audio = document.getElementById("windowOpenAudio");
+                            if (audio) {
+                                audio.currentTime = 0;
+                                audio.play();
+                            }
+                        }
+                    }}
+                    style={{
+                        padding: "4px 12px",
+                        backgroundColor: "#0DF2F1",
+                        color: "#000",
+                        border: "2px solid #000",
+                        borderRadius: 4,
+                        cursor: "pointer",
+                        fontWeight: "bold",
+                        transition: "transform 0.2s ease, box-shadow 0.2s ease"
+                    }}
+                >
+                    What's Relay?
+                </button>
+                {isRelayTime() && (
+                    <button
+                        onClick={() => window.open('https://hack.af/z-join?id=jdw8go', '_blank')}
+                        style={{
+                            padding: "4px 12px",
+                            backgroundColor: "#0DF2F1",
+                            color: "#000",
+                            border: "2px solid #000",
+                            borderRadius: 4,
+                            cursor: "pointer",
+                            fontWeight: "bold",
+                            transition: "transform 0.2s ease, box-shadow 0.2s ease"
+                        }}
+                    >
+                        Join Zoom Call
+                    </button>
+                )}
+            </div>
+        </div>
+        <div className="floating-boat boat1" style={{ left: '0', top: '50%' }}>🏃‍♂️</div>
+        <div className="floating-boat boat2" style={{ right: '0', top: '30%' }}>🏃‍♂️</div>
+        <div className="floating-boat boat1" style={{ left: '30%', top: '70%', animationDelay: '4s' }}>🏃‍♂️</div>
+        <div className="floating-boat boat2" style={{ left: '30%', top: '70%', animationDelay: '4s' }}>🏃‍♂️</div>
+    </div>
+)}
 
           {isLoggedIn && tickets.some(t => !t.used) && <div 
                 className="panel-pop"
@@ -1535,39 +1784,53 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
 
         </div>
 
-        {userData?.Postcards?.length > 0 && 
-              <div style={{position: "absolute", bottom: 0, right: 16}}>
-                <img 
-                  style={{
-                    width: 96,
-                    animation: "jiggleEnvelope 1.2s linear infinite",
-                    transformOrigin: '50% 50%',
-                    transition: 'all 1.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
-                    cursor: 'pointer',
-                    position: 'relative',
-                    filter: 'drop-shadow(0 0 5px rgba(255,255,255,0.1))'
-                  }} 
-                  onMouseEnter={(e) => {
-                    e.target.style.width = '128px';
-                    e.target.style.animation = "jiggleEnvelopeIntense 0.8s linear infinite, rainbowShadow 8s linear infinite";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.width = '96px';
-                    e.target.style.animation = "jiggleEnvelope 1.2s linear infinite";
-                  }}
-                  onClick={() => {
-                    if (!openWindows.includes("postcard")) {
-                      setOpenWindows(prev => [...prev, "postcard"]);
-                      setWindowOrder(prev => [...prev.filter(w => w !== "postcard"), "postcard"]);
-                      document.getElementById("mailAudio").play();
-                    } else {
-                      setWindowOrder(prev => [...prev.filter(w => w !== "postcard"), "postcard"]);
-                    }
-                  }}
-                  src="./envelope.png"
-                />
-              </div>
-            }
+        <div style={{position: "absolute", display: 'flex', gap: 8, flexDirection: 'column', alignItems: "end", bottom: 0, right: 16}}>
+
+          <div style={{display: 'flex', flexDirection: "column", gap: 8}}>
+            {/* <div style={{width: 256, backgroundColor: "#fff", borderRadius: 4, padding: 4}}>
+            <p>a Hack Clubber published a game on Itch.io 5min ago</p>
+            </div>  */}
+            {/* <div style={{width: 256, transform: "scale(0.9)", opacity: 0.9, backgroundColor: "#fff", borderRadius: 4, padding: 4}}>
+            <p>a Hack Clubber published a game on Itch.io 5min ago</p>
+            </div>   
+            <div style={{width: 256, transform: "scale(0.8)", opacity: 0.8, backgroundColor: "#fff", borderRadius: 4, padding: 4}}>
+            <p>a Hack Clubber published a game on Itch.io 5min ago</p>
+            </div>    */}
+          </div>
+          {userData?.Postcards?.length > 0 && 
+      
+          <img 
+            style={{
+              width: 96,
+              animation: "jiggleEnvelope 1.2s linear infinite",
+              transformOrigin: '50% 50%',
+              transition: 'all 1.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
+              cursor: 'pointer',
+              position: 'relative',
+              filter: 'drop-shadow(0 0 5px rgba(255,255,255,0.1))'
+            }} 
+            onMouseEnter={(e) => {
+              e.target.style.width = '128px';
+              e.target.style.animation = "jiggleEnvelopeIntense 0.8s linear infinite, rainbowShadow 8s linear infinite";
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.width = '96px';
+              e.target.style.animation = "jiggleEnvelope 1.2s linear infinite";
+            }}
+            onClick={() => {
+              if (!openWindows.includes("postcard")) {
+                setOpenWindows(prev => [...prev, "postcard"]);
+                setWindowOrder(prev => [...prev.filter(w => w !== "postcard"), "postcard"]);
+                document.getElementById("mailAudio").play();
+              } else {
+                setWindowOrder(prev => [...prev.filter(w => w !== "postcard"), "postcard"]);
+              }
+            }}
+            src="./envelope.png"
+          />
+          }
+        </div>
+            
 
         {/* background goes here */}
         <div 

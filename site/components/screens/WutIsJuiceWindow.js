@@ -91,7 +91,7 @@ export default function WutIsJuiceWindow({ position, isDragging, isActive, handl
                             <li>include no spoken or written words in their game (languageless)</li>
                             <li>ship their game to the Steam Store (30min playable content)</li>
                         </ul>
-                        <p>You are invited & all of the tools are in your hands to make this adventure happen, so it's up to you. Do you want to make this adventure happen? If <a href="#" class="register-link">let's do this together</a></p>
+                        <p>You are invited & all of the tools are in your hands to make this adventure happen, so it's up to you. Do you want to make this adventure happen? If so, <a href="#" class="register-link">let's do this together</a></p>
                         <b style={{
                             animation: 'steamGrantFlash 1s infinite'
                         }}>ALL PARTICIPANTS THAT SHIP & MEET CRITERIA GET FREE STEAM LICENSE GRANT!</b>
