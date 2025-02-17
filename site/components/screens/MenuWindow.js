@@ -58,7 +58,12 @@ export default function MenuWindow({
       // Get moments and sort them with newest first
       const allMoments = userData.juiceStretches.reduce((acc, stretch) => {
         if (stretch.omgMoments) {
-          return [...acc, ...stretch.omgMoments];
+          // Add the stretch reference to each moment
+          const momentsWithStretch = stretch.omgMoments.map(moment => ({
+            ...moment,
+            stretchReview: stretch.Review[0]  // Add the review status directly to the moment
+          }));
+          return [...acc, ...momentsWithStretch];
         }
         return acc;
       }, []);
@@ -326,12 +331,11 @@ export default function MenuWindow({
                 {moments.map((moment) => {
                   let backgroundColor;
                   let strokeColor;
-                  const stretchReview = moment.stretch?.Review?.[0] || "Pending";
                   
-                  if (stretchReview === "Accepted") {
+                  if (moment.stretchReview === "Accepted") {
                     backgroundColor = "green";
                     strokeColor = "#90EE90";  // Light green
-                  } else if (stretchReview === "Rejected") {
+                  } else if (moment.stretchReview === "Rejected") {
                     backgroundColor = "red";
                     strokeColor = "#FFB6B6";  // Light red
                   } else {
