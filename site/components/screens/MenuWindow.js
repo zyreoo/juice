@@ -20,7 +20,7 @@ export default function MenuWindow({
   // Variables to hold calculated total hours for each status
   const [totalHours, setTotalHours] = useState(0);
   const [pendingHours, setPendingHours] = useState(0);
-  const [approvedHours, setApprovedHours] = useState(0);
+  const [acceptedHours, setAcceptedHours] = useState(0);
   const [rejectedHours, setRejectedHours] = useState(0);
 
   // Add this after the other state declarations
@@ -33,7 +33,7 @@ export default function MenuWindow({
     if (userData?.juiceStretches) {
       let total = 0;
       let pending = 0;
-      let approved = 0;
+      let accepted = 0;
       let rejected = 0;
 
       userData.juiceStretches.forEach((stretch) => {
@@ -42,7 +42,7 @@ export default function MenuWindow({
         total += stretchHours;
 
         if (stretch.Review === "Accepted") {
-          approved += stretchHours;
+          accepted += stretchHours;
         } else if (stretch.Review === "Rejected") {
           rejected += stretchHours;
         } else {
@@ -52,7 +52,7 @@ export default function MenuWindow({
 
       setTotalHours(total);
       setPendingHours(pending);
-      setApprovedHours(approved);
+      setAcceptedHours(accepted);
       setRejectedHours(rejected);
 
       // Get moments and sort them with newest first
@@ -184,8 +184,8 @@ export default function MenuWindow({
               marginTop: 8,
             }}
           >
-            {approvedHours.toFixed(2)}/100{" "}
-            <p style={{ fontSize: 16 }}>approved shipped hours</p>
+            {acceptedHours.toFixed(2)}/100{" "}
+            <p style={{ fontSize: 16 }}>accepted shipped hours</p>
           </h2>
           <div style={{ width: "80%", margin: "auto", textAlign: "center" }}>
             <div
@@ -201,8 +201,8 @@ export default function MenuWindow({
               <div
                 style={{
                   height: "100%",
-                  width: `${(approvedHours / 100) * 100}%`,
-                  background: approvedHours >= 100 ? "gold" : "green",
+                  width: `${(acceptedHours / 100) * 100}%`,
+                  background: acceptedHours >= 100 ? "gold" : "green",
                   transition: "width 0.5s ease-in-out",
                 }}
               />
@@ -213,7 +213,7 @@ export default function MenuWindow({
             style={{ margin: 0, textAlign: "center", padding: 10, fontSize: 14 }}
             className="rainbow-text"
           >
-            After completing the base 100 hours, each new approved hour will get
+            After completing the base 100 hours, each new accepted hour will get
             <br />
             converted into $5 additional for your stipend!
           </p>
@@ -241,9 +241,9 @@ export default function MenuWindow({
             </span>
           </div>
           <div>
-            Approved Hours: <br />
+            Accepted Hours: <br />
             <span style={{ color: "green" }}>
-              {approvedHours.toFixed(2)} hrs
+              {acceptedHours.toFixed(2)} hrs
             </span>
           </div>
           <div>
@@ -276,7 +276,7 @@ export default function MenuWindow({
             <div style={{width: 12, backgroundColor: "green", height: 12, borderRadius: 2}}>
 
             </div>
-             Approved
+             Accepted
           </span>
           <span
             style={{ color: "orange", display: "flex", flexDirection: "row", gap: 4, marginRight: "10px", fontSize: "12px" }}
@@ -326,7 +326,7 @@ export default function MenuWindow({
                 {moments.map((moment) => {
                   let backgroundColor;
                   let strokeColor;
-                  if (moment.status === "Approved") {
+                  if (moment.status === "Accepted") {
                     backgroundColor = "green";
                     strokeColor = "#90EE90";  // Light green
                   } else if (moment.status === "Rejected") {
