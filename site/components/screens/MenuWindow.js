@@ -41,7 +41,7 @@ export default function MenuWindow({
           Math.round(((stretch.timeWorkedSeconds || 0) / 3600) * 100) / 100;
         total += stretchHours;
 
-        if (stretch.Review === "Approved") {
+        if (stretch.Review === "Accepted") {
           approved += stretchHours;
         } else if (stretch.Review === "Rejected") {
           rejected += stretchHours;
