@@ -650,13 +650,136 @@ export default function MainViewZero({
           width: '100vw',
           height: '100vh',
           pointerEvents: 'none',
-          zIndex: 9999,
+          // zIndex: 9999,
           animation: isShaking
             ? 'saturate 0.6s cubic-bezier(.36,.07,.19,.97) both'
             : 'none',
-          mixBlendMode: 'saturation',
+          // mixBlendMode: 'saturation',
+          backgroundImage: 'url("/still-background.png")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center center',
+          backgroundRepeat: 'no-repeat',
+          imageRendering: 'pixelated',
         }}
       />
+      <div
+        style={{
+          position: 'absolute',
+          zIndex: 3,
+          height: TOP_BAR_HEIGHT,
+          borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+          justifyContent: 'space-between',
+          padding: '8px 16px',
+          top: 0,
+          left: 0,
+          display: 'flex',
+          width: '100vw',
+          margin: 0,
+          backgroundColor: 'rgba(255, 220, 180, 0.8)',
+          backdropFilter:
+            'blur(8px) saturate(200%) sepia(50%) hue-rotate(-15deg) brightness(1.1)',
+          WebkitBackdropFilter:
+            'blur(8px) saturate(200%) sepia(50%) hue-rotate(-15deg) brightness(1.1)',
+          boxShadow: '0 1px 25px rgba(255, 160, 60, 0.3)',
+        }}
+      >
+        <p
+          style={{
+            color: 'rgba(0, 0, 0, 0.8)',
+            fontWeight: 500,
+          }}
+        >
+          Juice{' '}
+          <p style={{ display: 'inline', color: 'rgba(80, 80, 80, .8)' }}>
+            Zero
+          </p>
+        </p>
+        <div style={{ display: 'flex', flexDirection: 'row', gap: 16 }}>
+          <div
+            style={{
+              display: 'flex',
+              border: '1px solid #000',
+              alignItems: 'center',
+              justifyContent: 'space-around',
+              borderRadius: 4,
+              padding: '2px 4px',
+              minWidth: 42,
+              gap: 6,
+              transition: 'all 0.3s ease',
+              backgroundColor: 'rgba(0, 0, 0, 0.05)',
+              borderColor: '#000',
+            }}
+          >
+            <img style={{ width: 14, height: 14 }} src={'./kudos.png'} />
+            <p
+              style={{
+                fontSize: 16,
+                color: '#000',
+                fontWeight: userData?.totalKudos > 0 ? 'bold' : 'normal',
+              }}
+            >
+              {userData?.totalKudos || 0}
+            </p>
+          </div>
+
+          <div
+            style={{
+              display: 'flex',
+              border: '1px solid #000',
+              alignItems: 'center',
+              justifyContent: 'space-around',
+              borderRadius: 4,
+              padding: '2px 4px',
+              minWidth: 42,
+              gap: 6,
+              transition: 'all 0.3s ease',
+              backgroundColor: 'rgba(0, 0, 0, 0.05)',
+              borderColor: '#000',
+            }}
+          >
+            <img style={{ width: 14, height: 14 }} src={'/jungle/token.png'} />
+            <p
+              style={{
+                fontSize: 16,
+                color: '#000',
+                fontWeight: userData?.totalKudos > 0 ? 'bold' : 'normal',
+              }}
+            >
+              {userData?.totalTokens || 0}
+            </p>
+          </div>
+          <div
+            style={{
+              display: 'flex',
+              border: '1px solid #000',
+              alignItems: 'center',
+              justifyContent: 'space-around',
+              borderRadius: 4,
+              padding: '2px 4px',
+              minWidth: 42,
+              gap: 6,
+              transition: 'all 0.3s ease',
+              backgroundColor: 'rgba(0, 0, 0, 0.05)',
+              borderColor: '#000',
+            }}
+          >
+            <img
+              style={{ width: 14, height: 14 }}
+              src={'/jungle/goldToken.png'}
+            />
+            <p
+              style={{
+                fontSize: 16,
+                color: '#000',
+                fontWeight: userData?.totalKudos > 0 ? 'bold' : 'normal',
+              }}
+            >
+              {userData?.totalRedeemableTokens || 0}
+            </p>
+          </div>
+        </div>
+      </div>
+
       <div
         style={{
           position: 'relative',
