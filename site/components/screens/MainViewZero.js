@@ -16,6 +16,7 @@ import FruitBasketWindow from './FruitBasketWindow';
 import WutIsJungleWindow from './WutIsJungleWindow';
 import SecondChallengeWindow from './SecondChallengeWindow';
 import MenuWindow from './MenuWindow';
+import ZeroWindow from './ZeroWindow';
 
 export default function MainViewZero({
   isLoggedIn,
@@ -80,6 +81,7 @@ export default function MainViewZero({
     x: 400,
     y: 100,
   });
+	const [zeroWindowPosition, setZeroWindowPosition] = React.useState({ x: -400, y: -150})
 
   const [isShaking, setIsShaking] = React.useState(false);
   const [showCookies, setShowCookies] = React.useState(false);
@@ -118,6 +120,7 @@ export default function MainViewZero({
     menuWindow: 470,
     wutIsRelay: 470,
     galleryWindow: 397,
+		zero: 300,
   };
   const BASE_Z_INDEX = 1;
 
@@ -186,6 +189,9 @@ export default function MainViewZero({
       case 'secondChallenge':
         position = secondChallengePosition;
         break;
+			case 'zero':
+				position = zeroWindowPosition;
+				break;
       default:
         console.log('Unknown window name:', windowName);
         position = { x: 0, y: 0 };
@@ -254,7 +260,9 @@ export default function MainViewZero({
         setwutIsJunglePosition(newPosition);
       } else if (activeWindow === 'secondChallenge') {
         setSecondChallengePosition(newPosition);
-      }
+      } else if (activeWindow === 'zero') {
+				setZeroWindowPosition(newPosition)
+			}
     }
   };
 
@@ -690,9 +698,9 @@ export default function MainViewZero({
           }}
         >
           Juice{' '}
-          <p style={{ display: 'inline', color: 'rgba(80, 80, 80, .8)' }}>
+          <i style={{ display: 'inline', color: 'rgba(80, 80, 80, .8)' }}>
             Zero
-          </p>
+          </i>
         </p>
         <div style={{ display: 'flex', flexDirection: 'row', gap: 16 }}>
           <div
@@ -1051,6 +1059,19 @@ export default function MainViewZero({
             setUserData={setUserData}
           />
         )}
+
+				{openWindows.includes("zero") && (
+					<ZeroWindow
+						position={zeroWindowPosition}
+						isDragging={isDragging && activeWindow === "zero"}
+						isActive={windowOrder[windowOrder.length - 1] === "zero"}
+						handleMouseDown={handleMouseDown}
+						handleDismiss={handleDismiss}
+						handleWindowClick={handleWindowClick}
+						BASE_Z_INDEX={getWindowZIndex("zero")}
+						ACTIVE_Z_INDEX={getWindowZIndex("zero")}
+					/>
+				)}
 
         <audio id="juicerAudio" src="./juicer.mp3" preload="auto"></audio>
         <audio id="collectAudio" src="./collect.mp3" preload="auto"></audio>

@@ -21,6 +21,7 @@ import SecondChallengeWindow from './SecondChallengeWindow';
 import MenuWindow from "./MenuWindow";
 import PostcardWindow from './PostcardWindow';
 import WutIsRelayWindow from './WutIsRelayWindow';
+import ZeroWindow from './ZeroWindow';
 
 export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserData, isJungle }) {
   const [time, setTime] = React.useState(new Date());
@@ -52,6 +53,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
     x: 400,
     y: 100
   });
+	const [zeroWindowPosition, setZeroWindowPosition] = React.useState({ x: -150, y: 0})
 
   const [isShaking, setIsShaking] = React.useState(false);
   const collectSoundRef = React.useRef(null);
@@ -92,7 +94,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
     secondChallenge: 300,
     menuWindow: 470,
     wutIsRelay: 470,
-    galleryWindow: 397
+    galleryWindow: 397,
+		zero: 300,
   };
   const BASE_Z_INDEX = 1;
 
@@ -318,6 +321,21 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         } else {
           setWindowOrder(prev => [...prev.filter(w => w !== 'wutIsJungle'), 'wutIsJungle']);
         }
+      }	else if (fileId === "Juice Zero") {
+        if (!openWindows.includes("zero")) {
+          setOpenWindows((prev) => [...prev, "zero"]);
+          setWindowOrder((prev) => [
+            ...prev.filter((w) => w !== "zero"),
+            "zero",
+          ]);
+          document.getElementById("windowOpenAudio").currentTime = 0;
+          document.getElementById("windowOpenAudio").play();
+        } else {
+          setWindowOrder((prev) => [
+            ...prev.filter((w) => w !== "zero"),
+            "zero",
+          ]);
+        }
       }
     }
     setSelectedFile(fileId);
@@ -391,6 +409,9 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
       case 'wutIsRelay':
         position = wutIsRelayPosition;
         break;
+			case 'zero':
+				position = zeroWindowPosition;
+				break;
       default:
         console.log("Unknown window name:", windowName);
         position = { x: 0, y: 0 };
@@ -461,7 +482,9 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         setSecondChallengePosition(newPosition);
       } else if (activeWindow === 'wutIsRelay') {
         setWutIsRelayPosition(newPosition);
-      }
+      } else if (activeWindow === 'zero') {
+				setZeroWindowPosition(newPosition)
+			}
     }
   };
 
@@ -1445,6 +1468,19 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
           />
         )}
 
+				{openWindows.includes("zero") && (
+          <ZeroWindow
+            position={zeroWindowPosition}
+            isDragging={isDragging && activeWindow === "zero"}
+            isActive={windowOrder[windowOrder.length - 1] === "zero"}
+            handleMouseDown={handleMouseDown}
+            handleDismiss={handleDismiss}
+            handleWindowClick={handleWindowClick}
+            BASE_Z_INDEX={getWindowZIndex("zero")}
+            ACTIVE_Z_INDEX={getWindowZIndex("zero")}
+          />
+        )}
+
         <div
           style={{
             position: "absolute",
@@ -1503,6 +1539,14 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                   data-file-id="FruitBasket"
                 />
               )}
+							<FileIcon
+                text="Juice Zero"
+                icon="./juiceZero.png"
+                isSelected={selectedFile === "Juice Zero"}
+                onClick={handleFileClick("Juice Zero")}
+                delay={0.4}
+                data-file-id="Juice Zero"
+              />
             </div>
             <div>
               <FileIcon
