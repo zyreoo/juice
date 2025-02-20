@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-export default function JungleShopWindow({ position, isDragging, isActive, handleMouseDown, handleDismiss, handleWindowClick, BASE_Z_INDEX, ACTIVE_Z_INDEX, userData}) {
+export default function JungleShopWindow({ position, isDragging, isActive, handleMouseDown, handleDismiss, handleWindowClick, BASE_Z_INDEX, ACTIVE_Z_INDEX, userData, setOpenWindows, setWindowOrder}) {
     const [fruitCollected, setFruitCollected] = useState({
         kiwis: 0,
         lemons: 0,
@@ -21,6 +21,14 @@ export default function JungleShopWindow({ position, isDragging, isActive, handl
             clickSoundRef.current.play().catch(e => console.error('Error playing click:', e));
         }
     };
+    const openJungleApp = () => {
+        setTimeout(() => {
+            document.getElementById("windowOpenAudio").currentTime = 0;
+            document.getElementById("windowOpenAudio").play();
+            setOpenWindows(prev => [...prev, 'jungleWindow']);
+            setWindowOrder(prev => [...prev.filter(w => w !== 'jungleWindow'), 'jungleWindow']);
+        }, 100);
+    }
 
     return (
         <div style={{
@@ -98,8 +106,8 @@ export default function JungleShopWindow({ position, isDragging, isActive, handl
                         </h1>
                     </div>
                     <h1 style={{fontSize: "2rem", marginLeft: "1rem"}}>Get all of these by working on your game in the <span style={{fontSize: "2rem", color: "green"}}>Jungle</span> app</h1>
-                    <button style={{margin: ".5rem 1rem", height: "2.4rem", fontSize: "2rem"}}>Open Jungle App</button>
-                <div style={{flex: 1, padding: 16, display: "flex", flexDirection: "column", gap: 8 , overflow: 'auto', maxHeight: 600}}>
+                    <button style={{margin: ".5rem 1rem", height: "2.4rem", fontSize: "2rem"}} onClick={openJungleApp}>Open Jungle App</button>
+                <div style={{flex: 1, padding: 16, display: "flex", flexDirection: "column", gap: 8 , overflow: 'auto', maxHeight: 400}}>
                     
                     <div style={{display: "flex", flexDirection: "column", gap: ".5rem"}}>
                         <div style={{display: "flex", justifyContent: "center", alignItems: "center", width: "100%", gap: "2rem"}}>
@@ -197,6 +205,8 @@ export default function JungleShopWindow({ position, isDragging, isActive, handl
                             </div>
                             
                         </div>
+                        <a style={{all: "unset", width: "100%"}} href="https://hackclub.slack.com/docs/T0266FRGM/F08DU2K47EX"><button style={{width: "100%"}}>Request More Rewards</button></a>
+
                     </div>
                 </div>
             </div>
