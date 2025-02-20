@@ -97,6 +97,8 @@ export default function JungleShopWindow({ position, isDragging, isActive, handl
                             SHOP SHOP SHOP SHOP SHOP SHOP SHOP SHOP SHOP SHOP SHOP SHOP SHOP SHOP SHOP SHOP SHOP SHOP SHOP SHOP SHOP SHOP SHOP SHOP SHOP SHOP SHOP SHOP SHOP SHOP SHOP SHOP SHOP 
                         </h1>
                     </div>
+                    <h1 style={{fontSize: "2rem", marginLeft: "1rem"}}>Get all of these by working on your game in the <span style={{fontSize: "2rem", color: "green"}}>Jungle</span> app</h1>
+                    <button style={{margin: ".5rem 1rem", height: "2.4rem", fontSize: "2rem"}}>Open Jungle App</button>
                 <div style={{flex: 1, padding: 16, display: "flex", flexDirection: "column", gap: 8 , overflow: 'auto', maxHeight: 600}}>
                     
                     <div style={{display: "flex", flexDirection: "column", gap: ".5rem"}}>
