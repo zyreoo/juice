@@ -21,6 +21,7 @@ import SecondChallengeWindow from './SecondChallengeWindow';
 import MenuWindow from "./MenuWindow";
 import PostcardWindow from './PostcardWindow';
 import WutIsRelayWindow from './WutIsRelayWindow';
+import JungleShopWindow from './JungleShopWindow';
 
 export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserData, isJungle }) {
   const [time, setTime] = React.useState(new Date());
@@ -43,6 +44,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
   const [juiceWindowPosition, setJuiceWindowPosition] = React.useState({ x: 0, y: 0 });
   const [jungleWindowPosition, setjungleWindowPosition] = React.useState({ x: 0, y: 0 });
   const [fruitBasketWindowPosition, setFruitBasketWindowPosition] = React.useState({ x: 0, y: 0})
+  const [jungleShopWindowPosition, setJungleShopWindowPosition] = React.useState({ x: 0, y: 0})
   const [fortuneBasketPosition, setFortuneBasketPosition] = React.useState({ 
     x: Math.max(0, window.innerWidth / 2 - 150), 
     y: Math.max(0, window.innerHeight / 2 - 110)
@@ -87,6 +89,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
     juiceWindow: 300,
     jungleWindow: 300,
     fruitBasketWindow: 300,
+    jungleShopWindowPosition: 300,
     fortuneBasket: 220,
     thanks: 300,
     secondChallenge: 300,
@@ -293,7 +296,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
             "fruitBasketWindow",
           ]);
         }
-      }   else if (fileId === "Gallery") {
+      } else if (fileId === "Gallery") {
         if (!openWindows.includes("Gallery")) {
           setOpenWindows((prev) => [...prev, "Gallery"]);
           setWindowOrder((prev) => [
@@ -317,6 +320,21 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
           document.getElementById("windowOpenAudio").play();
         } else {
           setWindowOrder(prev => [...prev.filter(w => w !== 'wutIsJungle'), 'wutIsJungle']);
+        }
+      } else if (fileId === "JungleShop") {
+        if (!openWindows.includes("jungleShopWindow")) {
+          setOpenWindows((prev) => [...prev, "jungleShopWindow"]);
+          setWindowOrder((prev) => [
+            ...prev.filter((w) => w !== "jungleShopWindow"),
+            "jungleShopWindow",
+          ]);
+          document.getElementById("windowOpenAudio").currentTime = 0;
+          document.getElementById("windowOpenAudio").play();
+        } else {
+          setWindowOrder((prev) => [
+            ...prev.filter((w) => w !== "jungleShopWindow"),
+            "jungleShopWindow",
+          ]);
         }
       }
     }
@@ -391,6 +409,9 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
       case 'wutIsRelay':
         position = wutIsRelayPosition;
         break;
+      case "jungleShopWindow":
+        position = jungleShopWindowPosition;
+        break;
       default:
         console.log("Unknown window name:", windowName);
         position = { x: 0, y: 0 };
@@ -461,6 +482,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         setSecondChallengePosition(newPosition);
       } else if (activeWindow === 'wutIsRelay') {
         setWutIsRelayPosition(newPosition);
+      } else if (activeWindow === "jungleShopWindow") {
+        setJungleShopWindowPosition(newPosition);
       }
     }
   };
@@ -1330,6 +1353,26 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
           />
         )}
 
+        {openWindows.includes("jungleShopWindow") && (
+          <JungleShopWindow
+            position={jungleShopWindowPosition}
+            isDragging={isDragging && activeWindow === "jungleShopWindow"}
+            isActive={
+              windowOrder[windowOrder.length - 1] === "jungleShopWindow"
+            }
+            handleMouseDown={handleMouseDown}
+            handleDismiss={handleDismiss}
+            handleWindowClick={handleWindowClick}
+            BASE_Z_INDEX={getWindowZIndex("jungleShopWindow")}
+            ACTIVE_Z_INDEX={getWindowZIndex("jungleShopWindow")}
+            userData={userData}
+            setUserData={setUserData}
+            startJuicing={startJuicing}
+            playCollectSound={playCollectSound}
+            isJuicing={isJuicing}
+          />
+        )}
+
         {openWindows.includes("fortuneBasket") && (
           <FortuneBasket
             handleDismiss={() => handleDismiss("fortuneBasket")}
@@ -1501,7 +1544,17 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                   onClick={handleFileClick("FruitBasket")}
                   delay={0.5}
                   data-file-id="FruitBasket"
-                />
+                /> 
+              )}
+              {isLoggedIn && (
+                <FileIcon
+                text="Jungle Shop"
+                icon="./jungle/goldToken.png"
+                isSelected={selectedFile === "JungleShop"}
+                onClick={handleFileClick("JungleShop")}
+                delay={0.5}
+                data-file-id="JungleShop"
+              />
               )}
             </div>
             <div>
