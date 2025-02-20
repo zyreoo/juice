@@ -1830,7 +1830,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
               )}
               {isLoggedIn && (
                 <FileIcon
-                text="Jungle Shop"
+                text="Cosmin's Jungle Shop"
                 icon="./jungle/goldToken.png"
                 isSelected={selectedFile === "JungleShop"}
                 onClick={handleFileClick("JungleShop")}
