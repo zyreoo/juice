@@ -11,7 +11,7 @@ export default function WelcomeWindow({ position, isDragging, isActive, handleMo
     const audioRef = useRef(null);
     const fadeOutStartTimeRef = useRef(null);
     const [isMuted, setIsMuted] = useState(isLoggedIn);
-    const options = [isLoggedIn ? (isJungle ? 'Start Foraging' : 'Start Juicing') : 'Join Jam', isJungle && 'Shop', 'Learn More', 'Exit'];
+    const options =  isJungle ? [isLoggedIn ? 'Start Foraging': 'Join Jam', 'Shop', 'Learn More', 'Exit'] : [isLoggedIn ? 'Start Juicing' : 'Join Jam', 'Learn More', 'Exit'];
     const logoStyle = { 
         width: isJungle ? '70%' : '110%',
         height: isJungle ? '70%' : '110%',
