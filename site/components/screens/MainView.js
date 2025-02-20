@@ -1370,6 +1370,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
             startJuicing={startJuicing}
             playCollectSound={playCollectSound}
             isJuicing={isJuicing}
+            setOpenWindows={setOpenWindows}
+            setWindowOrder={setWindowOrder}
           />
         )}
 
