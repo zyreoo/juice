@@ -26,11 +26,11 @@ export default async function handler(req, res) {
 
     const records = await base('jungleBosses').select({}).firstPage();
 
-    const jungleBossesFought = signupRecord.fields.jungleBossesFought || [];
-
+    // const jungleBossesFought = signupRecord.fields.jungleBossesFought || [];
+    // console.log(jungleBossesFought)
     // Fetch jungle bosses fought by Airtable record ID
     const jungleBossesFoughtRecords = await base("jungleBossesFought").select({
-      filterByFormula: `OR(${jungleBossesFought.map(id => `RECORD_ID() = '${id}'`).join(',')})`
+      filterByFormula: `{user} = '${signupRecord.fields.email}'`
     }).firstPage();
 
     const jungleBossesFoughtIds = jungleBossesFoughtRecords.map(jungleBossFought => jungleBossFought.fields.jungleBoss[0])
@@ -41,7 +41,7 @@ export default async function handler(req, res) {
       .filter(record => !jungleBossesFoughtIds.includes(record.id) && record.fields.hours)
       .sort((a, b) => a.fields.hours - b.fields.hours);
 
-    console.log(jungleBossesNotFought);
+    // console.log(jungleBossesNotFought);
     if (!jungleBossesNotFought || jungleBossesNotFought.length === 0) {
       return res.status(200).json({ message: 'No jungle bosses left to fight' });
     }

@@ -21,6 +21,7 @@ import SecondChallengeWindow from './SecondChallengeWindow';
 import MenuWindow from "./MenuWindow";
 import PostcardWindow from './PostcardWindow';
 import WutIsRelayWindow from './WutIsRelayWindow';
+import JungleShopWindow from './JungleShopWindow';
 import ZeroWindow from './ZeroWindow';
 
 export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserData, isJungle }) {
@@ -44,6 +45,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
   const [juiceWindowPosition, setJuiceWindowPosition] = React.useState({ x: 0, y: 0 });
   const [jungleWindowPosition, setjungleWindowPosition] = React.useState({ x: 0, y: 0 });
   const [fruitBasketWindowPosition, setFruitBasketWindowPosition] = React.useState({ x: 0, y: 0})
+  const [jungleShopWindowPosition, setJungleShopWindowPosition] = React.useState({ x: 0, y: 0})
   const [fortuneBasketPosition, setFortuneBasketPosition] = React.useState({ 
     x: Math.max(0, window.innerWidth / 2 - 150), 
     y: Math.max(0, window.innerHeight / 2 - 110)
@@ -56,6 +58,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
 	const [zeroWindowPosition, setZeroWindowPosition] = React.useState({ x: -150, y: 0})
 
   const [isShaking, setIsShaking] = React.useState(false);
+  const [isExpanded, setIsExpanded] = React.useState(false);
   const collectSoundRef = React.useRef(null);
   const [tickets, setTickets] = React.useState([]);
   const [isRsvped, setIsRsvped] = React.useState(false);
@@ -76,6 +79,13 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
 
   const [relayCountdown, setRelayCountdown] = React.useState('');
 
+  const [isHovered, setIsHovered] = React.useState(false);
+  const hoverTimeoutRef = React.useRef(null);
+
+  const [countdownText, setCountdownText] = React.useState('');
+
+  const [currentSound, setCurrentSound] = React.useState('');
+
   // Constants
   const TOP_BAR_HEIGHT = 36;
   const WINDOW_HEIGHTS = {
@@ -89,6 +99,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
     juiceWindow: 300,
     jungleWindow: 300,
     fruitBasketWindow: 300,
+    jungleShopWindowPosition: 300,
     fortuneBasket: 220,
     thanks: 300,
     secondChallenge: 300,
@@ -98,6 +109,80 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
 		zero: 300,
   };
   const BASE_Z_INDEX = 1;
+
+  // Remove the eggShake keyframes and replace with this new approach
+  const [shakeValues, setShakeValues] = React.useState({ rotate: 0, scale: 1 });
+  const shakeIntervalRef = React.useRef(null);
+
+  const startShaking = () => {
+    let time = 0;
+    setIsExpanded(true);
+    
+    shakeIntervalRef.current = setInterval(() => {
+      time += 50; // Update every 50ms
+      setShakeValues({
+        rotate: Math.sin(time * 0.1) * 2, // Oscillate between -2 and 2 degrees
+        scale: 1.3 + Math.sin(time * 0.2) * 0.05 // Oscillate between 1.25 and 1.35
+      });
+    }, 50);
+  };
+
+  const stopShaking = () => {
+    if (shakeIntervalRef.current) {
+      clearInterval(shakeIntervalRef.current);
+    }
+    setShakeValues({ rotate: 0, scale: 1 });
+    setIsExpanded(false);
+  };
+
+  const playRandomBritishSound = () => {
+    try {
+      const sounds = [
+        'a bit of a pickle.mp3',
+        'alarm hasn_t gone off.mp3',
+        'bloody hell, it_s boiling in here.mp3',
+        'can_t get out of here.mp3',
+        'cheerio chaps.mp3',
+        'escape this preposterous circumstance.mp3',
+        'excuse me, im a bit stuck here.mp3',
+        'Good heavens, I_m Stuck!.mp3',
+        'having a bit of a lie-in.mp3',
+        'hold on, let me get my crumpets.mp3',
+        'I_m feeling quite famished.mp3',
+        'I_m having a kip.mp3',
+        'I_m just getitng my beauty sleep.mp3',
+        'I_m tryna get ouut of this egg.mp3',
+        'kerfuffle.mp3',
+        'rather cramped.mp3',
+        'The egg is merely a vessel.mp3',
+        'until my cup of tea.mp3',
+        'Working on my grand entrance.mp3'
+      ];
+      const randomSound = sounds[Math.floor(Math.random() * sounds.length)];
+      const audio = new Audio(`/BritishSounds/${randomSound}`);
+      
+      audio.addEventListener('play', startShaking);
+      audio.addEventListener('ended', stopShaking);
+      audio.addEventListener('pause', stopShaking);
+      audio.addEventListener('error', stopShaking);
+
+      audio.play().catch(error => {
+        console.log("Audio playback error:", error);
+        stopShaking();
+      });
+    } catch (error) {
+      console.log("Error playing sound:", error);
+    }
+  };
+
+  // Clean up interval on unmount
+  React.useEffect(() => {
+    return () => {
+      if (shakeIntervalRef.current) {
+        clearInterval(shakeIntervalRef.current);
+      }
+    };
+  }, []);
 
   React.useEffect(() => {
     const timer = setInterval(() => {
@@ -296,7 +381,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
             "fruitBasketWindow",
           ]);
         }
-      }   else if (fileId === "Gallery") {
+      } else if (fileId === "Gallery") {
         if (!openWindows.includes("Gallery")) {
           setOpenWindows((prev) => [...prev, "Gallery"]);
           setWindowOrder((prev) => [
@@ -320,6 +405,21 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
           document.getElementById("windowOpenAudio").play();
         } else {
           setWindowOrder(prev => [...prev.filter(w => w !== 'wutIsJungle'), 'wutIsJungle']);
+        }
+      } else if (fileId === "JungleShop") {
+        if (!openWindows.includes("jungleShopWindow")) {
+          setOpenWindows((prev) => [...prev, "jungleShopWindow"]);
+          setWindowOrder((prev) => [
+            ...prev.filter((w) => w !== "jungleShopWindow"),
+            "jungleShopWindow",
+          ]);
+          document.getElementById("windowOpenAudio").currentTime = 0;
+          document.getElementById("windowOpenAudio").play();
+        } else {
+          setWindowOrder((prev) => [
+            ...prev.filter((w) => w !== "jungleShopWindow"),
+            "jungleShopWindow",
+          ]);
         }
       }	else if (fileId === "Juice Zero") {
         if (!openWindows.includes("zero")) {
@@ -409,6 +509,9 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
       case 'wutIsRelay':
         position = wutIsRelayPosition;
         break;
+      case "jungleShopWindow":
+        position = jungleShopWindowPosition;
+        break;
 			case 'zero':
 				position = zeroWindowPosition;
 				break;
@@ -482,6 +585,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         setSecondChallengePosition(newPosition);
       } else if (activeWindow === 'wutIsRelay') {
         setWutIsRelayPosition(newPosition);
+      } else if (activeWindow === "jungleShopWindow") {
+        setJungleShopWindowPosition(newPosition);
       } else if (activeWindow === 'zero') {
 				setZeroWindowPosition(newPosition)
 			}
@@ -796,6 +901,66 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
     return () => clearInterval(timer);
   }, []);
 
+  const handleMouseEnter = () => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    hoverTimeoutRef.current = setTimeout(() => {
+      setIsHovered(false);
+    }, 500); // 1 second grace period
+  };
+
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      const now = new Date();
+      // Get next Friday 9pm EST
+      const friday = new Date();
+      friday.setDate(friday.getDate() + (5 + 7 - friday.getDay()) % 7); // Next Friday
+      friday.setHours(21, 0, 0, 0); // 9pm
+      friday.setMinutes(0);
+      friday.setSeconds(0);
+      
+      const diff = friday - now;
+      
+      if (diff > 0) {
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+        
+        setCountdownText(`${days}d ${hours}h ${minutes}m ${seconds}s`);
+      } else {
+        setCountdownText('Egg Hatched!');
+      }
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const handleSquareClick = (e) => {
+    e.stopPropagation();
+    playRandomBritishSound();
+  };
+
+  // Add this function near the top with other helper functions
+  const getEggColor = (email) => {
+    if (!email) return 'blueegg.gif';
+    
+    const firstChar = email.charAt(0).toLowerCase();
+    // Split alphabet roughly into thirds
+    if ('abcdefghi'.includes(firstChar)) {
+      return 'blueegg.gif';
+    } else if ('jklmnopq'.includes(firstChar)) {
+      return 'greenegg.gif';
+    } else {
+      return 'pinkegg.gif';
+    }
+  };
+
   return (
     <div
       data-shake-container="true"
@@ -1024,6 +1189,25 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                    drop-shadow(0 0 12px rgba(255,0,255,0.1));
           }
         }
+        @keyframes eggShake {
+          0% { transform: rotate(0deg) scale(1.2); }
+          2% { transform: rotate(-2deg) scale(1.35); }
+          4% { transform: rotate(2deg) scale(1.3); }
+          6% { transform: rotate(-2.5deg) scale(1.35); }
+          8% { transform: rotate(2.5deg) scale(1.3); }
+          10% { transform: rotate(-2deg) scale(1.35); }
+          12% { transform: rotate(2deg) scale(1.3); }
+          14% { transform: rotate(-2.5deg) scale(1.35); }
+          16% { transform: rotate(2.5deg) scale(1.3); }
+          18% { transform: rotate(-2deg) scale(1.35); }
+          20% { transform: rotate(0deg) scale(1.3); }
+          90% { transform: rotate(0deg) scale(1.3); }
+          100% { transform: rotate(0deg) scale(1); }
+        }
+        @keyframes shimmer {
+          0% { background-position: 200% center; }
+          100% { background-position: -200% center; }
+        }
       `}</style>
       <div
         style={{
@@ -1176,7 +1360,126 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
             </p>
           </div>
         </div>
-
+        <div 
+          style={{
+            zIndex: 3, 
+            position: "absolute", 
+            bottom: 0, 
+            paddingBottom: 32, 
+            paddingTop: 32, 
+            display: "flex", 
+            alignItems: "center", 
+            justifyContent: "center", 
+            height: 8, 
+            width: "100vw",
+            cursor: "pointer"
+          }}
+        >
+          <div 
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            style={{
+              position: "relative",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center"
+            }}
+          >
+            <div style={{
+              position: "absolute", 
+              top: "-150px", 
+              padding: 8, 
+              width: 142, 
+              border: "1px solid #000", 
+              display: "flex", 
+              flexDirection: "column", 
+              alignItems: "center", 
+              justifyContent: isHovered ? "space-between" : "center",
+              height: 142, 
+              backgroundColor: "#fff", 
+              borderRadius: isHovered ? "8px" : "1000px",
+              transform: `
+                scale(${!isHovered ? 0 : (isExpanded ? shakeValues.scale : 1)})
+                rotate(${shakeValues.rotate}deg)
+              `,
+              transition: `
+                transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                border-radius 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${isHovered ? "0.2s" : "0s"},
+                justify-content 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${isHovered ? "0.5s" : "0s"}
+              `,
+              transformOrigin: "bottom center"
+            }}>
+              <div 
+                onClick={handleSquareClick}
+                style={{
+                  height: 96, 
+                  marginTop: isHovered ? 8 : 14,
+                  marginBottom: isHovered ? 0 : 0,
+                  borderRadius: 8, 
+                  width: 96, 
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  transition: `
+                    margin 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${isHovered ? "0.5s" : "0s"},
+                    transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)
+                  `
+                }}
+              >
+                <img 
+                  src={`/${userData?.email ? getEggColor(userData.email) : 'blueegg.gif'}`}
+                  alt="Colored Egg"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "contain",
+                    borderRadius: 8,
+                  }}
+                />
+              </div>
+              
+              <p style={{
+                fontSize: 12,
+                height: isHovered ? 12 : 0,
+                opacity: isHovered ? 1 : 0,
+                marginTop: isHovered ? 0 : 0, // Hide upward when not hovered
+                transition: `
+                  opacity 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${isHovered ? "0.5s" : "0s"},
+                  height 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${isHovered ? "0.5s" : "0s"},
+                  margin-top 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${isHovered ? "0.5s" : "0s"}
+                `
+              }}>
+                {countdownText}
+              </p>
+            </div>
+            <div 
+              style={{
+                width: isHovered ? 520 : 300,
+                height: 16, 
+                borderRadius: 16, 
+                backgroundColor: isHovered ? "#fff" : "transparent",
+                border: "1px solid #000",
+                transition: "all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+                background: isHovered ? "#fff" : `
+                  linear-gradient(
+                    90deg,
+                    rgba(255,255,255,1) 0%,
+                    rgba(255,220,250,0.4) 25%,
+                    rgba(220,250,255,0.4) 35%,
+                    rgba(255,255,255,1) 50%,
+                    rgba(220,255,250,0.4) 65%,
+                    rgba(250,220,255,0.4) 75%,
+                    rgba(255,255,255,1) 100%
+                  )
+                `,
+                backgroundSize: "200% auto",
+                animation: isHovered ? "none" : "shimmer 3s linear infinite"
+              }}
+            >
+            </div>
+          </div>
+        </div>
         {openWindows.includes("welcomeWindow") && (
           <WelcomeWindow
             isJungle={isJungle}
@@ -1350,6 +1653,28 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
             startJuicing={startJuicing}
             playCollectSound={playCollectSound}
             isJuicing={isJuicing}
+          />
+        )}
+
+        {openWindows.includes("jungleShopWindow") && (
+          <JungleShopWindow
+            position={jungleShopWindowPosition}
+            isDragging={isDragging && activeWindow === "jungleShopWindow"}
+            isActive={
+              windowOrder[windowOrder.length - 1] === "jungleShopWindow"
+            }
+            handleMouseDown={handleMouseDown}
+            handleDismiss={handleDismiss}
+            handleWindowClick={handleWindowClick}
+            BASE_Z_INDEX={getWindowZIndex("jungleShopWindow")}
+            ACTIVE_Z_INDEX={getWindowZIndex("jungleShopWindow")}
+            userData={userData}
+            setUserData={setUserData}
+            startJuicing={startJuicing}
+            playCollectSound={playCollectSound}
+            isJuicing={isJuicing}
+            setOpenWindows={setOpenWindows}
+            setWindowOrder={setWindowOrder}
           />
         )}
 
@@ -1538,6 +1863,16 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                   delay={0.5}
                   data-file-id="FruitBasket"
                 />
+              )}
+              {isLoggedIn && (
+                <FileIcon
+                text="Cosmin's Jungle Shop"
+                icon="./jungle/goldToken.png"
+                isSelected={selectedFile === "JungleShop"}
+                onClick={handleFileClick("JungleShop")}
+                delay={0.5}
+                data-file-id="JungleShop"
+              />
               )}
 							<FileIcon
                 text="Juice Zero"
