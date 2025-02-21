@@ -77,6 +77,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
     y: window.innerHeight / 2
   });
   const [wutIsRelayPosition, setWutIsRelayPosition] = React.useState({ x: 100, y: 100 });
+	const [tamagotchiNotesPosition, setTamagotchiNotesPosition] = React.useState({ x: 100, y: 100 });
 
   const [relayCountdown, setRelayCountdown] = React.useState('');
 
@@ -1064,10 +1065,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
     const todaysJungleHours = getTodaysHours(userData?.jungleStretches, startDate);
     const totalHours = todaysJuiceHours + todaysJungleHours;
     return Math.min(100, (totalHours / 2) * 100);
-  };
-
-  // Add this with the other position states near the top of MainView
-  const [tamagotchiNotesPosition, setTamagotchiNotesPosition] = React.useState({ x: 100, y: 100 });
+  };  
 
   // Add this after getProgressPercentage and before MainView component
   const getStatusMessage = (userData) => {
@@ -2261,6 +2259,19 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
           />
         )}
 
+				{openWindows.includes("tamagotchiNotes") && (
+            <TamagotchiNotesWindow
+                position={tamagotchiNotesPosition}
+                isDragging={isDragging && activeWindow === "tamagotchiNotes"}
+                isActive={windowOrder[windowOrder.length - 1] === "tamagotchiNotes"}
+                handleMouseDown={handleMouseDown("tamagotchiNotes")}
+                handleDismiss={handleDismiss}
+                handleWindowClick={handleWindowClick}
+                BASE_Z_INDEX={getWindowZIndex("tamagotchiNotes")}
+                ACTIVE_Z_INDEX={getWindowZIndex("tamagotchiNotes")}
+            />
+        )}
+
         <div
           style={{
             position: "absolute",
@@ -2699,19 +2710,6 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         <audio id="collectAudio" src="./collect.mp3" preload="auto"></audio>
         <audio id="windowOpenAudio" src="./sounds/windowOpenSound.wav"/>
         <audio id="mailAudio" src="/youGotMail.mp3" />
-
-        {openWindows.includes("tamagotchiNotes") && (
-            <TamagotchiNotesWindow
-                position={tamagotchiNotesPosition}
-                isDragging={isDragging && activeWindow === "tamagotchiNotes"}
-                isActive={windowOrder[windowOrder.length - 1] === "tamagotchiNotes"}
-                handleMouseDown={handleMouseDown("tamagotchiNotes")}
-                handleDismiss={handleDismiss}
-                handleWindowClick={handleWindowClick}
-                BASE_Z_INDEX={getWindowZIndex("tamagotchiNotes")}
-                ACTIVE_Z_INDEX={getWindowZIndex("tamagotchiNotes")}
-            />
-        )}
       </div>
     </div>
   );
