@@ -22,6 +22,7 @@ import MenuWindow from "./MenuWindow";
 import PostcardWindow from './PostcardWindow';
 import WutIsRelayWindow from './WutIsRelayWindow';
 import JungleShopWindow from './JungleShopWindow';
+import TamagotchiNotesWindow from './TamagotchiNotesWindow';
 
 export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserData, isJungle }) {
   const [time, setTime] = React.useState(new Date());
@@ -84,6 +85,11 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
 
   const [currentSound, setCurrentSound] = React.useState('');
 
+  // Add this near the top with other state declarations
+  const [displayedMessage, setDisplayedMessage] = React.useState('');
+  const [playedCompletionSound, setPlayedCompletionSound] = React.useState(false); // Move this here
+  const messageRef = React.useRef('');
+
   // Constants
   const TOP_BAR_HEIGHT = 36;
   const WINDOW_HEIGHTS = {
@@ -103,7 +109,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
     secondChallenge: 300,
     menuWindow: 470,
     wutIsRelay: 470,
-    galleryWindow: 397
+    galleryWindow: 397,
+    tamagotchiNotes: 470,
   };
   const BASE_Z_INDEX = 1;
 
@@ -135,28 +142,21 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
   const playRandomBritishSound = () => {
     try {
       const sounds = [
-        'a bit of a pickle.mp3',
-        'alarm hasn_t gone off.mp3',
-        'bloody hell, it_s boiling in here.mp3',
-        'can_t get out of here.mp3',
-        'cheerio chaps.mp3',
-        'escape this preposterous circumstance.mp3',
-        'excuse me, im a bit stuck here.mp3',
-        'Good heavens, I_m Stuck!.mp3',
-        'having a bit of a lie-in.mp3',
-        'hold on, let me get my crumpets.mp3',
-        'I_m feeling quite famished.mp3',
-        'I_m having a kip.mp3',
-        'I_m just getitng my beauty sleep.mp3',
-        'I_m tryna get ouut of this egg.mp3',
-        'kerfuffle.mp3',
-        'rather cramped.mp3',
-        'The egg is merely a vessel.mp3',
-        'until my cup of tea.mp3',
-        'Working on my grand entrance.mp3'
+        'if i had arms.mp3',
+        'constantly be an infant.mp3',
+        'do you want me to stay small forevrr.mp3',
+        'giving up now are we_.mp3', 
+        'ill jusft sit here and rot.mp3',
+        'like a forgotten lemon.mp3',
+        'like a juice carton with no straw.mp3',
+        'oi slacker.mp3',
+        'otherwise I_ll meet my tragic death.mp3',
+        'sad little pixel.mp3',
+        'the blender is gaining dust.mp3',
+        'wither away like a biscuit in a cup of tea.mp3'
       ];
       const randomSound = sounds[Math.floor(Math.random() * sounds.length)];
-      const audio = new Audio(`/BritishSounds/${randomSound}`);
+      const audio = new Audio(`/BritishSoundsBad/${randomSound}`);
       
       audio.addEventListener('play', startShaking);
       audio.addEventListener('ended', stopShaking);
@@ -418,6 +418,15 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
             "jungleShopWindow",
           ]);
         }
+      } else if (fileId === "tamagotchiNotes") {
+        if (!openWindows.includes("tamagotchiNotes")) {
+          setOpenWindows(prev => [...prev, "tamagotchiNotes"]);
+          setWindowOrder(prev => [...prev.filter(w => w !== "tamagotchiNotes"), "tamagotchiNotes"]);
+          document.getElementById("windowOpenAudio").currentTime = 0;
+          document.getElementById("windowOpenAudio").play();
+        } else {
+          setWindowOrder(prev => [...prev.filter(w => w !== "tamagotchiNotes"), "tamagotchiNotes"]);
+        }
       }
     }
     setSelectedFile(fileId);
@@ -494,6 +503,9 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
       case "jungleShopWindow":
         position = jungleShopWindowPosition;
         break;
+      case "tamagotchiNotes":
+        position = tamagotchiNotesPosition;
+        break;
       default:
         console.log("Unknown window name:", windowName);
         position = { x: 0, y: 0 };
@@ -566,6 +578,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         setWutIsRelayPosition(newPosition);
       } else if (activeWindow === "jungleShopWindow") {
         setJungleShopWindowPosition(newPosition);
+      } else if (activeWindow === "tamagotchiNotes") {
+        setTamagotchiNotesPosition(newPosition);
       }
     }
   };
@@ -918,9 +932,46 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
     return () => clearInterval(timer);
   }, []);
 
-  const handleSquareClick = (e) => {
+  const handleSquareClick = async (e) => {
     e.stopPropagation();
-    playRandomBritishSound();
+    
+    // Check progress before playing sound
+    const progress = getProgressPercentage(userData);
+    if (progress >= 100) {
+      playRandomGoodSound();
+    } else {
+      playRandomBritishSound();
+    }
+
+    // Only create Tamagotchi if user is logged in and doesn't have one yet
+    if (isLoggedIn && !userData?.Tamagotchi?.length) {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch('/api/create-tamagotchi', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ token }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to create Tamagotchi');
+        }
+
+        const data = await response.json();
+        
+        // Update userData with the new Tamagotchi
+        setUserData(prevData => ({
+          ...prevData,
+          Tamagotchi: [data.record]
+        }));
+
+        console.log('Tamagotchi created:', data);
+      } catch (error) {
+        console.error('Error creating Tamagotchi:', error);
+      }
+    }
   };
 
   // Add this function near the top with other helper functions
@@ -935,6 +986,221 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
       return 'greenegg.gif';
     } else {
       return 'pinkegg.gif';
+    }
+  };
+
+  // Add this helper function near the top of MainView component
+  const getTamagotchiDay = (startDate) => {
+    if (!startDate) return 1;
+    const start = new Date(startDate);
+    const now = new Date();
+    // Calculate days difference in UTC
+    const diffTime = Math.abs(now.getTime() - start.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
+  };
+
+  // Update the getTodaysHours helper function to use Tamagotchi start time
+  const getTodaysHours = (stretches, startDate) => {
+    if (!stretches || !startDate) return 0;
+    
+    const now = new Date();
+    const tamagotchiStart = new Date(startDate);
+    
+    // If it's been more than 24 hours since start, use rolling 24h window
+    // If it's been less than 24 hours, use time since start
+    const dayWindow = now.getTime() - tamagotchiStart.getTime() >= 24 * 60 * 60 * 1000 ?
+        new Date(now.getTime() - 24 * 60 * 60 * 1000) :
+        tamagotchiStart;
+    
+    return stretches.reduce((total, stretch) => {
+        const stretchDate = new Date(stretch.startTime);
+        if (stretchDate.getTime() >= dayWindow.getTime()) {
+            return total + (stretch.timeWorkedHours || 0);
+        }
+        return total;
+    }, 0);
+};
+
+  // Update getRemainingHours to consider Tamagotchi start time
+  const getRemainingHours = (userData) => {
+    const startDate = userData?.Tamagotchi?.[0]?.startDate;
+    const todaysJuiceHours = getTodaysHours(userData?.juiceStretches, startDate);
+    const todaysJungleHours = getTodaysHours(userData?.jungleStretches, startDate);
+    const totalHours = todaysJuiceHours + todaysJungleHours;
+    return Math.max(0, 2 - totalHours).toFixed(2);
+  };
+
+  // Update getProgressPercentage to consider Tamagotchi start time
+  const getProgressPercentage = (userData) => {
+    if (!userData?.Tamagotchi?.length) return 0;
+    
+    const startDate = userData.Tamagotchi[0].startDate;
+    const todaysJuiceHours = getTodaysHours(userData?.juiceStretches, startDate);
+    const todaysJungleHours = getTodaysHours(userData?.jungleStretches, startDate);
+    const totalHours = todaysJuiceHours + todaysJungleHours;
+    return Math.min(100, (totalHours / 2) * 100);
+  };
+
+  // Add this with the other position states near the top of MainView
+  const [tamagotchiNotesPosition, setTamagotchiNotesPosition] = React.useState({ x: 100, y: 100 });
+
+  // Add this after getProgressPercentage and before MainView component
+  const getStatusMessage = (userData) => {
+    const remainingHours = getRemainingHours(userData);
+    const startTime = userData?.Tamagotchi?.[0]?.startDate;
+    const now = new Date();
+    
+    // Calculate next feeding deadline in UTC
+    const nextFeedingDeadline = startTime ? 
+        new Date(new Date(startTime).getTime() + 24 * 60 * 60 * 1000) : 
+        new Date(now.getTime() + 24 * 60 * 60 * 1000);
+    
+    const hoursUntilDeadline = Math.max(0, Math.ceil((nextFeedingDeadline.getTime() - now.getTime()) / (1000 * 60 * 60)));
+    const daysLeft = 10 - getTamagotchiDay(userData?.Tamagotchi?.[0]?.startDate);
+    
+    if (remainingHours === "0.00") {
+        return `I'm full for the next ${hoursUntilDeadline} hours. ty for feeding me. just ${daysLeft} more days of feeding me and then I'll come to you in the mail as a tamagotchi`;
+    } else {
+        return `i'm hungry! feed me ${remainingHours} more hours of juice or jungle within the next ${hoursUntilDeadline} hours or I'll perish. ${
+            daysLeft > 0 
+                ? `if you keep me alive ${daysLeft} more days, Hack Club will mail me to you (a real life tamagotchi)` 
+                : 'Hack Club will mail me to you soon!'
+        }`;
+    }
+};
+
+  // Add this helper function with the others
+  const isTamagotchiDead = (userData) => {
+    if (!userData?.Tamagotchi?.length) return false;
+    
+    const startTime = new Date(userData.Tamagotchi[0].startDate);
+    const now = new Date();
+    
+    // Calculate how many complete 24h periods have passed
+    const totalHoursSinceStart = (now.getTime() - startTime.getTime()) / (1000 * 60 * 60);
+    const completePeriods = Math.floor(totalHoursSinceStart / 24);
+    
+    // Check each 24h period
+    for (let i = 0; i < completePeriods; i++) {
+      const periodStart = new Date(startTime.getTime() + (i * 24 * 60 * 60 * 1000));
+      const periodEnd = new Date(periodStart.getTime() + (24 * 60 * 60 * 1000));
+      
+      // Calculate hours worked in this period
+      const periodHours = (userData.juiceStretches || []).reduce((total, stretch) => {
+        const stretchTime = new Date(stretch.startTime);
+        if (stretchTime >= periodStart && stretchTime < periodEnd) {
+          return total + (stretch.timeWorkedHours || 0);
+        }
+        return total;
+      }, 0) + (userData.jungleStretches || []).reduce((total, stretch) => {
+        const stretchTime = new Date(stretch.startTime);
+        if (stretchTime >= periodStart && stretchTime < periodEnd) {
+          return total + (stretch.timeWorkedHours || 0);
+        }
+        return total;
+      }, 0);
+
+      // If any period has less than 2 hours, the Tamagotchi is dead
+      if (periodHours < 2) {
+        return true;
+      }
+    }
+    
+    return false;
+  };
+
+  // Add this effect to handle the typing animation
+  React.useEffect(() => {
+    if (!isHovered) {
+      setDisplayedMessage('');
+      return;
+    }
+
+    const progress = getProgressPercentage(userData);
+    
+    // Play completion sound when reaching 100% for the first time today
+    if (progress >= 100 && !playedCompletionSound) {
+      playRandomGoodSound();
+      setPlayedCompletionSound(true);
+    }
+
+    const message = !isTamagotchiDead(userData) && getStatusMessage(userData);
+    messageRef.current = message || '';
+    
+    let currentIndex = 0;
+    const interval = setInterval(() => {
+      if (currentIndex <= messageRef.current.length) {
+        setDisplayedMessage(messageRef.current.slice(0, currentIndex));
+        currentIndex++;
+      } else {
+        clearInterval(interval);
+      }
+    }, 7); // Changed from 20ms to 7ms for 3x speed
+
+    return () => clearInterval(interval);
+  }, [isHovered, userData, playedCompletionSound]);
+
+  // Reset the completion sound flag at midnight
+  React.useEffect(() => {
+    const resetCompletionSound = () => {
+      const now = new Date();
+      if (now.getHours() === 0 && now.getMinutes() === 0) {
+        setPlayedCompletionSound(false);
+      }
+    };
+
+    const interval = setInterval(resetCompletionSound, 60000); // Check every minute
+    return () => clearInterval(interval);
+  }, []);
+
+  // Add this new function near the other sound functions
+  const playRandomGoodSound = () => {
+    try {
+      const sounds = [
+        'distinguished gentlepet.mp3',
+        'another day for my cup of tea.mp3',
+        'blimey, tail wagging.mp3',
+        'chance to meet.mp3',
+        'high five.mp3',
+        'most well raised in history.mp3',
+        'orange juice or apple juice_.mp3',
+        'round of applause.mp3',
+        'stupendous work.mp3',
+        'well done mate.mp3'
+      ];
+      const randomSound = sounds[Math.floor(Math.random() * sounds.length)];
+      const audio = new Audio(`/BritishSoundsGood/${randomSound}`);
+      
+      audio.addEventListener('play', startShaking);
+      audio.addEventListener('ended', stopShaking);
+      audio.addEventListener('pause', stopShaking);
+      audio.addEventListener('error', stopShaking);
+
+      audio.play().catch(error => {
+        console.log("Audio playback error:", error);
+        stopShaking();
+      });
+    } catch (error) {
+      console.log("Error playing sound:", error);
+    }
+  };
+
+  // Update the getEggColor function to getTamagotchiType
+  const getTamagotchiType = (email) => {
+    if (!email) return 'kiwibird.gif';  // Default blue
+    
+    const firstChar = email.charAt(0).toLowerCase();
+    // Match animals to similar colored eggs:
+    // kiwibird (blue) -> blueegg
+    // blueberryturtle (green) -> greenegg  
+    // strawberrycat (pink/red) -> pinkegg
+    if ('abcdefghi'.includes(firstChar)) {
+      return 'kiwibird.gif';  // Blue theme
+    } else if ('jklmnopq'.includes(firstChar)) {
+      return 'blueberryturtle.gif';  // Green theme
+    } else {
+      return 'strawberrycat.gif';  // Pink/red theme
     }
   };
 
@@ -1362,6 +1628,122 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
               justifyContent: "center"
             }}
           >
+            {userData?.Tamagotchi?.length > 0 ?
+            <div style={{
+              position: "absolute", 
+              top: "-200px", 
+              padding: 8, 
+              width: 196, 
+              border: "1px solid #000", 
+              display: "flex", 
+              flexDirection: "column", 
+              alignItems: "center", 
+              justifyContent: isHovered ? "space-between" : "center",
+              height: 196, 
+              backgroundColor: "#fff", 
+              borderRadius: isHovered ? "8px" : "1000px",
+              transform: `
+                scale(${!isHovered ? 0 : (isExpanded ? shakeValues.scale : 1)})
+                rotate(${shakeValues.rotate}deg)
+              `,
+              transition: `
+                transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                border-radius 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${isHovered ? "0.2s" : "0s"},
+                justify-content 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${isHovered ? "0.5s" : "0s"}
+              `,
+              transformOrigin: "bottom center"
+            }}>
+                            <p style={{
+                fontSize: 12,
+                height: isHovered ? 12 : 0,
+                opacity: isHovered ? 1 : 0,
+                marginTop: isHovered ? 0 : 0,
+                transition: `
+                  opacity 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${isHovered ? "0.5s" : "0s"},
+                  height 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${isHovered ? "0.5s" : "0s"},
+                  margin-top 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${isHovered ? "0.5s" : "0s"}
+                `
+              }}>
+                {`10 days of tamagotchi - day ${getTamagotchiDay(userData?.Tamagotchi?.[0]?.startDate)}`.split('').map((char, i) => {
+                  const text = `10 days of tamagotchi - day ${getTamagotchiDay(userData?.Tamagotchi?.[0]?.startDate)}`;
+                  const position = Math.floor((Date.now() / 30) % text.length);
+                  return (
+                    <span
+                      key={i}
+                      style={{
+                        color: isHovered && i === position ? '#FF0000' : '#000000',
+                        display: 'inline-block',
+                        height: isHovered ? 12 : 0,
+                        opacity: isHovered ? 1 : 0,
+                        whiteSpace: 'pre',
+                        fontSize: 14
+                      }}
+                    >
+                      {char}
+                    </span>
+                  );
+                })}
+                </p>
+              <div 
+                onClick={handleSquareClick}
+                style={{
+                  height: 96, 
+                  marginTop: isHovered ? 8 : 14,
+                  marginBottom: isHovered ? 0 : 0,
+                  borderRadius: 8, 
+                  width: 96, 
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  transition: `
+                    margin 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${isHovered ? "0.5s" : "0s"},
+                    transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)
+                  `
+                }}
+              >
+                {isTamagotchiDead(userData) ? (
+                  <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: 8
+                  }}>
+                    <span style={{ fontSize: 32 }}>🪦</span>
+                    <p style={{ fontSize: 12, textAlign: 'center' }}>
+                      You missed a day & it died. It's ok though, keep juicing! ❤️
+                    </p>
+                  </div>
+                ) : (
+                  <img 
+                  src={isTamagotchiDead(userData) ? 
+                    "🪦" : 
+                    `./${userData?.email ? getTamagotchiType(userData.email) : 'kiwibird.gif'}`
+                  }
+                  alt="Tamagotchi Pet"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "contain",
+                    borderRadius: 8,
+                  }}
+                  />
+                )}
+              </div>
+              <p style={{
+                fontSize: 12,
+                height: isHovered ? "auto" : 0,
+                opacity: isHovered ? 1 : 0,
+                marginTop: isHovered ? 0 : 0,
+                transition: `
+                  opacity 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${isHovered ? "0.5s" : "0s"},
+                  height 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${isHovered ? "0.5s" : "0s"},
+                  margin-top 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${isHovered ? "0.5s" : "0s"}
+                `
+              }}>
+                {displayedMessage}
+              </p>
+            </div> :
             <div style={{
               position: "absolute", 
               top: "-150px", 
@@ -1404,56 +1786,128 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                   `
                 }}
               >
-                <img 
-                  src={`/${userData?.email ? getEggColor(userData.email) : 'blueegg.gif'}`}
-                  alt="Colored Egg"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "contain",
-                    borderRadius: 8,
-                  }}
-                />
+                {isTamagotchiDead(userData) ? (
+                  <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: 8
+                  }}>
+                    <span style={{ fontSize: 32 }}>🪦</span>
+                    <p style={{ fontSize: 12, textAlign: 'center' }}>
+                      You missed a day & it died. It's ok though, keep juicing! ❤️
+                    </p>
+                  </div>
+                ) : (
+                  <img 
+                    src={`/${userData?.email ? getEggColor(userData.email) : 'blueegg.gif'}`}
+                    alt="Colored Egg"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "contain",
+                      borderRadius: 8,
+                    }}
+                  />
+                )}
               </div>
               
               <p style={{
                 fontSize: 12,
                 height: isHovered ? 12 : 0,
                 opacity: isHovered ? 1 : 0,
-                marginTop: isHovered ? 0 : 0, // Hide upward when not hovered
+                marginTop: isHovered ? 0 : 0,
                 transition: `
                   opacity 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${isHovered ? "0.5s" : "0s"},
                   height 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${isHovered ? "0.5s" : "0s"},
                   margin-top 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${isHovered ? "0.5s" : "0s"}
                 `
               }}>
-                {countdownText}
+                Tap to Hatch
               </p>
-            </div>
+            </div>            
+            }
             <div 
               style={{
                 width: isHovered ? 520 : 300,
                 height: 16, 
                 borderRadius: 16, 
-                backgroundColor: isHovered ? "#fff" : "transparent",
+                backgroundColor: "transparent",
                 border: "1px solid #000",
                 transition: "all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
-                background: isHovered ? "#fff" : `
-                  linear-gradient(
-                    90deg,
-                    rgba(255,255,255,1) 0%,
-                    rgba(255,220,250,0.4) 25%,
-                    rgba(220,250,255,0.4) 35%,
-                    rgba(255,255,255,1) 50%,
-                    rgba(220,255,250,0.4) 65%,
-                    rgba(250,220,255,0.4) 75%,
-                    rgba(255,255,255,1) 100%
-                  )
-                `,
-                backgroundSize: "200% auto",
-                animation: isHovered ? "none" : "shimmer 3s linear infinite"
+                overflow: "hidden",
+                position: "relative"
               }}
             >
+              {/* Colorful filled portion */}
+              <div
+                style={{
+                  position: "absolute",
+                  left: 0,
+                  top: 0,
+                  height: "100%",
+                  width: `${getProgressPercentage(userData)}%`,
+                  background: `
+                    linear-gradient(
+                      90deg,
+                      #FF61D8 0%,
+                      #FFA84B 15%,
+                      #FFE81A 30%,
+                      #76FF7A 45%,
+                      #32F2F2 60%,
+                      #A97FFF 75%,
+                      #FF61D8 90%
+                    )
+                  `,
+                  backgroundSize: "200% auto",
+                  transition: "width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+                  animation: "shimmer 3s linear infinite",
+                  opacity: 0.9
+                }}
+              />
+              {/* Original style background */}
+              <div
+                style={{
+                  position: "absolute",
+                  left: 0,
+                  top: 0,
+                  height: "100%",
+                  width: "100%",
+                  background: `
+                    linear-gradient(
+                      90deg,
+                      rgba(255,255,255,1) 0%,
+                      rgba(255,220,250,0.4) 25%,
+                      rgba(220,250,255,0.4) 35%,
+                      rgba(255,255,255,1) 50%,
+                      rgba(220,255,250,0.4) 65%,
+                      rgba(250,220,255,0.4) 75%,
+                      rgba(255,255,255,1) 100%
+                    )
+                  `,
+                  backgroundSize: "200% auto",
+                  animation: "shimmer 3s linear infinite"
+                }}
+              />
+              {/* Percentage text */}
+              <div
+                style={{
+                  position: "absolute",
+                  left: 0,
+                  top: 0,
+                  height: "100%",
+                  width: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: 12,
+                  fontWeight: "bold",
+                  mixBlendMode: "difference",
+                  color: "#fff"
+                }}
+              >
+                {userData?.Tamagotchi?.length ? `${(getProgressPercentage(userData)).toFixed(1)}%` : ''}
+              </div>
             </div>
           </div>
         </div>
@@ -1901,13 +2355,22 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                 delay={0}
                 data-file-id="file1"
               />
-                                  <FileIcon 
+                    <FileIcon 
                         text="wutIsJungle.txt" 
                         icon="./texticon.png"
                         isSelected={selectedFile === "wutIsJungle"}
                         onClick={handleFileClick("wutIsJungle")}
                         delay={0}
                         data-file-id="wutIsJungle"
+                    />
+
+                    <FileIcon 
+                        text="wutTheEgg.txt" 
+                        icon="./texticon.png"
+                        isSelected={selectedFile === "tamagotchiNotes"}
+                        onClick={handleFileClick("tamagotchiNotes")}
+                        delay={0}
+                        data-file-id="tamagotchiNotes"
                     />
             </div>
           </div>
@@ -1963,7 +2426,8 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                             textShadow: `
                                 -1px -1px 0 #000,
                                 1px -1px 0 #000,
-                                -1px 1px 0 #000`
+                                -1px 1px 0 #000,
+                                1px 1px 0 #000`
                         }}>Second Challenge Reveals Itself...</p>
                         <button 
                             onClick={handleSecondChallengeOpen}
@@ -2190,6 +2654,19 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         <audio id="collectAudio" src="./collect.mp3" preload="auto"></audio>
         <audio id="windowOpenAudio" src="./sounds/windowOpenSound.wav"/>
         <audio id="mailAudio" src="/youGotMail.mp3" />
+
+        {openWindows.includes("tamagotchiNotes") && (
+            <TamagotchiNotesWindow
+                position={tamagotchiNotesPosition}
+                isDragging={isDragging && activeWindow === "tamagotchiNotes"}
+                isActive={windowOrder[windowOrder.length - 1] === "tamagotchiNotes"}
+                handleMouseDown={handleMouseDown("tamagotchiNotes")}
+                handleDismiss={handleDismiss}
+                handleWindowClick={handleWindowClick}
+                BASE_Z_INDEX={getWindowZIndex("tamagotchiNotes")}
+                ACTIVE_Z_INDEX={getWindowZIndex("tamagotchiNotes")}
+            />
+        )}
       </div>
     </div>
   );

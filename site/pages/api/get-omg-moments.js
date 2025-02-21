@@ -10,13 +10,21 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Calculate timestamp for 24 hours ago
-    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-
-    // Fetch records from the past 24 hours
+    // Get the user's start time and convert to UTC
+    const userStartTime = req.query.startTime ? 
+      new Date(new Date(req.query.startTime).toISOString()) : 
+      new Date(new Date().toISOString());
+    
+    // Calculate timestamp for 24 hours from start time in UTC
+    const twentyFourHoursFromStart = new Date(userStartTime.getTime() + 24 * 60 * 60 * 1000);
+    
+    // Fetch records within the 24-hour window using UTC timestamps
     const records = await base('omgMoments')
       .select({
-        filterByFormula: `IS_AFTER({created_at}, '${twentyFourHoursAgo}')`,
+        filterByFormula: `AND(
+          IS_AFTER({created_at}, '${userStartTime.toISOString()}'),
+          IS_BEFORE({created_at}, '${twentyFourHoursFromStart.toISOString()}')
+        )`,
         sort: [{ field: 'created_at', direction: 'desc' }]
       })
       .all();
