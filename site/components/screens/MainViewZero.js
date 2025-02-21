@@ -17,6 +17,8 @@ import WutIsJungleWindow from './WutIsJungleWindow';
 import SecondChallengeWindow from './SecondChallengeWindow';
 import MenuWindow from './MenuWindow';
 import ZeroWindow from './ZeroWindow';
+import JungleShopWindow from './JungleShopWindow';
+import TamagotchiNotesWindow from './TamagotchiNotesWindow';
 
 export default function MainViewZero({
   isLoggedIn,
@@ -72,6 +74,8 @@ export default function MainViewZero({
   });
   const [fruitBasketWindowPosition, setFruitBasketWindowPosition] =
     React.useState({ x: 0, y: 0 });
+  const [jungleShopWindowPosition, setJungleShopWindowPosition] =
+    React.useState({ x: 0, y: 0 });
   const [fortuneBasketPosition, setFortuneBasketPosition] = React.useState({
     x: Math.max(0, window.innerWidth / 2 - 150),
     y: Math.max(0, window.innerHeight / 2 - 110),
@@ -81,7 +85,10 @@ export default function MainViewZero({
     x: 400,
     y: 100,
   });
-	const [zeroWindowPosition, setZeroWindowPosition] = React.useState({ x: -400, y: -150})
+  const [zeroWindowPosition, setZeroWindowPosition] = React.useState({
+    x: -400,
+    y: -150,
+  });
 
   const [isShaking, setIsShaking] = React.useState(false);
   const [showCookies, setShowCookies] = React.useState(false);
@@ -99,6 +106,10 @@ export default function MainViewZero({
   const [secondChallengePosition, setSecondChallengePosition] = React.useState({
     x: 350,
     y: 150,
+  });
+  const [tamagotchiNotesPosition, setTamagotchiNotesPosition] = React.useState({
+    x: 100,
+    y: 100,
   });
 
   // Constants
@@ -120,7 +131,9 @@ export default function MainViewZero({
     menuWindow: 470,
     wutIsRelay: 470,
     galleryWindow: 397,
-		zero: 300,
+    zero: 300,
+    jungleShopWindowPosition: 300,
+    tamagotchiNotes: 470,
   };
   const BASE_Z_INDEX = 1;
 
@@ -189,9 +202,15 @@ export default function MainViewZero({
       case 'secondChallenge':
         position = secondChallengePosition;
         break;
-			case 'zero':
-				position = zeroWindowPosition;
-				break;
+      case 'zero':
+        position = zeroWindowPosition;
+        break;
+      case 'jungleShopWindow':
+        position = jungleShopWindowPosition;
+        break;
+      case 'tamagotchiNotes':
+        position = tamagotchiNotesPosition;
+        break;
       default:
         console.log('Unknown window name:', windowName);
         position = { x: 0, y: 0 };
@@ -261,8 +280,8 @@ export default function MainViewZero({
       } else if (activeWindow === 'secondChallenge') {
         setSecondChallengePosition(newPosition);
       } else if (activeWindow === 'zero') {
-				setZeroWindowPosition(newPosition)
-			}
+        setZeroWindowPosition(newPosition);
+      }
     }
   };
 
@@ -972,6 +991,28 @@ export default function MainViewZero({
           />
         )}
 
+        {openWindows.includes('jungleShopWindow') && (
+          <JungleShopWindow
+            position={jungleShopWindowPosition}
+            isDragging={isDragging && activeWindow === 'jungleShopWindow'}
+            isActive={
+              windowOrder[windowOrder.length - 1] === 'jungleShopWindow'
+            }
+            handleMouseDown={handleMouseDown}
+            handleDismiss={handleDismiss}
+            handleWindowClick={handleWindowClick}
+            BASE_Z_INDEX={getWindowZIndex('jungleShopWindow')}
+            ACTIVE_Z_INDEX={getWindowZIndex('jungleShopWindow')}
+            userData={userData}
+            setUserData={setUserData}
+            startJuicing={startJuicing}
+            playCollectSound={playCollectSound}
+            isJuicing={isJuicing}
+            setOpenWindows={setOpenWindows}
+            setWindowOrder={setWindowOrder}
+          />
+        )}
+
         {openWindows.includes('fortuneBasket') && (
           <FortuneBasket
             handleDismiss={() => handleDismiss('fortuneBasket')}
@@ -1060,18 +1101,31 @@ export default function MainViewZero({
           />
         )}
 
-				{openWindows.includes("zero") && (
-					<ZeroWindow
-						position={zeroWindowPosition}
-						isDragging={isDragging && activeWindow === "zero"}
-						isActive={windowOrder[windowOrder.length - 1] === "zero"}
-						handleMouseDown={handleMouseDown}
-						handleDismiss={handleDismiss}
-						handleWindowClick={handleWindowClick}
-						BASE_Z_INDEX={getWindowZIndex("zero")}
-						ACTIVE_Z_INDEX={getWindowZIndex("zero")}
-					/>
-				)}
+        {openWindows.includes('zero') && (
+          <ZeroWindow
+            position={zeroWindowPosition}
+            isDragging={isDragging && activeWindow === 'zero'}
+            isActive={windowOrder[windowOrder.length - 1] === 'zero'}
+            handleMouseDown={handleMouseDown}
+            handleDismiss={handleDismiss}
+            handleWindowClick={handleWindowClick}
+            BASE_Z_INDEX={getWindowZIndex('zero')}
+            ACTIVE_Z_INDEX={getWindowZIndex('zero')}
+          />
+        )}
+
+        {openWindows.includes('tamagotchiNotes') && (
+          <TamagotchiNotesWindow
+            position={tamagotchiNotesPosition}
+            isDragging={isDragging && activeWindow === 'tamagotchiNotes'}
+            isActive={windowOrder[windowOrder.length - 1] === 'tamagotchiNotes'}
+            handleMouseDown={handleMouseDown('tamagotchiNotes')}
+            handleDismiss={handleDismiss}
+            handleWindowClick={handleWindowClick}
+            BASE_Z_INDEX={getWindowZIndex('tamagotchiNotes')}
+            ACTIVE_Z_INDEX={getWindowZIndex('tamagotchiNotes')}
+          />
+        )}
 
         <audio id="juicerAudio" src="./juicer.mp3" preload="auto"></audio>
         <audio id="collectAudio" src="./collect.mp3" preload="auto"></audio>
