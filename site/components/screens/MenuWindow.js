@@ -20,12 +20,8 @@ export default function MenuWindow({
   // Variables to hold calculated total hours for each status
   const [totalHours, setTotalHours] = useState(0);
   const [pendingHours, setPendingHours] = useState(0);
-  const [approvedHours, setApprovedHours] = useState(0);
+  const [acceptedHours, setAcceptedHours] = useState(0);
   const [rejectedHours, setRejectedHours] = useState(0);
-
-  // Add this near the top of the component, after the useState declarations
-  const [audio] = useState(new Audio('/trapdoor.mp3'));
-  const [clickSound] = useState(new Audio('/click.mp3'));
 
   // Add this after the other state declarations
   const [currentMomentIndex, setCurrentMomentIndex] = useState(0);
@@ -37,7 +33,7 @@ export default function MenuWindow({
     if (userData?.juiceStretches) {
       let total = 0;
       let pending = 0;
-      let approved = 0;
+      let accepted = 0;
       let rejected = 0;
 
       userData.juiceStretches.forEach((stretch) => {
@@ -45,9 +41,9 @@ export default function MenuWindow({
           Math.round(((stretch.timeWorkedSeconds || 0) / 3600) * 100) / 100;
         total += stretchHours;
 
-        if (stretch.Review === "Approved") {
-          approved += stretchHours;
-        } else if (stretch.Review === "Rejected") {
+        if (stretch.Review[0] === "Accepted") {
+          accepted += stretchHours;
+        } else if (stretch.Review[0] === "Rejected") {
           rejected += stretchHours;
         } else {
           pending += stretchHours;
@@ -56,13 +52,18 @@ export default function MenuWindow({
 
       setTotalHours(total);
       setPendingHours(pending);
-      setApprovedHours(approved);
+      setAcceptedHours(accepted);
       setRejectedHours(rejected);
 
       // Get moments and sort them with newest first
       const allMoments = userData.juiceStretches.reduce((acc, stretch) => {
         if (stretch.omgMoments) {
-          return [...acc, ...stretch.omgMoments];
+          // Add the stretch reference to each moment
+          const momentsWithStretch = stretch.omgMoments.map(moment => ({
+            ...moment,
+            stretchReview: stretch.Review[0]  // Add the review status directly to the moment
+          }));
+          return [...acc, ...momentsWithStretch];
         }
         return acc;
       }, []);
@@ -81,59 +82,45 @@ export default function MenuWindow({
   const handleMomentClick = (moment) => {
     const index = moments.findIndex(m => m.id === moment.id);
     setCurrentMomentIndex(index);
-    audio.currentTime = 0;
-    audio.play();
     setSelectedMoment(moment);
   };
 
   const closePopup = () => {
-    clickSound.currentTime = 0;
-    clickSound.play();
-    setTimeout(() => {
-      setSelectedMoment(null);
-    }, 50); // Small delay to ensure sound starts playing first
+    setSelectedMoment(null);
   };
 
-  // Modify the navigateMoments function
   const navigateMoments = (direction) => {
     const newIndex = currentMomentIndex + direction;
     
     // Check bounds
     if (newIndex >= 0 && newIndex < moments.length) {
-      audio.currentTime = 0;
-      audio.play();
-      setCurrentMomentIndex(newIndex);
-      setSelectedMoment(moments[newIndex]);
-      setVideoKey(prev => prev + 1);
+        setCurrentMomentIndex(newIndex);
+        setSelectedMoment(moments[newIndex]);
+        setVideoKey(prev => prev + 1);
     }
   };
 
-  // Modify the escape key handler useEffect to include arrow keys
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (selectedMoment) {
-        if (e.key === "Escape") {
-          clickSound.currentTime = 0;
-          clickSound.play();
-          setTimeout(() => {
-            setSelectedMoment(null);
-          }, 50);
-        } else if (e.key === "ArrowLeft") {
-          navigateMoments(-1);
-        } else if (e.key === "ArrowRight") {
-          navigateMoments(1);
+        if (selectedMoment) {
+            if (e.key === "Escape") {
+                setSelectedMoment(null);
+            } else if (e.key === "ArrowLeft") {
+                navigateMoments(-1);
+            } else if (e.key === "ArrowRight") {
+                navigateMoments(1);
+            }
         }
-      }
     };
 
     if (selectedMoment) {
-      document.addEventListener("keydown", handleKeyDown);
+        document.addEventListener("keydown", handleKeyDown);
     }
 
     return () => {
-      document.removeEventListener("keydown", handleKeyDown);
+        document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [selectedMoment, clickSound, audio, moments, currentMomentIndex]);
+  }, [selectedMoment, moments, currentMomentIndex]);
 
   return (
     <div
@@ -202,8 +189,8 @@ export default function MenuWindow({
               marginTop: 8,
             }}
           >
-            {approvedHours.toFixed(2)}/100{" "}
-            <p style={{ fontSize: 16 }}>approved shipped hours</p>
+            {acceptedHours.toFixed(2)}/100{" "}
+            <p style={{ fontSize: 16 }}>accepted shipped hours</p>
           </h2>
           <div style={{ width: "80%", margin: "auto", textAlign: "center" }}>
             <div
@@ -219,8 +206,8 @@ export default function MenuWindow({
               <div
                 style={{
                   height: "100%",
-                  width: `${(approvedHours / 100) * 100}%`,
-                  background: approvedHours >= 100 ? "gold" : "green",
+                  width: `${(acceptedHours / 100) * 100}%`,
+                  background: acceptedHours >= 100 ? "gold" : "green",
                   transition: "width 0.5s ease-in-out",
                 }}
               />
@@ -231,7 +218,7 @@ export default function MenuWindow({
             style={{ margin: 0, textAlign: "center", padding: 10, fontSize: 14 }}
             className="rainbow-text"
           >
-            After completing the base 100 hours, each new approved hour will get
+            After completing the base 100 hours, each new accepted hour will get
             <br />
             converted into $5 additional for your stipend!
           </p>
@@ -259,9 +246,9 @@ export default function MenuWindow({
             </span>
           </div>
           <div>
-            Approved Hours: <br />
+            Accepted Hours: <br />
             <span style={{ color: "green" }}>
-              {approvedHours.toFixed(2)} hrs
+              {acceptedHours.toFixed(2)} hrs
             </span>
           </div>
           <div>
@@ -294,7 +281,7 @@ export default function MenuWindow({
             <div style={{width: 12, backgroundColor: "green", height: 12, borderRadius: 2}}>
 
             </div>
-             Approved
+             Accepted
           </span>
           <span
             style={{ color: "orange", display: "flex", flexDirection: "row", gap: 4, marginRight: "10px", fontSize: "12px" }}
@@ -344,10 +331,11 @@ export default function MenuWindow({
                 {moments.map((moment) => {
                   let backgroundColor;
                   let strokeColor;
-                  if (moment.status === "Approved") {
+                  
+                  if (moment.stretchReview === "Accepted") {
                     backgroundColor = "green";
                     strokeColor = "#90EE90";  // Light green
-                  } else if (moment.status === "Rejected") {
+                  } else if (moment.stretchReview === "Rejected") {
                     backgroundColor = "red";
                     strokeColor = "#FFB6B6";  // Light red
                   } else {

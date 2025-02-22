@@ -26,11 +26,15 @@ export default async function handler(req, res) {
     // console.log("singup " + signupRecord.id)
 
     const records = await base('jungleBosses').select({}).firstPage();
-    const jungleBossesFought = signupRecord.fields.jungleBossesFought || [];
+    const jungleBossesFoughtRecords = await base("jungleBossesFought").select({
+      filterByFormula: `{user} = '${signupRecord.fields.email}'`
+    }).firstPage();
+    const jungleBossesFoughtIds = jungleBossesFoughtRecords.map(jungleBossFought => jungleBossFought.fields.jungleBoss[0])
     // Filter jungle bosses not fought
-    const jungleBossesNotFought = records.filter(record => 
-      !jungleBossesFought.includes(record.id)
-    );
+    const jungleBossesNotFought = records
+      .filter(record => !jungleBossesFoughtIds.includes(record.id) && record.fields.hours)
+      .sort((a, b) => a.fields.hours - b.fields.hours);
+    console.log(jungleBossesNotFought);
 
     // Create new record in jungleStretches with a reference to the Signups record
     const bossFought = (await base('jungleBossesFought').create([

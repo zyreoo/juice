@@ -11,7 +11,7 @@ export default function WelcomeWindow({ position, isDragging, isActive, handleMo
     const audioRef = useRef(null);
     const fadeOutStartTimeRef = useRef(null);
     const [isMuted, setIsMuted] = useState(isLoggedIn);
-    const options = [isLoggedIn ? (isJungle ? 'Start Foraging' : 'Start Juicing') : 'Join Jam', 'Learn More', 'Exit'];
+    const options =  isJungle ? [isLoggedIn ? 'Start Foraging': 'Join Jam', 'Shop', 'Learn More', 'Exit'] : [isLoggedIn ? 'Start Juicing' : 'Join Jam', 'Learn More', 'Exit'];
     const logoStyle = { 
         width: isJungle ? '70%' : '110%',
         height: isJungle ? '70%' : '110%',
@@ -136,6 +136,13 @@ export default function WelcomeWindow({ position, isDragging, isActive, handleMo
                 setOpenWindows(prev => [...prev, 'jungleWindow']);
                 setWindowOrder(prev => [...prev.filter(w => w !== 'jungleWindow'), 'jungleWindow']);
             }, 100);
+        } else if (options[index] === 'Shop'){
+            setTimeout(() => {
+                document.getElementById("windowOpenAudio").currentTime = 0;
+                document.getElementById("windowOpenAudio").play();
+                setOpenWindows(prev => [...prev, 'jungleShopWindow']);
+                setWindowOrder(prev => [...prev.filter(w => w !== 'jungleShopWindow'), 'jungleShopWindow']);
+            }, 100);
         }
     };
 
@@ -216,7 +223,7 @@ export default function WelcomeWindow({ position, isDragging, isActive, handleMo
                 position: "absolute", 
                 zIndex: isActive ? ACTIVE_Z_INDEX : BASE_Z_INDEX, 
                 width: 400,
-                height: 300,
+                height: isJungle ? 320 : 300,
                 backgroundColor: "transparent", 
                 border: "1px solid #000", 
                 borderRadius: 4,
