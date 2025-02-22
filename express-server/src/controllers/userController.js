@@ -29,7 +29,7 @@ export async function getUserData(req, res) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    const userData = records[0].fields;
+    const userData = { ...records[0].fields };
     const safeEmail = userData.email.replace(/'/g, "\\'");
 
     // Run all main queries in parallel
@@ -48,7 +48,8 @@ export async function getUserData(req, res) {
         filterByFormula: `AND({email (from Signups)} = '${safeEmail}', {endtime}, NOT({isCanceled}))`,
         fields: ['timeWorkedSeconds', 'countsForBoss', 'isRedeemed', 
                 'kiwisCollected', 'lemonsCollected', 'orangesCollected', 
-                'applesCollected', 'blueberriesCollected']
+                'applesCollected', 'blueberriesCollected', 'startTime',
+                'timeWorkedHours', 'endtime', 'ID']
       }).firstPage(),
       
       base('omgMoments').select({
@@ -87,36 +88,28 @@ export async function getUserData(req, res) {
       return record.fields;
     });
 
-    // Resolve all OMG moment fetches in parallel
-    const omgMomentDetails = await Promise.all(omgMomentPromises);
-    userData.juiceStretches.forEach((stretch, index) => {
-      stretch.omgMoments = omgMomentDetails.slice(
-        index * (stretch.omgMoments?.length || 0),
-        (index + 1) * (stretch.omgMoments?.length || 0)
-      );
-    });
-
-    userData.totalJuiceHours = totalHours;
+    // Process jungle stretches - match the same pattern as juice stretches
+    userData.jungleStretches = jungleStretches.map(record => record.fields);
 
     // Calculate jungle metrics
     const fruitTypes = ['kiwis', 'lemons', 'oranges', 'apples', 'blueberries'];
     const fruitCounts = { collected: {}, redeemable: {} };
     
-    jungleStretches.forEach(record => {
-      const category = !record.fields.countsForBoss ? 'collected' : 
-                      !record.fields.isRedeemed ? 'redeemable' : null;
+    userData.jungleStretches.forEach(stretch => {
+      const category = !stretch.countsForBoss ? 'collected' : 
+                      !stretch.isRedeemed ? 'redeemable' : null;
       
       if (category) {
         fruitTypes.forEach(fruit => {
           fruitCounts[category][fruit] = (fruitCounts[category][fruit] || 0) + 
-                                       (record.fields[fruit + 'Collected'] || 0);
+                                       (stretch[fruit + 'Collected'] || 0);
         });
       }
     });
     
     // Calculate total jungle hours
-    userData.totalJungleHours = jungleStretches.reduce((total, record) => {
-      return total + Math.round((record.fields.timeWorkedSeconds || 0) / 3600 * 100) / 100;
+    userData.totalJungleHours = userData.jungleStretches.reduce((total, stretch) => {
+      return total + Math.round((stretch.timeWorkedSeconds || 0) / 3600 * 100) / 100;
     }, 0);
 
     // Calculate tokens
