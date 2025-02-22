@@ -1024,46 +1024,130 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
     return diffDays;
   };
 
-  // Update the getTodaysHours helper function to use Tamagotchi start time
-  const getTodaysHours = (stretches, startDate) => {
-    if (!stretches || !startDate) return 0;
+  // Update the getTodaysHours helper function to use UTC timestamps
+  const getTodaysHours = (stretches, startUTC) => {
+    if (!stretches || !startUTC) {
+      console.log('getTodaysHours early return:', { stretches, startUTC });
+      return 0;
+    }
     
     const now = new Date();
-    const tamagotchiStart = new Date(startDate);
+    const nowUTC = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(),
+                           now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds());
     
-    // If it's been more than 24 hours since start, use rolling 24h window
-    // If it's been less than 24 hours, use time since start
-    const dayWindow = now.getTime() - tamagotchiStart.getTime() >= 24 * 60 * 60 * 1000 ?
-        new Date(now.getTime() - 24 * 60 * 60 * 1000) :
-        tamagotchiStart;
+    const dayWindow = nowUTC - startUTC >= 24 * 60 * 60 * 1000 ?
+        nowUTC - (24 * 60 * 60 * 1000) :
+        startUTC;
     
-    return stretches.reduce((total, stretch) => {
-        const stretchDate = new Date(stretch.startTime);
-        if (stretchDate.getTime() >= dayWindow.getTime()) {
-            return total + (stretch.timeWorkedHours || 0);
-        }
-        return total;
-    }, 0);
-};
+    console.log('getTodaysHours time windows:', {
+      now: now.toString(),
+      nowUTC,
+      startUTC,
+      dayWindow,
+      using: nowUTC - startUTC >= 24 * 60 * 60 * 1000 ? 'rolling 24h' : 'since start',
+      windowDate: new Date(dayWindow).toString()
+    });
 
-  // Update getRemainingHours to consider Tamagotchi start time
+    const hours = stretches.reduce((total, stretch) => {
+      // Add validation for stretch data
+      if (!stretch?.startTime) {
+        console.log('Invalid stretch:', stretch);
+        return total;
+      }
+
+      let stretchDate;
+      try {
+        stretchDate = new Date(stretch.startTime);
+        // Validate the date is valid
+        if (isNaN(stretchDate.getTime())) {
+          console.log('Invalid stretch date:', stretch.startTime);
+          return total;
+        }
+      } catch (error) {
+        console.log('Error parsing stretch date:', error, stretch);
+        return total;
+      }
+
+      const stretchUTC = Date.UTC(stretchDate.getUTCFullYear(), stretchDate.getUTCMonth(), 
+                                 stretchDate.getUTCDate(), stretchDate.getUTCHours(),
+                                 stretchDate.getUTCMinutes(), stretchDate.getUTCSeconds());
+      
+      console.log('Checking stretch:', {
+        stretchDate: stretchDate.toString(),
+        stretchTime: stretch.startTime,
+        stretchUTC,
+        isAfterWindow: stretchUTC >= dayWindow,
+        hours: stretch.timeWorkedHours
+      });
+
+      if (stretchUTC >= dayWindow) {
+        return total + (stretch.timeWorkedHours || 0);
+      }
+      return total;
+    }, 0);
+
+    console.log('getTodaysHours result:', hours);
+    return hours;
+  };
+
+  // Update getRemainingHours to use UTC timestamp
   const getRemainingHours = (userData) => {
-    const startDate = userData?.Tamagotchi?.[0]?.startDate;
-    const todaysJuiceHours = getTodaysHours(userData?.juiceStretches, startDate);
-    const todaysJungleHours = getTodaysHours(userData?.jungleStretches, startDate);
+    if (!userData?.Tamagotchi?.length) return "2.00";
+    
+    const startDate = new Date(userData.Tamagotchi[0].startDate);
+    const startUTC = Date.UTC(startDate.getUTCFullYear(), startDate.getUTCMonth(), startDate.getUTCDate(),
+                             startDate.getUTCHours(), startDate.getUTCMinutes(), startDate.getUTCSeconds());
+    
+    const todaysJuiceHours = getTodaysHours(userData?.juiceStretches, startUTC);
+    const todaysJungleHours = getTodaysHours(userData?.jungleStretches, startUTC);
     const totalHours = todaysJuiceHours + todaysJungleHours;
     return Math.max(0, 2 - totalHours).toFixed(2);
   };
 
-  // Update getProgressPercentage to consider Tamagotchi start time
+  // Update getProgressPercentage for more detailed logging
   const getProgressPercentage = (userData) => {
-    if (!userData?.Tamagotchi?.length) return 0;
+    if (!userData?.Tamagotchi?.length) {
+      console.log('No Tamagotchi found:', userData?.Tamagotchi);
+      return 0;
+    }
     
-    const startDate = userData.Tamagotchi[0].startDate;
-    const todaysJuiceHours = getTodaysHours(userData?.juiceStretches, startDate);
-    const todaysJungleHours = getTodaysHours(userData?.jungleStretches, startDate);
+    let startDate;
+    try {
+      startDate = new Date(userData.Tamagotchi[0].startDate);
+      if (isNaN(startDate.getTime())) {
+        console.log('Invalid Tamagotchi start date:', userData.Tamagotchi[0].startDate);
+        return 0;
+      }
+    } catch (error) {
+      console.log('Error parsing Tamagotchi start date:', error);
+      return 0;
+    }
+
+    const startUTC = Date.UTC(startDate.getUTCFullYear(), startDate.getUTCMonth(), startDate.getUTCDate(),
+                             startDate.getUTCHours(), startDate.getUTCMinutes(), startDate.getUTCSeconds());
+    
+    console.log('Calculating progress for:', {
+      rawStartDate: userData.Tamagotchi[0].startDate,
+      parsedStartDate: startDate.toString(),
+      startUTC,
+      juiceStretches: userData?.juiceStretches?.length,
+      jungleStretches: userData?.jungleStretches?.length
+    });
+
+    const todaysJuiceHours = getTodaysHours(userData?.juiceStretches, startUTC);
+    const todaysJungleHours = getTodaysHours(userData?.jungleStretches, startUTC);
+    
     const totalHours = todaysJuiceHours + todaysJungleHours;
-    return Math.min(100, (totalHours / 2) * 100);
+    const percentage = Math.min(100, (totalHours / 2) * 100);
+    
+    console.log('Final progress calculation:', {
+      todaysJuiceHours,
+      todaysJungleHours,
+      totalHours,
+      percentage
+    });
+    
+    return percentage;
   };
 
   // Add this with the other position states near the top of MainView
