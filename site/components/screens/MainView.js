@@ -1372,6 +1372,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
             isJuicing={isJuicing}
             setOpenWindows={setOpenWindows}
             setWindowOrder={setWindowOrder}
+            isLoggedIn={isLoggedIn}
           />
         )}
 
@@ -1548,7 +1549,6 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                   data-file-id="FruitBasket"
                 /> 
               )}
-              {isLoggedIn && (
                 <FileIcon
                 text="Cosmin's Jungle Shop"
                 icon="./jungle/goldToken.png"
@@ -1557,7 +1557,6 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                 delay={0.5}
                 data-file-id="JungleShop"
               />
-              )}
             </div>
             <div>
               <FileIcon
