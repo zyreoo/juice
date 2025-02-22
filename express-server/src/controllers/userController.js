@@ -150,6 +150,22 @@ export async function getUserData(req, res) {
       userData.Postcards = [];
     }
 
+    // Get Tamagotchi data
+    if (records[0].fields.Tamagotchi) {
+      const tamagotchiRecords = await Promise.all(
+        records[0].fields.Tamagotchi.map(tamagotchiId => 
+          base('Tamagotchi').find(tamagotchiId)
+        )
+      );
+
+      userData.Tamagotchi = tamagotchiRecords.map(record => ({
+        id: record.id,
+        ...record.fields
+      }));
+    } else {
+      userData.Tamagotchi = [];
+    }
+
     res.status(200).json({ userData });
   } catch (error) {
     console.error('Error fetching user data:', error);
