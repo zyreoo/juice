@@ -19,6 +19,7 @@ import MenuWindow from './MenuWindow';
 import ZeroWindow from './ZeroWindow';
 import JungleShopWindow from './JungleShopWindow';
 import TamagotchiNotesWindow from './TamagotchiNotesWindow';
+import WutIsPenguathonWindow from './WutIsPenguathonWindow';
 
 export default function MainViewZero({
   isLoggedIn,
@@ -36,12 +37,14 @@ export default function MainViewZero({
     y: 50,
   });
   const [dragStart, setDragStart] = React.useState({ x: 0, y: 0 });
-  const [openWindows, setOpenWindows] = React.useState(
-    windowsOpen ?? ['welcomeWindow']
-  );
-  const [windowOrder, setWindowOrder] = React.useState(
-    windowsOpen ?? ['welcomeWindow']
-  );
+  const [openWindows, setOpenWindows] = React.useState([
+    ...(windowsOpen ?? ['welcomeWindow']),
+    Date.now() < 1740294000 ? 'wutIsPenguathon' : '',
+  ]);
+  const [windowOrder, setWindowOrder] = React.useState([
+    ...(windowsOpen ?? ['welcomeWindow']),
+    Date.now() < 1740294000 ? 'wutIsPenguathon' : '',
+  ]);
   const [selectedRank, setSelectedRank] = React.useState(1);
   const [wutIsJuicePosition, setwutIsJuicePosition] = React.useState({
     x: 100,
@@ -89,6 +92,11 @@ export default function MainViewZero({
     x: -400,
     y: -150,
   });
+  const [wutIsPenguathonWindowPosition, setWutIsPenguathonWindowPosition] =
+    React.useState({
+      x: 400,
+      y: 150,
+    });
 
   const [isShaking, setIsShaking] = React.useState(false);
   const [showCookies, setShowCookies] = React.useState(false);
@@ -134,6 +142,7 @@ export default function MainViewZero({
     zero: 300,
     jungleShopWindowPosition: 300,
     tamagotchiNotes: 470,
+    wutIsPenguathon: 300,
   };
   const BASE_Z_INDEX = 1;
 
@@ -211,6 +220,9 @@ export default function MainViewZero({
       case 'tamagotchiNotes':
         position = tamagotchiNotesPosition;
         break;
+      case 'wutIsPenguathon':
+        position = wutIsPenguathonWindowPosition;
+        break;
       default:
         console.log('Unknown window name:', windowName);
         position = { x: 0, y: 0 };
@@ -281,6 +293,8 @@ export default function MainViewZero({
         setSecondChallengePosition(newPosition);
       } else if (activeWindow === 'zero') {
         setZeroWindowPosition(newPosition);
+      } else if (activeWindow === 'wutIsPenguathon') {
+        setWutIsPenguathonWindowPosition(newPosition);
       }
     }
   };
@@ -1124,6 +1138,19 @@ export default function MainViewZero({
             handleWindowClick={handleWindowClick}
             BASE_Z_INDEX={getWindowZIndex('tamagotchiNotes')}
             ACTIVE_Z_INDEX={getWindowZIndex('tamagotchiNotes')}
+          />
+        )}
+
+        {openWindows.includes('wutIsPenguathon') && (
+          <WutIsPenguathonWindow
+            position={wutIsPenguathonWindowPosition}
+            isDragging={isDragging && activeWindow === 'zero'}
+            isActive={windowOrder[windowOrder.length - 1] === 'zero'}
+            handleMouseDown={handleMouseDown}
+            handleDismiss={handleDismiss}
+            handleWindowClick={handleWindowClick}
+            BASE_Z_INDEX={getWindowZIndex('wutIsPenguathon')}
+            ACTIVE_Z_INDEX={getWindowZIndex('wutIsPenguathon')}
           />
         )}
 
