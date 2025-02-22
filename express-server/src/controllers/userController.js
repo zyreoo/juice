@@ -40,26 +40,18 @@ export async function getUserData(req, res) {
       tokenFruitConversionRecords
     ] = await Promise.all([
       base('juiceStretches').select({
-        filterByFormula: `AND({email (from Signups)} = '${safeEmail}', NOT({omgMoments} = ''))`,
-        fields: ['ID', 'startTime', 'endTime', 'timeWorkedHours', 'timeWorkedSeconds', 'totalPauseTimeSeconds', 'Review', 'omgMoments']
+        filterByFormula: `AND({email (from Signups)} = '${safeEmail}', NOT({omgMoments} = ''))`
       }).firstPage(),
       
       base('jungleStretches').select({
-        filterByFormula: `AND({email (from Signups)} = '${safeEmail}', {endtime}, NOT({isCanceled}))`,
-        fields: ['timeWorkedSeconds', 'countsForBoss', 'isRedeemed', 
-                'kiwisCollected', 'lemonsCollected', 'orangesCollected', 
-                'applesCollected', 'blueberriesCollected', 'startTime',
-                'timeWorkedHours', 'endtime', 'ID']
+        filterByFormula: `AND({email (from Signups)} = '${safeEmail}', {endTime}, NOT({isCanceled}))`
       }).firstPage(),
       
       base('omgMoments').select({
-        filterByFormula: `{email} = '${safeEmail}'`,
-        fields: ['kudos']
+        filterByFormula: `{email} = '${safeEmail}'`
       }).all(),
       
-      base("fruitPricesProbabilities - Do not modify").select({
-        fields: ['fruit', 'tokens']
-      }).firstPage()
+      base("fruitPricesProbabilities - Do not modify").select().firstPage()
     ]);
 
     // Process juice stretches
