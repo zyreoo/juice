@@ -323,7 +323,7 @@ export default function MenuWindow({
               <div
                 style={{
                   display: "grid",
-                  gridTemplateColumns: "repeat(20, 1fr)",
+                  gridTemplateColumns: "repeat(12, 1fr)",
                   gap: 16,
                   width: "100%",
                 }}
