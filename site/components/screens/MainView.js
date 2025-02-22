@@ -24,6 +24,7 @@ import WutIsRelayWindow from './WutIsRelayWindow';
 import JungleShopWindow from './JungleShopWindow';
 import TamagotchiNotesWindow from './TamagotchiNotesWindow';
 import ZeroWindow from './ZeroWindow';
+import WutIsPenguathonWindow from './WutIsPenguathonWindow';
 
 export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserData, isJungle }) {
   const [time, setTime] = React.useState(new Date());
@@ -57,6 +58,10 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
     y: 100
   });
 	const [zeroWindowPosition, setZeroWindowPosition] = React.useState({ x: -150, y: 0})
+	const [wutIsPenguathonWindowPosition, setWutIsPenguathonWindowPosition] = React.useState({
+				x: 400,
+				y: 150,
+			});
 
   const [isShaking, setIsShaking] = React.useState(false);
   const [isExpanded, setIsExpanded] = React.useState(false);
@@ -78,7 +83,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
   });
   const [wutIsRelayPosition, setWutIsRelayPosition] = React.useState({ x: 100, y: 100 });
 
-  const [relayCountdown, setRelayCountdown] = React.useState('');
+  const [penguathonCountdown, setPenguathonCountdown] = React.useState('');
 
   const [isHovered, setIsHovered] = React.useState(false);
   const hoverTimeoutRef = React.useRef(null);
@@ -115,6 +120,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
     tamagotchiNotes: 470,
     galleryWindow: 397,
 		zero: 300,
+		wutIsPenguathon: 300
   };
   const BASE_Z_INDEX = 1;
 
@@ -528,6 +534,9 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
 			case 'zero':
 				position = zeroWindowPosition;
 				break;
+			case 'wutIsPenguathon':
+				position = wutIsPenguathonWindowPosition;
+				break;
       default:
         console.log("Unknown window name:", windowName);
         position = { x: 0, y: 0 };
@@ -604,7 +613,9 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
         setTamagotchiNotesPosition(newPosition);
       } else if (activeWindow === 'zero') {
         setZeroWindowPosition(newPosition);
-      }
+      } else if (activeWindow === 'wutIsPenguathon') {
+				setWutIsPenguathonWindowPosition(newPosition)
+			}
     }
   }; // Add closing brace here
 
@@ -722,12 +733,12 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
     }
   };
 
-  const handleRelayClick = () => {
-    if (!openWindows.includes('wutIsRelay')) {
-        setOpenWindows([...openWindows, 'wutIsRelay']);
-        setWindowOrder([...windowOrder, 'wutIsRelay']);
+  const handlePenguathonClick = () => {
+    if (!openWindows.includes('wutIsPenguathon')) {
+        setOpenWindows([...openWindows, 'wutIsPenguathon']);
+        setWindowOrder([...windowOrder, 'wutIsPenguathon']);
     } else {
-        handleWindowClick('wutIsRelay')();
+        handleWindowClick('wutIsPenguathon')();
     }
   };
 
@@ -850,38 +861,27 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
     }
   };
 
-  // Add this function inside MainView component to check if it's before 9pm GMT on Feb 14th
-  const isBeforeRelayTime = () => {
-    const now = new Date();
-    const relayTime = new Date('2025-02-15T00:00:00.000Z'); 
-    return now.getTime() < relayTime.getTime();
+  const isBeforePenguathonTime = () => {
+    return Date.now() < 1740236400000
   };
 
-  // Add this function to check relay time
-  const isRelayTime = () => {
-    const now = new Date();
-    const relayTime = new Date('2025-02-15T00:00:00.000Z'); // 9 PM GMT on Feb 14th, 2025
-    return now.getTime() >= relayTime.getTime();
+  const isPenguathonTime = () => {
+    return Date.now() > 1740236400000 && Date.now() < 1740294000000;
   };
 
-  const getRelayState = () => {
-    const now = new Date();
-    const relayStart = new Date('2025-02-15T00:00:00.000Z'); // Midnight GMT on Feb 15th, 2025
-    const relayEnd = new Date('2025-02-16T00:00:00.000Z');   // Midnight GMT on Feb 16th, 2025
+  const getPenguathonState = () => {
+    const penguathonStart = 1740236400000; 
+    const penguathonEnd = 1740294000000;
 
-    if (now > relayEnd) {
-        return null; // Only return null after the relay ends
+    if (Date.now() > penguathonEnd) {
+        return null;
     }
 
-    if (now < relayStart) {
-        return 'upcoming'; // New state for before the relay starts
+    if (Date.now() < penguathonStart) {
+        return 'upcoming';
     }
-
-    // During the relay, return the current state
-    const hoursSinceStart = (now - relayStart) / (1000 * 60 * 60);
-    const currentHour = Math.floor(hoursSinceStart) % 1.25; // 1.25 hours per cycle (1 hour sprint + 15 min refuel)
     
-    return currentHour < 1 ? 'sprinting' : 'refueling';
+    return 'happening now!';
   };
 
   React.useEffect(() => {
@@ -895,19 +895,19 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
   React.useEffect(() => {
     const timer = setInterval(() => {
         const now = new Date();
-        const relayStart = new Date('2025-02-15T00:00:00.000Z');
-        const relayEnd = new Date('2025-02-16T00:00:00.000Z');
+        const penguathonStart = new Date(1740236400000); 
+        const penguathonEnd = new Date(1740294000000);
         
-        if (now >= relayStart && now <= relayEnd) {
+        if (now >= penguathonStart && now <= penguathonEnd) {
             const totalSeconds = 24 * 60 * 60; // 24 hours in seconds
-            const elapsedSeconds = Math.floor((now - relayStart) / 1000);
+            const elapsedSeconds = Math.floor((now - penguathonStart) / 1000);
             const remainingSeconds = Math.max(0, totalSeconds - elapsedSeconds);
             
             const hours = Math.floor(remainingSeconds / 3600);
             const minutes = Math.floor((remainingSeconds % 3600) / 60);
             const seconds = remainingSeconds % 60;
             
-            setRelayCountdown(
+            setPenguathonCountdown(
                 `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
             );
         }
@@ -2248,6 +2248,19 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
           />
         )}
 
+				{openWindows.includes('wutIsPenguathon') && (
+          <WutIsPenguathonWindow
+            position={wutIsPenguathonWindowPosition}
+            isDragging={isDragging && activeWindow === 'wutIsPenguathon'}
+            isActive={windowOrder[windowOrder.length - 1] === 'wutIsPenguathon'}
+            handleMouseDown={handleMouseDown}
+            handleDismiss={handleDismiss}
+            handleWindowClick={handleWindowClick}
+            BASE_Z_INDEX={getWindowZIndex('wutIsPenguathon')}
+            ACTIVE_Z_INDEX={getWindowZIndex('wutIsPenguathon')}
+          />
+        )}
+
 				{openWindows.includes("zero") && (
           <ZeroWindow
             position={zeroWindowPosition}
@@ -2329,14 +2342,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                 data-file-id="JungleShop"
               />
               )}
-							<FileIcon
-                text="Juice Zero"
-                icon="./juiceZero.png"
-                isSelected={selectedFile === "Juice Zero"}
-                onClick={handleFileClick("Juice Zero")}
-                delay={0.4}
-                data-file-id="Juice Zero"
-              />
+							
             </div>
             <div>
               <FileIcon
@@ -2418,6 +2424,14 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                         data-file-id="tamagotchiNotes"
                     />
             </div>
+						<div><FileIcon
+                text="Juice Zero"
+                icon="./juiceZero.png"
+                isSelected={selectedFile === "Juice Zero"}
+                onClick={handleFileClick("Juice Zero")}
+                delay={0.4}
+                data-file-id="Juice Zero"
+              /></div>
           </div>
         </div>
 
@@ -2425,7 +2439,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
 
  
 
-{(isLoggedIn && !userData?.achievements?.includes("pr_submitted")) && !isJungle && (
+						{(isLoggedIn && !userData?.achievements?.includes("pr_submitted")) && !isJungle && (
                 <div 
                     className="panel-pop"
                     style={{
@@ -2495,25 +2509,24 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                     <div className="floating-boat boat1" style={{ left: '30%', top: '70%', animationDelay: '4s' }}>⛵️</div>
                 </div>
             )}
-
-{getRelayState() !== null && (
-    <div 
-        onClick={handleRelayClick}
-        className="panel-pop rainbow-glass-panel"
-        style={{
-            width: 332,
-            marginTop: 8,
-            borderRadius: 8,
-            padding: 12,
-            position: 'relative',
-            overflow: 'hidden',
-            cursor: 'pointer',
-            backgroundColor: getRelayState() === 'sprinting' 
-                ? 'rgba(0, 255, 0, 0.1)' 
-                : getRelayState() === 'refueling' 
-                    ? 'rgba(0, 0, 255, 0.1)' 
-                    : 'transparent'
-        }}>
+		{getPenguathonState() && (
+			<div 
+					onClick={handlePenguathonClick}
+					className="panel-pop rainbow-glass-panel"
+					style={{
+							width: 332,
+							marginTop: 8,
+							borderRadius: 8,
+							padding: 12,
+							position: 'relative',
+							overflow: 'hidden',
+							cursor: 'pointer',
+							backgroundColor: getPenguathonState() === 'sprinting' 
+									? 'rgba(0, 255, 0, 0.1)' 
+									: getPenguathonState() === 'refueling' 
+											? 'rgba(0, 0, 255, 0.1)' 
+											: 'transparent'
+					}}>
         <div style={{ position: 'relative', zIndex: 1 }}>
             <div style={{ 
                 display: 'flex', 
@@ -2530,9 +2543,9 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                         -1px 1px 0 #000,
                         1px 1px 0 #000`
                 }}>
-                    Juice Relay
+                    Penguathon
                 </p>
-                {getRelayState() && (
+                {getPenguathonState() && (
                     <span style={{ 
                         color: "rgba(255, 255, 255, 0.8)",
                         fontSize: "0.9em",
@@ -2542,15 +2555,15 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                             -1px 1px 0 #000,
                             1px 1px 0 #000`
                     }}>
-                        • Currently {getRelayState()}
+                        • Currently {getPenguathonState()}
                     </span>
                 )}
             </div>
             <div style={{ display: 'flex', gap: '10px' }}>
                 <button
                     onClick={() => {
-                        if (!openWindows.includes("wutIsRelay")) {
-                            setOpenWindows((prev) => [...prev, "wutIsRelay"]);
+                        if (!openWindows.includes("wutIsPenguathon")) {
+                            setOpenWindows((prev) => [...prev, "wutIsPenguathon"]);
                             const audio = document.getElementById("windowOpenAudio");
                             if (audio) {
                                 audio.currentTime = 0;
@@ -2569,9 +2582,9 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                         transition: "transform 0.2s ease, box-shadow 0.2s ease"
                     }}
                 >
-                    What's Relay?
+                    What's Penguathon?
                 </button>
-                {isRelayTime() && (
+                {isPenguathonTime() && (
                     <button
                         onClick={() => window.open('https://hack.af/z-join?id=jdw8go', '_blank')}
                         style={{
