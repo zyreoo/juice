@@ -1102,19 +1102,36 @@ export default function MainView({
     return diffDays;
   };
 
-  // Helper function to get hours for stretches that ended in a given window
-  const getHoursInWindow = (stretches, windowStart, windowEnd) => {
+  // Helper function to get hours for stretches in a window, considering previous windows' needs
+  const getHoursInWindow = (stretches, windowStart, windowEnd, previousWindowHours = null) => {
     if (!stretches) return 0;
+    
     return stretches.reduce((total, stretch) => {
+      const stretchStart = new Date(stretch.startTime);
       const stretchEnd = new Date(stretch.endTime);
-      if (stretchEnd >= windowStart && stretchEnd <= windowEnd) {
+
+      // If stretch overlaps with window
+      if (stretchEnd >= windowStart && stretchStart <= windowEnd) {
+        // If this is the current window and previous window needed hours,
+        // only count stretches that started in current window
+        if (previousWindowHours !== null && previousWindowHours < 2) {
+          if (stretchStart < windowStart) {
+            return total; // Previous window needs this stretch
+          }
+        }
+        // If this is the previous window, count any overlapping stretch
+        // that started before the next window
+        else if (previousWindowHours === null && stretchStart < windowEnd) {
+          return total + (stretch.timeWorkedHours || 0);
+        }
+        
         return total + (stretch.timeWorkedHours || 0);
       }
       return total;
     }, 0);
   };
 
-  // Get hours for stretches that ended in the current window
+  // Get hours for stretches that overlap with the current window
   const getTodaysHours = (stretches, startDate) => {
     if (!stretches || !startDate) return 0;
 
@@ -1128,10 +1145,15 @@ export default function MainView({
         ? new Date(now.getTime() - 24 * 60 * 60 * 1000)
         : tamagotchiStart;
 
-    return getHoursInWindow(stretches, dayWindow, now);
+    // Get previous window's hours to determine if stretches should count there
+    const previousWindowStart = new Date(dayWindow.getTime() - 24 * 60 * 60 * 1000);
+    const previousWindowHours = 
+      getHoursInWindow(stretches, previousWindowStart, dayWindow, null);
+
+    return getHoursInWindow(stretches, dayWindow, now, previousWindowHours);
   };
 
-  // Update isTamagotchiDead to use the same window logic
+  // Update isTamagotchiDead to use the same logic
   const isTamagotchiDead = (userData) => {
     if (!userData?.Tamagotchi?.length) return false;
 
@@ -1146,11 +1168,18 @@ export default function MainView({
     for (let i = 0; i < completePeriods; i++) {
       const periodEnd = new Date(startTime.getTime() + (i + 1) * 24 * 60 * 60 * 1000);
       const periodStart = new Date(periodEnd.getTime() - 24 * 60 * 60 * 1000);
+      
+      // Get previous period's hours
+      const previousPeriodStart = new Date(periodStart.getTime() - 24 * 60 * 60 * 1000);
+      const previousPeriodHours = i > 0 ? 
+        getHoursInWindow(userData.juiceStretches, previousPeriodStart, periodStart, null) +
+        getHoursInWindow(userData.jungleStretches, previousPeriodStart, periodStart, null) : 
+        null;
 
-      // Calculate hours from stretches that ended in this period
+      // Calculate hours from stretches that overlap with this period
       const periodHours = 
-        getHoursInWindow(userData.juiceStretches, periodStart, periodEnd) +
-        getHoursInWindow(userData.jungleStretches, periodStart, periodEnd);
+        getHoursInWindow(userData.juiceStretches, periodStart, periodEnd, previousPeriodHours) +
+        getHoursInWindow(userData.jungleStretches, periodStart, periodEnd, previousPeriodHours);
 
       // If any period has less than 2 hours, the Tamagotchi is dead
       if (periodHours < 2) {
