@@ -17,6 +17,7 @@ import WutIsJungleWindow from './WutIsJungleWindow';
 import SecondChallengeWindow from './SecondChallengeWindow';
 import MenuWindow from './MenuWindow';
 import ZeroWindow from './ZeroWindow';
+import WutIsPenguathonWindow from './WutIsPenguathonWindow';
 
 export default function MainViewZero({
   isLoggedIn,
@@ -34,12 +35,14 @@ export default function MainViewZero({
     y: 50,
   });
   const [dragStart, setDragStart] = React.useState({ x: 0, y: 0 });
-  const [openWindows, setOpenWindows] = React.useState(
-    windowsOpen ?? ['welcomeWindow']
-  );
-  const [windowOrder, setWindowOrder] = React.useState(
-    windowsOpen ?? ['welcomeWindow']
-  );
+  const [openWindows, setOpenWindows] = React.useState([
+    ...(windowsOpen ?? ['welcomeWindow']),
+    Date.now() < 1740294000 ? 'wutIsPenguathon' : '',
+  ]);
+  const [windowOrder, setWindowOrder] = React.useState([
+    ...(windowsOpen ?? ['welcomeWindow']),
+    Date.now() < 1740294000 ? 'wutIsPenguathon' : '',
+  ]);
   const [selectedRank, setSelectedRank] = React.useState(1);
   const [wutIsJuicePosition, setwutIsJuicePosition] = React.useState({
     x: 100,
@@ -81,7 +84,15 @@ export default function MainViewZero({
     x: 400,
     y: 100,
   });
-	const [zeroWindowPosition, setZeroWindowPosition] = React.useState({ x: -400, y: -150})
+  const [zeroWindowPosition, setZeroWindowPosition] = React.useState({
+    x: -400,
+    y: -150,
+  });
+  const [wutIsPenguathonWindowPosition, setWutIsPenguathonWindowPosition] =
+    React.useState({
+      x: 400,
+      y: 150,
+    });
 
   const [isShaking, setIsShaking] = React.useState(false);
   const [showCookies, setShowCookies] = React.useState(false);
@@ -120,7 +131,8 @@ export default function MainViewZero({
     menuWindow: 470,
     wutIsRelay: 470,
     galleryWindow: 397,
-		zero: 300,
+    zero: 300,
+    wutIsPenguathon: 300,
   };
   const BASE_Z_INDEX = 1;
 
@@ -189,9 +201,12 @@ export default function MainViewZero({
       case 'secondChallenge':
         position = secondChallengePosition;
         break;
-			case 'zero':
-				position = zeroWindowPosition;
-				break;
+      case 'zero':
+        position = zeroWindowPosition;
+        break;
+      case 'wutIsPenguathon':
+        position = wutIsPenguathonWindowPosition;
+        break;
       default:
         console.log('Unknown window name:', windowName);
         position = { x: 0, y: 0 };
@@ -261,8 +276,10 @@ export default function MainViewZero({
       } else if (activeWindow === 'secondChallenge') {
         setSecondChallengePosition(newPosition);
       } else if (activeWindow === 'zero') {
-				setZeroWindowPosition(newPosition)
-			}
+        setZeroWindowPosition(newPosition);
+      } else if (activeWindow === 'wutIsPenguathon') {
+        setWutIsPenguathonWindowPosition(newPosition);
+      }
     }
   };
 
@@ -1060,18 +1077,31 @@ export default function MainViewZero({
           />
         )}
 
-				{openWindows.includes("zero") && (
-					<ZeroWindow
-						position={zeroWindowPosition}
-						isDragging={isDragging && activeWindow === "zero"}
-						isActive={windowOrder[windowOrder.length - 1] === "zero"}
-						handleMouseDown={handleMouseDown}
-						handleDismiss={handleDismiss}
-						handleWindowClick={handleWindowClick}
-						BASE_Z_INDEX={getWindowZIndex("zero")}
-						ACTIVE_Z_INDEX={getWindowZIndex("zero")}
-					/>
-				)}
+        {openWindows.includes('zero') && (
+          <ZeroWindow
+            position={zeroWindowPosition}
+            isDragging={isDragging && activeWindow === 'zero'}
+            isActive={windowOrder[windowOrder.length - 1] === 'zero'}
+            handleMouseDown={handleMouseDown}
+            handleDismiss={handleDismiss}
+            handleWindowClick={handleWindowClick}
+            BASE_Z_INDEX={getWindowZIndex('zero')}
+            ACTIVE_Z_INDEX={getWindowZIndex('zero')}
+          />
+        )}
+
+        {openWindows.includes('wutIsPenguathon') && (
+          <WutIsPenguathonWindow
+            position={wutIsPenguathonWindowPosition}
+            isDragging={isDragging && activeWindow === 'zero'}
+            isActive={windowOrder[windowOrder.length - 1] === 'zero'}
+            handleMouseDown={handleMouseDown}
+            handleDismiss={handleDismiss}
+            handleWindowClick={handleWindowClick}
+            BASE_Z_INDEX={getWindowZIndex('wutIsPenguathon')}
+            ACTIVE_Z_INDEX={getWindowZIndex('wutIsPenguathon')}
+          />
+        )}
 
         <audio id="juicerAudio" src="./juicer.mp3" preload="auto"></audio>
         <audio id="collectAudio" src="./collect.mp3" preload="auto"></audio>
