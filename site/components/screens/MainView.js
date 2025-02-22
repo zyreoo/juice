@@ -2919,7 +2919,7 @@ export default function MainView({
                     <button
                       onClick={() =>
                         window.open(
-                          'https://hack.af/z-join?id=jdw8go',
+                          'https://hack.af/z-join?id=h6tp88',
                           '_blank'
                         )
                       }

@@ -140,7 +140,7 @@ export default function WutIsPenguathonWindow({
             </p>
             {isPenguathonTime() && (
               <a
-                href="https://hack.af/z-join?id=jdw8go"
+                href="https://hack.af/z-join?id=h6tp88"
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
