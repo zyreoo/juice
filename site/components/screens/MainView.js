@@ -1103,11 +1103,14 @@ export default function MainView({
   };
 
   // Helper function to get hours for stretches that ended in a given window
-  const getHoursInWindow = (stretches, windowStart, windowEnd) => {
+  const getHoursInWindow = (stretches, windowStart, windowEnd, tamagotchiStart) => {
     if (!stretches) return 0;
     return stretches.reduce((total, stretch) => {
+      const stretchStart = new Date(stretch.startTime);
       const stretchEnd = new Date(stretch.endTime);
-      if (stretchEnd >= windowStart && stretchEnd <= windowEnd) {
+
+      // Only count stretches that started after tamagotchi was created
+      if (stretchStart >= tamagotchiStart && stretchEnd >= windowStart && stretchEnd <= windowEnd) {
         return total + (stretch.timeWorkedHours || 0);
       }
       return total;
@@ -1128,7 +1131,7 @@ export default function MainView({
         ? new Date(now.getTime() - 24 * 60 * 60 * 1000)
         : tamagotchiStart;
 
-    return getHoursInWindow(stretches, dayWindow, now);
+    return getHoursInWindow(stretches, dayWindow, now, tamagotchiStart);
   };
 
   // Update isTamagotchiDead to use the same window logic
@@ -1175,9 +1178,23 @@ export default function MainView({
     if (!userData?.Tamagotchi?.length) return 0;
 
     const startDate = userData.Tamagotchi[0].startDate;
+    const now = new Date();
+    const dayWindow = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+
     const todaysJuiceHours = getTodaysHours(userData?.juiceStretches, startDate);
     const todaysJungleHours = getTodaysHours(userData?.jungleStretches, startDate);
     const totalHours = todaysJuiceHours + todaysJungleHours;
+
+    console.log('Progress calculation:', {
+      tamagotchiStartDate: startDate,
+      dayWindowStart: dayWindow,
+      now: now,
+      todaysJuiceHours,
+      todaysJungleHours,
+      totalHours,
+      progress: Math.min(100, (totalHours / 2) * 100)
+    });
+
     return Math.min(100, (totalHours / 2) * 100);
   };
 
