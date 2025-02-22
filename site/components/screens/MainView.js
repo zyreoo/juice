@@ -1103,14 +1103,11 @@ export default function MainView({
   };
 
   // Helper function to get hours for stretches that ended in a given window
-  const getHoursInWindow = (stretches, windowStart, windowEnd, tamagotchiStart) => {
+  const getHoursInWindow = (stretches, windowStart, windowEnd) => {
     if (!stretches) return 0;
     return stretches.reduce((total, stretch) => {
-      const stretchStart = new Date(stretch.startTime);
       const stretchEnd = new Date(stretch.endTime);
-
-      // Only count stretches that started after tamagotchi was created
-      if (stretchStart >= tamagotchiStart && stretchEnd >= windowStart && stretchEnd <= windowEnd) {
+      if (stretchEnd >= windowStart && stretchEnd <= windowEnd) {
         return total + (stretch.timeWorkedHours || 0);
       }
       return total;
@@ -1131,7 +1128,7 @@ export default function MainView({
         ? new Date(now.getTime() - 24 * 60 * 60 * 1000)
         : tamagotchiStart;
 
-    return getHoursInWindow(stretches, dayWindow, now, tamagotchiStart);
+    return getHoursInWindow(stretches, dayWindow, now);
   };
 
   // Update isTamagotchiDead to use the same window logic
