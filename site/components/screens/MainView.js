@@ -2331,7 +2331,7 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                   data-file-id="FruitBasket"
                 />
               )}
-                <FileIcon
+              <FileIcon
                 text="Cosmin's Jungle Shop"
                 icon="./jungle/goldToken.png"
                 isSelected={selectedFile === "JungleShop"}
@@ -2339,7 +2339,6 @@ export default function MainView({ isLoggedIn, setIsLoggedIn, userData, setUserD
                 delay={0.5}
                 data-file-id="JungleShop"
               />
-              )}
 							<FileIcon
                 text="Juice Zero"
                 icon="./juiceZero.png"
