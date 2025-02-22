@@ -17,6 +17,8 @@ import WutIsJungleWindow from './WutIsJungleWindow';
 import SecondChallengeWindow from './SecondChallengeWindow';
 import MenuWindow from './MenuWindow';
 import ZeroWindow from './ZeroWindow';
+import JungleShopWindow from './JungleShopWindow';
+import TamagotchiNotesWindow from './TamagotchiNotesWindow';
 import WutIsPenguathonWindow from './WutIsPenguathonWindow';
 
 export default function MainViewZero({
@@ -75,6 +77,8 @@ export default function MainViewZero({
   });
   const [fruitBasketWindowPosition, setFruitBasketWindowPosition] =
     React.useState({ x: 0, y: 0 });
+  const [jungleShopWindowPosition, setJungleShopWindowPosition] =
+    React.useState({ x: 0, y: 0 });
   const [fortuneBasketPosition, setFortuneBasketPosition] = React.useState({
     x: Math.max(0, window.innerWidth / 2 - 150),
     y: Math.max(0, window.innerHeight / 2 - 110),
@@ -111,6 +115,10 @@ export default function MainViewZero({
     x: 350,
     y: 150,
   });
+  const [tamagotchiNotesPosition, setTamagotchiNotesPosition] = React.useState({
+    x: 100,
+    y: 100,
+  });
 
   // Constants
   const TOP_BAR_HEIGHT = 36;
@@ -132,6 +140,8 @@ export default function MainViewZero({
     wutIsRelay: 470,
     galleryWindow: 397,
     zero: 300,
+    jungleShopWindowPosition: 300,
+    tamagotchiNotes: 470,
     wutIsPenguathon: 300,
   };
   const BASE_Z_INDEX = 1;
@@ -203,6 +213,12 @@ export default function MainViewZero({
         break;
       case 'zero':
         position = zeroWindowPosition;
+        break;
+      case 'jungleShopWindow':
+        position = jungleShopWindowPosition;
+        break;
+      case 'tamagotchiNotes':
+        position = tamagotchiNotesPosition;
         break;
       case 'wutIsPenguathon':
         position = wutIsPenguathonWindowPosition;
@@ -989,6 +1005,28 @@ export default function MainViewZero({
           />
         )}
 
+        {openWindows.includes('jungleShopWindow') && (
+          <JungleShopWindow
+            position={jungleShopWindowPosition}
+            isDragging={isDragging && activeWindow === 'jungleShopWindow'}
+            isActive={
+              windowOrder[windowOrder.length - 1] === 'jungleShopWindow'
+            }
+            handleMouseDown={handleMouseDown}
+            handleDismiss={handleDismiss}
+            handleWindowClick={handleWindowClick}
+            BASE_Z_INDEX={getWindowZIndex('jungleShopWindow')}
+            ACTIVE_Z_INDEX={getWindowZIndex('jungleShopWindow')}
+            userData={userData}
+            setUserData={setUserData}
+            startJuicing={startJuicing}
+            playCollectSound={playCollectSound}
+            isJuicing={isJuicing}
+            setOpenWindows={setOpenWindows}
+            setWindowOrder={setWindowOrder}
+          />
+        )}
+
         {openWindows.includes('fortuneBasket') && (
           <FortuneBasket
             handleDismiss={() => handleDismiss('fortuneBasket')}
@@ -1087,6 +1125,19 @@ export default function MainViewZero({
             handleWindowClick={handleWindowClick}
             BASE_Z_INDEX={getWindowZIndex('zero')}
             ACTIVE_Z_INDEX={getWindowZIndex('zero')}
+          />
+        )}
+
+        {openWindows.includes('tamagotchiNotes') && (
+          <TamagotchiNotesWindow
+            position={tamagotchiNotesPosition}
+            isDragging={isDragging && activeWindow === 'tamagotchiNotes'}
+            isActive={windowOrder[windowOrder.length - 1] === 'tamagotchiNotes'}
+            handleMouseDown={handleMouseDown('tamagotchiNotes')}
+            handleDismiss={handleDismiss}
+            handleWindowClick={handleWindowClick}
+            BASE_Z_INDEX={getWindowZIndex('tamagotchiNotes')}
+            ACTIVE_Z_INDEX={getWindowZIndex('tamagotchiNotes')}
           />
         )}
 

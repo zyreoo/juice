@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-export default function JungleShopWindow({ position, isDragging, isActive, handleMouseDown, handleDismiss, handleWindowClick, BASE_Z_INDEX, ACTIVE_Z_INDEX, userData, setOpenWindows, setWindowOrder}) {
+export default function JungleShopWindow({ position, isDragging, isActive, handleMouseDown, handleDismiss, handleWindowClick, BASE_Z_INDEX, ACTIVE_Z_INDEX, userData, setOpenWindows, setWindowOrder, isLoggedIn}) {
     const [fruitCollected, setFruitCollected] = useState({
         kiwis: 0,
         lemons: 0,
@@ -27,6 +27,23 @@ export default function JungleShopWindow({ position, isDragging, isActive, handl
             document.getElementById("windowOpenAudio").play();
             setOpenWindows(prev => [...prev, 'jungleWindow']);
             setWindowOrder(prev => [...prev.filter(w => w !== 'jungleWindow'), 'jungleWindow']);
+        }, 100);
+    }
+    const redeemTokens = () => {
+        setTimeout(() => {
+            document.getElementById("windowOpenAudio").currentTime = 0;
+            document.getElementById("windowOpenAudio").play();
+            setOpenWindows(prev => [...prev, 'fruitBasketApp']);
+            setWindowOrder(prev => [...prev.filter(w => w !== 'fruitBasketApp'), 'fruitBasketApp']);
+        }, 100);
+    }
+
+    const signUp = () => {
+        setTimeout(() => {
+            document.getElementById("windowOpenAudio").currentTime = 0;
+            document.getElementById("windowOpenAudio").play();
+            setOpenWindows(prev => [...prev, 'register']);
+            setWindowOrder(prev => [...prev.filter(w => w !== 'register'), 'register']);
         }, 100);
     }
 
@@ -106,7 +123,14 @@ export default function JungleShopWindow({ position, isDragging, isActive, handl
                         </h1>
                     </div>
                     <h1 style={{fontSize: "2rem", marginLeft: "1rem"}}>Get all of these by working on your game in the <span style={{fontSize: "2rem", color: "green"}}>Jungle</span> app</h1>
-                    <button style={{margin: ".5rem 1rem", height: "2.4rem", fontSize: "2rem"}} onClick={openJungleApp}>Open Jungle App</button>
+                    { isLoggedIn ? (<>
+                        <button style={{margin: ".5rem 1rem", height: "2.4rem", fontSize: "2rem"}} onClick={openJungleApp}>Open Jungle App</button>
+                        <button style={{margin: ".5rem 1rem", height: "2.4rem", fontSize: "2rem"}} onClick={redeemTokens}>Redeem Tokens</button>
+                        </>
+                    ) : (
+                        <button style={{margin: ".5rem 1rem", height: "2.4rem", fontSize: "2rem"}} onClick={signUp}>Sign Up</button>
+                    )
+                    }
                 <div style={{flex: 1, padding: 16, display: "flex", flexDirection: "column", gap: 8 , overflow: 'auto', maxHeight: 400}}>
                     
                     <div style={{display: "flex", flexDirection: "column", gap: ".5rem"}}>
