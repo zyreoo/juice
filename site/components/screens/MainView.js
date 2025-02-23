@@ -1118,20 +1118,29 @@ export default function MainView({
   };
 
   // Get hours for stretches that ended in the current window
-  const getTodaysHours = (stretches, startDate) => {
-    if (!stretches || !startDate) return 0;
+  const getTodaysHours = (stretches, periodStart) => {
+    if (!stretches || !periodStart) return 0;
 
     const now = new Date();
-    const tamagotchiStart = new Date(startDate);
+    const periodStartDate = new Date(periodStart);
+    const periodEnd = new Date(now > periodStartDate ? now : periodStartDate);
 
-    // If it's been more than 24 hours since start, use rolling 24h window
-    // If it's been less than 24 hours, use time since start
-    const dayWindow =
-      now.getTime() - tamagotchiStart.getTime() >= 24 * 60 * 60 * 1000
-        ? new Date(now.getTime() - 24 * 60 * 60 * 1000)
-        : tamagotchiStart;
+    return stretches.reduce((total, stretch) => {
+      const stretchStart = new Date(stretch.startTime);
+      const stretchEnd = new Date(stretch.endTime);
 
-    return getHoursInWindow(stretches, dayWindow, now, tamagotchiStart);
+      // Skip if stretch ended before period start or started after period end
+      if (stretchEnd < periodStartDate || stretchStart > periodEnd) {
+        return total;
+      }
+
+      // Calculate overlap duration
+      const overlapStart = stretchStart > periodStartDate ? stretchStart : periodStartDate;
+      const overlapEnd = stretchEnd < periodEnd ? stretchEnd : periodEnd;
+      const overlapHours = (overlapEnd - overlapStart) / (1000 * 60 * 60);
+
+      return total + overlapHours;
+    }, 0);
   };
 
   // Update isTamagotchiDead to use the same window logic
