@@ -1152,9 +1152,12 @@ export default function MainView({
 
     const startDate = new Date(tamagotchi.startDate);
     const now = new Date();
-    const diffTime = Math.abs(now - startDate);
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
     
+    // Don't check for death in the first 24 hours
+    const timeSinceStart = Math.abs(now - startDate);
+    const hoursSinceStart = timeSinceStart / (1000 * 60 * 60);
+    if (hoursSinceStart < 24) return false;
+
     // Only check for death if more than 24 hours have passed since the last juicing
     const lastJuiceTime = userData?.Loops?.['juiceLastOmgMomentAt'] 
       ? new Date(userData.Loops['juiceLastOmgMomentAt'])
