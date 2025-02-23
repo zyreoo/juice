@@ -260,8 +260,13 @@ export default function MainView({
         const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
+        const daysNoun = pluralize(days, "Day", "Days");
+        const hoursNoun = pluralize(hours, "Hour", "Hours");
+        const minutesNoun = pluralize(minutes, "Minute", "Minutes");
+        const secondsNoun = pluralize(seconds, "Second", "Seconds");
+
         setTimeRemaining(
-          `${days} Days, ${hours} Hours, ${minutes} Minutes, ${seconds} Seconds`
+          `${days} ${daysNoun}, ${hours} ${hoursNoun}, ${minutes} ${minutesNoun}, ${seconds} ${secondsNoun}`
         );
       } else {
         setTimeRemaining('Event has started!');
@@ -1217,6 +1222,8 @@ export default function MainView({
     return Math.min(100, (totalHours / 2) * 100);
   };
 
+  const pluralize = (value, singular, plural) => parseFloat(value) === 1 ? singular : plural;
+
   // Add this after getProgressPercentage and before MainView component
   const getStatusMessage = (userData) => {
     const remainingHours = getRemainingHours(userData);
@@ -1237,12 +1244,16 @@ export default function MainView({
     const daysLeft =
       10 - getTamagotchiDay(userData?.Tamagotchi?.[0]?.startDate);
 
+    const tilDeadlineNoun = pluralize(hoursUntilDeadline, "hour", "hours");
+    const remainingHoursNoun = pluralize(remainingHours, "hour", "hours");
+    const daysLeftNoun = pluralize(daysLeft, "day", "days");
+
     if (remainingHours === '0.00') {
-      return `I'm full for the next ${hoursUntilDeadline} hours. ty for feeding me. just ${daysLeft} more days of feeding me and then I'll come to you in the mail as a tamagotchi`;
+      return `I'm full for the next ${hoursUntilDeadline} ${tilDeadlineNoun}. ty for feeding me. just ${daysLeft} more ${daysLeftNoun} of feeding me and then I'll come to you in the mail as a tamagotchi`;
     } else {
-      return `i'm hungry! feed me ${remainingHours} more hours of juice or jungle within the next ${hoursUntilDeadline} hours or I'll perish. ${
+      return `i'm hungry! feed me ${remainingHours} ${remainingHoursNoun} hours of juice or jungle within the next ${hoursUntilDeadline} ${tilDeadlineNoun} or I'll perish. ${
         daysLeft > 0
-          ? `if you keep me alive ${daysLeft} more days, Hack Club will mail me to you (a real life tamagotchi)`
+          ? `if you keep me alive ${daysLeft} more ${daysLeftNoun}, Hack Club will mail me to you (a real life tamagotchi)`
           : 'Hack Club will mail me to you soon!'
       }`;
     }
@@ -1348,11 +1359,15 @@ export default function MainView({
     
     const { hoursNeeded, hoursLeft } = getRemainingHours(userData);
     const daysLeft = 10 - getTamagotchiDay(userData?.Tamagotchi?.[0]?.startDate);
+
+    const daysLeftNoun = pluralize(daysLeft, "day", "days");
+    const hoursLeftNoun = pluralize(hoursLeft, "hour", "hours");
+    const hoursNeededNoun = pluralize(hoursNeeded, "hour", "hours");
     
     if (hoursNeeded > 0) {
-      return `i'm hungry! feed me ${hoursNeeded} more hours of juice or jungle within the next ${hoursLeft} hours or I'll perish. if you keep me alive ${daysLeft} more days, Hack Club will mail me to you (a real life tamagotchi)`;
+      return `i'm hungry! feed me ${hoursNeeded} more ${hoursNeededNoun} of juice or jungle within the next ${hoursLeft} ${hoursLeftNoun} or I'll perish. if you keep me alive ${daysLeft} more ${daysLeftNoun}, Hack Club will mail me to you (a real life tamagotchi)`;
     } else {
-      return `I'm full for the next ${hoursLeft} hours. ty for feeding me. just ${daysLeft} more days of feeding me and then I'll come to you in the mail as a tamagotchi`;
+      return `I'm full for the next ${hoursLeft} ${hoursLeftNoun}. ty for feeding me. just ${daysLeft} more ${daysLeftNoun} of feeding me and then I'll come to you in the mail as a tamagotchi`;
     }
   };
 
