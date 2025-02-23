@@ -1109,9 +1109,12 @@ export default function MainView({
       const stretchStart = new Date(stretch.startTime);
       const stretchEnd = new Date(stretch.endTime);
 
-      // Only count stretches that started after tamagotchi was created
-      if (stretchStart >= tamagotchiStart && stretchEnd >= windowStart && stretchEnd <= windowEnd) {
-        return total + (stretch.timeWorkedHours || 0);
+      // If stretch ends after tamagotchi was created and before window end
+      if (stretchEnd >= tamagotchiStart && stretchEnd <= windowEnd) {
+        // If stretch started before tamagotchi, only count time after tamagotchi creation
+        const effectiveStart = stretchStart < tamagotchiStart ? tamagotchiStart : stretchStart;
+        const overlapHours = (stretchEnd - effectiveStart) / (1000 * 60 * 60);
+        return total + overlapHours;
       }
       return total;
     }, 0);
@@ -1129,15 +1132,15 @@ export default function MainView({
       const stretchStart = new Date(stretch.startTime);
       const stretchEnd = new Date(stretch.endTime);
 
-      // Skip if stretch ended before period start or started after period end
-      if (stretchEnd < periodStartDate || stretchStart > periodEnd) {
+      // Skip if stretch ended before period start
+      if (stretchEnd < periodStartDate) {
         return total;
       }
 
       // Calculate overlap duration
-      const overlapStart = stretchStart > periodStartDate ? stretchStart : periodStartDate;
-      const overlapEnd = stretchEnd < periodEnd ? stretchEnd : periodEnd;
-      const overlapHours = (overlapEnd - overlapStart) / (1000 * 60 * 60);
+      const effectiveStart = stretchStart < periodStartDate ? periodStartDate : stretchStart;
+      const effectiveEnd = stretchEnd < periodEnd ? stretchEnd : periodEnd;
+      const overlapHours = (effectiveEnd - effectiveStart) / (1000 * 60 * 60);
 
       return total + overlapHours;
     }, 0);
