@@ -8,6 +8,8 @@ export default function KudosWindow({ position, isDragging, isActive, handleMous
     const [animatingKudos, setAnimatingKudos] = useState({});
     const [clickIntensity, setClickIntensity] = useState({});
     const [limitReached, setLimitReached] = useState({});
+    const [currentPage, setCurrentPage] = useState(1);
+    const momentsPerPage = 9;
     
     // Ref for the scrollable container
     const scrollContainerRef = useRef(null);
@@ -22,6 +24,9 @@ export default function KudosWindow({ position, isDragging, isActive, handleMous
 
     // Calculate video height for 16:9 aspect ratio
     const VIDEO_HEIGHT = Math.floor((CARD_WIDTH * 9) / 16);
+
+    // At the top with other state
+    const [buttonColors, setButtonColors] = useState({});
 
     useEffect(() => {
         const fetchMoments = async () => {
@@ -46,6 +51,24 @@ export default function KudosWindow({ position, isDragging, isActive, handleMous
                 setMoments(validMoments);
                 setKudosCounts(initialKudos);
                 setLimitReached(initialLimitReached);
+
+                // Assign random colors to moments
+                const colors = [
+                    '#FF0000', // Red
+                    '#FF7F00', // Orange
+                    '#FFFF00', // Yellow
+                    '#00FF00', // Green
+                    '#0000FF', // Blue
+                    '#4B0082', // Indigo
+                    '#8B00FF'  // Violet
+                ];
+                
+                const newButtonColors = validMoments.reduce((acc, moment) => ({
+                    ...acc,
+                    [moment.id]: colors[Math.floor(Math.random() * colors.length)]
+                }), {});
+                
+                setButtonColors(newButtonColors);
             } catch (err) {
                 console.error('Error fetching moments:', err);
                 setError(err.message);
@@ -171,6 +194,31 @@ export default function KudosWindow({ position, isDragging, isActive, handleMous
         }
     };
 
+    const indexOfLastMoment = currentPage * momentsPerPage;
+    const indexOfFirstMoment = indexOfLastMoment - momentsPerPage;
+    const currentMoments = moments.slice(indexOfFirstMoment, indexOfLastMoment);
+    const totalPages = Math.ceil(moments.length / momentsPerPage);
+
+    // Add this useEffect for keyboard navigation
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === "ArrowRight" && currentPage < totalPages) {
+                setCurrentPage(prev => prev + 1);
+            } else if (e.key === "ArrowLeft" && currentPage > 1) {
+                setCurrentPage(prev => prev - 1);
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [currentPage, totalPages]);
+
+    // Add this helper function at the top of the component
+    const shouldUseBlackText = (color) => {
+        // Return true for yellow and green backgrounds
+        return color === '#FFFF00' || color === '#00FF00';
+    };
+
     return (
         <div style={{
             position: "absolute", 
@@ -273,7 +321,12 @@ export default function KudosWindow({ position, isDragging, isActive, handleMous
                         height: "calc(100% - 37px)", // Account for header height
                         overflow: "auto",
                     }}>
-                    <h2 style={{ margin: 0 }}>"OMG IT WORKS MOMENTS"</h2>
+                    <h2 style={{ margin: 0 }}>
+                        "OMG IT WORKS MOMENTS" 
+                        <span style={{fontSize: 8}}>
+                            ({moments.length} moment{moments.length !== 1 ? 's' : ''} within past 24 hours)
+                        </span>
+                    </h2>
                     
                     {loading && <p>Loading moments...</p>}
                     {error && <p style={{ color: 'red' }}>Error: {error}</p>}
@@ -290,7 +343,7 @@ export default function KudosWindow({ position, isDragging, isActive, handleMous
                                 margin: "0 auto",
                                 padding: `0 ${SIDE_PADDING/2}px` // Add padding to match the original layout
                             }}>
-                                {moments.map(moment => (
+                                {currentMoments.map(moment => (
                                     <div key={moment.id} style={{
                                         display: "flex",
                                         flexDirection: "column",
@@ -347,8 +400,9 @@ export default function KudosWindow({ position, isDragging, isActive, handleMous
                                             <button
                                                 style={{
                                                     padding: "2px 6px",
-                                                    backgroundColor: limitReached[moment.id] ? "#FF3870" : "#3870FF",
-                                                    color: "#fff",
+                                                    backgroundColor: limitReached[moment.id] ? "#FF3870" : (buttonColors[moment.id] || "#3870FF"),
+                                                    color: limitReached[moment.id] ? "#fff" : 
+                                                          shouldUseBlackText(buttonColors[moment.id]) ? "#000" : "#fff",
                                                     border: "none",
                                                     borderRadius: 4,
                                                     cursor: limitReached[moment.id] ? "not-allowed" : "pointer",
@@ -425,6 +479,59 @@ export default function KudosWindow({ position, isDragging, isActive, handleMous
                         )
                     )}
                 </div>
+                {totalPages > 1 && (
+                    <div style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        gap: 12,
+                        marginTop: 'auto', // Push to bottom
+                        paddingTop: 16,
+                        paddingBottom: 16,
+                        borderTop: '1px solid #eee',
+                        fontSize: 14
+                    }}>
+                        <button
+                            onClick={() => setCurrentPage(prev => prev - 1)}
+                            disabled={currentPage === 1}
+                            style={{
+                                padding: "2px 8px",
+                                backgroundColor: "#fff",
+                                color: currentPage === 1 ? "#999" : "#000",
+                                border: "1px solid #ccc",
+                                borderRadius: 2,
+                                cursor: currentPage === 1 ? "not-allowed" : "pointer",
+                                fontSize: 13
+                            }}
+                        >
+                            prev page
+                        </button>
+                        
+                        <span style={{ 
+                            color: "#666",
+                            fontFamily: "monospace",
+                            fontSize: 13
+                        }}>
+                            page {currentPage} of {totalPages}
+                        </span>
+                        
+                        <button
+                            onClick={() => setCurrentPage(prev => prev + 1)}
+                            disabled={currentPage === totalPages}
+                            style={{
+                                padding: "2px 8px",
+                                backgroundColor: "#fff",
+                                color: currentPage === totalPages ? "#999" : "#000",
+                                border: "1px solid #ccc",
+                                borderRadius: 2,
+                                cursor: currentPage === totalPages ? "not-allowed" : "pointer",
+                                fontSize: 13
+                            }}
+                        >
+                            next page
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );
