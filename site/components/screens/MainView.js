@@ -1371,6 +1371,77 @@ export default function MainView({
     }
   };
 
+  // Add these new state variables with the other state declarations
+  const [pressTimer, setPressTimer] = React.useState(null);
+  const [pressStartTime, setPressStartTime] = React.useState(null);
+  const [showPressIndicator, setShowPressIndicator] = React.useState(false);
+  const [pressUpdateInterval, setPressUpdateInterval] = React.useState(null);
+
+  // Add these new handler functions before the return statement
+  const handleTamagotchiMouseDown = () => {
+    if (!userData?.Tamagotchi?.length) return; // Only work if there's a Tamagotchi
+    
+    setPressStartTime(Date.now());
+    const timer = setTimeout(async () => {
+      const shouldDelete = window.confirm("Are you sure you want to kill the Tamagotchi and start fresh?");
+      if (shouldDelete) {
+        try {
+          const token = localStorage.getItem('token');
+          const response = await fetch('/api/delete-tamagotchi', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ token }),
+          });
+
+          if (response.ok) {
+            // Update local state first
+            setUserData(prev => ({
+              ...prev,
+              Tamagotchi: []
+            }));
+            // Then refresh the page
+            window.location.reload();
+          } else {
+            console.error('Failed to delete Tamagotchi');
+          }
+        } catch (error) {
+          console.error('Error deleting Tamagotchi:', error);
+        }
+      }
+    }, 10000); // 10 seconds
+    setPressTimer(timer);
+    setShowPressIndicator(true);
+
+    // Start interval to update progress bar
+    const interval = setInterval(() => {
+      setPressStartTime(prev => prev); // Force re-render to update progress bar
+    }, 100);
+    setPressUpdateInterval(interval);
+  };
+
+  const handleTamagotchiMouseUp = () => {
+    if (pressTimer) {
+      clearTimeout(pressTimer);
+      setPressTimer(null);
+    }
+    if (pressUpdateInterval) {
+      clearInterval(pressUpdateInterval);
+      setPressUpdateInterval(null);
+    }
+    setPressStartTime(null);
+    setShowPressIndicator(false);
+  };
+
+  // Add cleanup effect
+  React.useEffect(() => {
+    return () => {
+      if (pressTimer) clearTimeout(pressTimer);
+      if (pressUpdateInterval) clearInterval(pressUpdateInterval);
+    };
+  }, [pressTimer, pressUpdateInterval]);
+
   return (
     <div
       data-shake-container="true"
@@ -1715,6 +1786,14 @@ export default function MainView({
             background-position: -200% center;
           }
         }
+        @keyframes pressProgress {
+          0% {
+            transform: scaleX(0);
+          }
+          100% {
+            transform: scaleX(1);
+          }
+        }
       `}</style>
       <div
         style={{
@@ -1922,7 +2001,28 @@ export default function MainView({
               `,
                   transformOrigin: 'bottom center',
                 }}
+                onMouseDown={handleTamagotchiMouseDown}
+                onMouseUp={handleTamagotchiMouseUp}
+                onMouseLeave={handleTamagotchiMouseUp}
               >
+                {/* Add this progress indicator */}
+                {showPressIndicator && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: 4,
+                      backgroundColor: '#ff0000',
+                      transformOrigin: 'left',
+                      transform: `scaleX(${
+                        pressStartTime ? (Date.now() - pressStartTime) / 10000 : 0
+                      })`,
+                      transition: 'transform 0.1s linear',
+                    }}
+                  />
+                )}
                 <p
                   style={{
                     fontSize: 12,
@@ -2002,10 +2102,8 @@ export default function MainView({
                         gap: 8,
                       }}
                     >
-                      <span style={{ fontSize: 32 }}>🪦</span>
                       <p style={{ fontSize: 12, textAlign: 'center' }}>
-                        You missed a day & it died. It's ok though, keep
-                        juicing! ❤️
+                        I don't see your tamagotchi. pls refresh :)
                       </p>
                     </div>
                   ) : (
@@ -2111,10 +2209,8 @@ export default function MainView({
                         gap: 8,
                       }}
                     >
-                      <span style={{ fontSize: 32 }}>🪦</span>
                       <p style={{ fontSize: 12, textAlign: 'center' }}>
-                        You missed a day & it died. It's ok though, keep
-                        juicing! ❤️
+                        Refresh Please 
                       </p>
                     </div>
                   ) : (
