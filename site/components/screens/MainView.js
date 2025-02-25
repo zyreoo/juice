@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useState } from 'react';
 import FileIcon from '../FileIcon';
 import WelcomeWindow from './WelcomeWindow';
 import AchievementsWindow from './AchievementsWindow';
@@ -25,6 +25,9 @@ import JungleShopWindow from './JungleShopWindow';
 import TamagotchiNotesWindow from './TamagotchiNotesWindow';
 import ZeroWindow from './ZeroWindow';
 import WutIsPenguathonWindow from './WutIsPenguathonWindow';
+import VillagerPokemonCard from '../VillagerPokemonCard';
+import BrucePokemonCard from '../BrucePokemonCard';
+import Win7PokemonCard from '../Win7PokemonCard';
 
 export default function MainView({
   isLoggedIn,
@@ -1441,6 +1444,19 @@ export default function MainView({
       if (pressUpdateInterval) clearInterval(pressUpdateInterval);
     };
   }, [pressTimer, pressUpdateInterval]);
+
+  // Add these state variables at the top of MainView component
+  const [villagerHover, setVillagerHover] = useState(false);
+  const [win7Hover, setWin7Hover] = useState(false);
+  const [bruceHover, setBruceHover] = useState(false);
+
+  // Add single hover state
+  const [isCardsFanned, setIsCardsFanned] = useState(false);
+
+  const handleQuestionClick = (e) => {
+    e.preventDefault(); // Prevent card click
+    alert("more to come ~Thomas");
+  };
 
   return (
     <div
@@ -3154,8 +3170,90 @@ export default function MainView({
             alignItems: 'end',
             bottom: 0,
             right: 16,
+            height: "100%", 
+            justifyContent: "center"
           }}
         >
+          <div 
+            style={{
+              display: "flex",
+              gap: 16,
+              transform: "rotate(270deg) scale(0.6) translateY(420px)",
+              position: 'relative'
+            }}
+            onMouseEnter={() => setIsCardsFanned(true)}
+            onMouseLeave={() => setIsCardsFanned(false)}
+          >
+            {/* Action Button - only visible when fanned out */}
+            <div 
+              onClick={handleQuestionClick}
+              style={{
+                position: 'absolute',
+                width: isCardsFanned ? 80 : 0,
+                opacity: isCardsFanned ? 1.0 : 0,
+                height: isCardsFanned ? 80 : 0,
+                borderRadius: '50%',
+                backgroundColor: '#000',
+                left: '50%',
+                top: "32px",
+                transform: 'translate(-50%, -50%)',
+                zIndex: 2,
+                transition: 'all 0.3s ease-in',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#fff',
+                fontSize: '32px',
+                fontWeight: 'bold'
+              }}
+            >
+              (:
+            </div>
+
+            <div style={{
+              transform: isCardsFanned 
+                ? "rotate(-70deg) scale(1.0) translate(120px, -60px)"
+                : "rotate(-15deg) scale(0.8) translateX(65px) translateY(60px)",
+              transition: "all 0.3s ease-out"
+            }}>
+              <VillagerPokemonCard/>
+            </div>
+
+            <div style={{
+              zIndex: 1,
+              transform: isCardsFanned 
+                ? "translateY(-280px) scale(1.0)"
+                : "translateY(10px) scale(0.9)",
+              transition: "all 0.3s ease-out",
+              
+            }}>
+              <Win7PokemonCard />
+            </div>
+
+            <div style={{
+              transform: isCardsFanned
+                ? "rotate(70deg) scale(1.0) translate(-120px, -60px)"
+                : "rotate(15deg) scale(0.8) translateX(-65px) translateY(60px)",
+              transition: "all 0.3s ease-out"
+            }}>
+              <BrucePokemonCard />
+            </div>
+          </div>
+        </div>
+
+        <div
+          style={{
+            position: 'absolute',
+            display: 'flex',
+            gap: 8,
+            flexDirection: 'column',
+            alignItems: 'end',
+            bottom: 0,
+            right: 16,
+          }}
+        >
+
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {/* <div style={{width: 256, backgroundColor: "#fff", borderRadius: 4, padding: 4}}>
             <p>a Hack Clubber published a game on Itch.io 5min ago</p>
