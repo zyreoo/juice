@@ -28,6 +28,7 @@ import WutIsPenguathonWindow from './WutIsPenguathonWindow';
 import VillagerPokemonCard from '../VillagerPokemonCard';
 import BrucePokemonCard from '../BrucePokemonCard';
 import Win7PokemonCard from '../Win7PokemonCard';
+import CardCreatorWindow from './CardCreatorWindow';
 
 export default function MainView({
   isLoggedIn,
@@ -177,6 +178,7 @@ export default function MainView({
     galleryWindow: 397,
     zero: 300,
     wutIsPenguathon: 300,
+    cardCreator: 470,
   };
   const BASE_Z_INDEX = 1;
 
@@ -613,6 +615,9 @@ export default function MainView({
       case 'wutIsPenguathon':
         position = wutIsPenguathonWindowPosition;
         break;
+      case 'cardCreator':
+        position = cardCreatorPosition;
+        break;
       default:
         console.log('Unknown window name:', windowName);
         position = { x: 0, y: 0 };
@@ -691,6 +696,8 @@ export default function MainView({
         setZeroWindowPosition(newPosition);
       } else if (activeWindow === 'wutIsPenguathon') {
         setWutIsPenguathonWindowPosition(newPosition);
+      } else if (activeWindow === 'cardCreator') {
+        setCardCreatorPosition(newPosition);
       }
     }
   }; // Add closing brace here
@@ -1455,8 +1462,27 @@ export default function MainView({
 
   const handleQuestionClick = (e) => {
     e.preventDefault(); // Prevent card click
-    alert("more to come ~Thomas");
+    if (!openWindows.includes('cardCreator')) {
+      setOpenWindows((prev) => [...prev, 'cardCreator']);
+      setWindowOrder((prev) => [
+        ...prev.filter((w) => w !== 'cardCreator'),
+        'cardCreator'
+      ]);
+      document.getElementById('windowOpenAudio').currentTime = 0;
+      document.getElementById('windowOpenAudio').play();
+    } else {
+      setWindowOrder((prev) => [
+        ...prev.filter((w) => w !== 'cardCreator'),
+        'cardCreator'
+      ]);
+    }
   };
+
+  // Add this with the other position states near the top of MainView
+  const [cardCreatorPosition, setCardCreatorPosition] = React.useState({
+    x: 0,
+    y: 0
+  });
 
   return (
     <div
@@ -2709,6 +2735,20 @@ export default function MainView({
           />
         )}
 
+        {openWindows.includes('cardCreator') && (
+          <CardCreatorWindow
+            position={cardCreatorPosition}
+            isDragging={isDragging && activeWindow === 'cardCreator'}
+            isActive={windowOrder[windowOrder.length - 1] === 'cardCreator'}
+            handleMouseDown={handleMouseDown}
+            handleDismiss={handleDismiss}
+            handleWindowClick={handleWindowClick}
+            BASE_Z_INDEX={getWindowZIndex('cardCreator')}
+            ACTIVE_Z_INDEX={getWindowZIndex('cardCreator')}
+            userData={userData}
+          />
+        )}
+
         <div
           style={{
             position: 'absolute',
@@ -3178,8 +3218,9 @@ export default function MainView({
             style={{
               display: "flex",
               gap: 16,
+              height: 240,
               transform: "rotate(270deg) scale(0.6) translateY(420px)",
-              position: 'relative'
+              position: 'relative',
             }}
             onMouseEnter={() => setIsCardsFanned(true)}
             onMouseLeave={() => setIsCardsFanned(false)}
@@ -3193,7 +3234,7 @@ export default function MainView({
                 opacity: isCardsFanned ? 1.0 : 0,
                 height: isCardsFanned ? 80 : 0,
                 borderRadius: '50%',
-                backgroundColor: '#000',
+                backgroundColor: '#fff',
                 left: '50%',
                 top: "32px",
                 transform: 'translate(-50%, -50%)',
@@ -3203,19 +3244,21 @@ export default function MainView({
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#fff',
+                color: '#000',
                 fontSize: '32px',
-                fontWeight: 'bold'
+                fontWeight: 'bold',
+                pointerEvents: 'auto' // Re-enable pointer events for the button
               }}
             >
-              (:
+              +
             </div>
 
             <div style={{
               transform: isCardsFanned 
                 ? "rotate(-70deg) scale(1.0) translate(120px, -60px)"
                 : "rotate(-15deg) scale(0.8) translateX(65px) translateY(60px)",
-              transition: "all 0.3s ease-out"
+              transition: "all 0.3s ease-out",
+              pointerEvents: 'auto' // Re-enable pointer events for the card
             }}>
               <VillagerPokemonCard/>
             </div>
@@ -3226,7 +3269,7 @@ export default function MainView({
                 ? "translateY(-280px) scale(1.0)"
                 : "translateY(10px) scale(0.9)",
               transition: "all 0.3s ease-out",
-              
+              pointerEvents: 'auto' // Re-enable pointer events for the card
             }}>
               <Win7PokemonCard />
             </div>
@@ -3235,7 +3278,8 @@ export default function MainView({
               transform: isCardsFanned
                 ? "rotate(70deg) scale(1.0) translate(-120px, -60px)"
                 : "rotate(15deg) scale(0.8) translateX(-65px) translateY(60px)",
-              transition: "all 0.3s ease-out"
+              transition: "all 0.3s ease-out",
+              pointerEvents: 'auto' // Re-enable pointer events for the card
             }}>
               <BrucePokemonCard />
             </div>
