@@ -2912,7 +2912,9 @@ export default function MainView({
         </div>
 
         <div
-          style={{ position: 'absolute', top: TOP_BAR_HEIGHT + 8, right: 8 }}
+          style={{ position: 'absolute',
+            zIndex: 101,
+            top: TOP_BAR_HEIGHT + 8, right: 8 }}
         >
           {isLoggedIn &&
             !userData?.achievements?.includes('pr_submitted') &&
