@@ -2017,15 +2017,16 @@ export default function MainView({
               <div
                 style={{
                   position: 'absolute',
-                  top: '-200px',
+                  top: '-246px',
                   padding: 8,
+                  overflow: "hidden",
                   width: 196,
                   border: '1px solid #000',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
                   justifyContent: isHovered ? 'space-between' : 'center',
-                  height: 196,
+                  height: 232,
                   backgroundColor: '#fff',
                   borderRadius: isHovered ? '8px' : '1000px',
                   transform: `
@@ -2190,6 +2191,50 @@ export default function MainView({
                 >
                   {getMessage(userData)}
                 </p>
+
+                {/* Commit graph visualization */}
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(10, 1fr)',
+                  gap: 2,
+                  width: '216px',
+                  padding: '0 16px',
+                  opacity: isHovered ? 1 : 0,
+                  height: isHovered ? '16px' : 0,
+                  transition: `
+                    opacity 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${isHovered ? '0.5s' : '0s'},
+                    height 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${isHovered ? '0.5s' : '0s'}
+                  `
+                }}>
+                  {Array.from({ length: 10 }, (_, i) => {
+                    const dayNumber = i + 1;
+                    const currentDay = getTamagotchiDay(userData?.Tamagotchi?.[0]?.startDate);
+                    const hasActivity = dayNumber <= currentDay;
+                    
+                    return (
+                      <div
+                        key={i}
+                        style={{
+                          width: '100%',
+                          aspectRatio: '1',
+                          backgroundColor: hasActivity ? '#4CAF50' : '#E0E0E0',
+                          borderRadius: 2,
+                          border: '1px solid rgba(0,0,0,0.1)',
+                          transition: 'transform 0.2s ease, filter 0.2s ease',
+                          cursor: 'default',
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.transform = 'scale(1.2)';
+                          e.currentTarget.style.filter = 'brightness(1.1)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.transform = 'scale(1)';
+                          e.currentTarget.style.filter = 'brightness(1)';
+                        }}
+                      />
+                    );
+                  })}
+                </div>
               </div>
             ) : (
               <div
