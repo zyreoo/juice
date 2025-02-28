@@ -1641,7 +1641,7 @@ export default function MainView({
 
   // Add a function to get moments for a specific day
   const getDayMoments = (dayNumber) => {
-    if (!userData?.juiceStretches) return [];
+    if (!userData?.juiceStretches && !userData?.jungleStretches) return [];
     
     const tamagotchiStartDate = userData?.Tamagotchi?.[0]?.startDate;
     if (!tamagotchiStartDate) return [];
@@ -1654,27 +1654,38 @@ export default function MainView({
     dayEnd.setDate(dayEnd.getDate() + dayNumber);
     dayEnd.setHours(0, 0, 0, 0);
     
-    // Get all moments from stretches that ended during this day
-    const dayMoments = userData.juiceStretches.reduce((acc, stretch) => {
-      if (!stretch.endTime) return acc;
-      
-      const stretchEnd = new Date(stretch.endTime);
-      if (stretchEnd >= dayStart && stretchEnd < dayEnd && stretch.omgMoments && stretch.omgMoments.length > 0) {
-        // Create a moment object for each omgMoment in the stretch
-        const stretchMoments = stretch.omgMoments.map((_, index) => ({
-          id: stretch.ID + "-" + index,
-          description: stretch["description (from omgMoments)"]?.[index] || "",
-          video: stretch["video (from omgMoments)"]?.[index] || "",
-          created_at: stretch.endTime,
-          stretchReview: stretch.Review?.[0] || "Pending",
-          hours: Math.round((stretch.timeWorkedSeconds / 3600) * 10) / 10
-        }));
-        return [...acc, ...stretchMoments];
-      }
-      return acc;
-    }, []);
+    // Helper function to process stretches
+    const processStretches = (stretches, type) => {
+      if (!stretches) return [];
+      return stretches.reduce((acc, stretch) => {
+        if (!stretch.endTime) return acc;
+        
+        const stretchEnd = new Date(stretch.endTime);
+        if (stretchEnd >= dayStart && stretchEnd < dayEnd && stretch.omgMoments && stretch.omgMoments.length > 0) {
+          // Create a moment object for each omgMoment in the stretch
+          const stretchMoments = stretch.omgMoments.map((_, index) => ({
+            id: stretch.ID + "-" + index,
+            description: stretch["description (from omgMoments)"]?.[index] || "",
+            video: stretch["video (from omgMoments)"]?.[index] || "",
+            created_at: stretch.endTime,
+            stretchReview: stretch.Review?.[0] || "Pending",
+            hours: Math.round((stretch.timeWorkedSeconds / 3600) * 10) / 10,
+            type: type // Add type to distinguish between juice and jungle moments
+          }));
+          return [...acc, ...stretchMoments];
+        }
+        return acc;
+      }, []);
+    };
     
-    return dayMoments;
+    // Get moments from both juice and jungle stretches
+    const juiceMoments = processStretches(userData?.juiceStretches, 'juice');
+    const jungleMoments = processStretches(userData?.jungleStretches, 'jungle');
+    
+    // Combine and sort all moments by creation time
+    return [...juiceMoments, ...jungleMoments].sort((a, b) => 
+      new Date(a.created_at) - new Date(b.created_at)
+    );
   };
 
   // Add a function to get total hours for a day
@@ -1812,9 +1823,10 @@ export default function MainView({
             let backgroundColor;
             let strokeColor;
             
+            // First determine review status colors
             if (moment.stretchReview === "Accepted") {
-              backgroundColor = "green";
-              strokeColor = "#90EE90";
+              backgroundColor = moment.type === 'jungle' ? "#4CAF50" : "#2196F3"; // Green for jungle, Blue for juice
+              strokeColor = moment.type === 'jungle' ? "#90EE90" : "#90CAF9";
             } else if (moment.stretchReview === "Rejected") {
               backgroundColor = "red";
               strokeColor = "#FFB6B6";
