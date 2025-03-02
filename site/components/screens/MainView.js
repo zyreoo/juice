@@ -1971,7 +1971,7 @@ export default function MainView({
     >
       {/* Add a new wrapper div for the zoom effect */}
       <div style={{
-        transform: isZoomedToRabbit ? 'scale(4.0) translateY(-6px)' : 'scale(1) translateY(0)',
+        transform: isZoomedToRabbit ? 'scale(5.0) translateY(-6px)' : 'scale(1) translateY(0)',
         transition: isZoomedToRabbit 
           ? 'all 8.9s cubic-bezier(0.34, 1.56, 0.64, 1)' // Bouncy transition when zooming in
           : 'all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1)', // Smooth transition when zooming out
