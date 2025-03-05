@@ -30,6 +30,7 @@ import BrucePokemonCard from '../BrucePokemonCard';
 import Win7PokemonCard from '../Win7PokemonCard';
 import CardCreatorWindow from './CardCreatorWindow';
 import RabbitMessage from '../RabbitMessage';
+import V1Challenge from './V1Challenge';
 
 export default function MainView({
   isLoggedIn,
@@ -3568,7 +3569,17 @@ export default function MainView({
               )}
 
             {isLoggedIn &&
+              userData?.achievements?.includes('poc_submitted') &&
+              !isJungle && (
+                <V1Challenge 
+                  userData={userData}
+                  handleThirdChallengeOpen={console.log("ok")}
+                />
+              )}
+
+            {isLoggedIn &&
               userData?.achievements?.includes('pr_submitted') &&
+              !userData?.achievements?.includes('poc_submitted') && 
               !isJungle && (
                 <div
                   className="panel-pop rainbow-glass-panel"
