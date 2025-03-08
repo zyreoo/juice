@@ -8,18 +8,168 @@ export default function V1Challenge({ userData, handleThirdChallengeOpen }) {
   const [isV1Tapped, setIsV1Tapped] = useState(false); // Track if card has been tapped
   const [displayText, setDisplayText] = useState(""); // For typewriter effect
   const [typingComplete, setTypingComplete] = useState(false); // Track if typing is done
-  const [countdown, setCountdown] = useState(""); // For countdown timer
+  const [gameWebsiteUrl, setGameWebsiteUrl] = useState(""); // For game website URL
+  const [githubLink, setGithubLink] = useState(""); // For GitHub repository link
+  const [isSubmitting, setIsSubmitting] = useState(false); // New state for tracking submission
+  const [repoData, setRepoData] = useState(null); // Store repository data
+  const [commitData, setCommitData] = useState(null); // Store commit activity data
+  const [isLoading, setIsLoading] = useState(false); // Track loading state for GitHub data
   
   // Define grid dimensions at component level so they're available to all functions
   const rows = 7;
   const cols = 15;
   
   // The message to be displayed when tapped
-  const fullMessage = "Your third challenge (V1) is to make 30min of complete gameplay, open source your game on GitHub, and publish your game to your own site or a well-crafted itch page.";
+  const fullMessage = "Your 3rd challenge (V1) is to make 30min of gameplay, open source your game on GitHub, and publish your game.";
   
-  // Target date for countdown: March 9, 2025, 9PM PST
-  const targetDate = new Date("2025-03-09T21:00:00-08:00");
-  
+  // Effect to fetch GitHub repository data if user has GitHubLink
+  useEffect(() => {
+    if (userData?.GitHubLink && !repoData) {
+      fetchGitHubData(userData.GitHubLink);
+    }
+    
+    // If user hasn't submitted yet, pre-populate the GitHub field with their link
+    if (userData?.GitHubLink && !githubLink) {
+      setGithubLink(userData.GitHubLink);
+    }
+  }, [userData]);
+
+  // Function to extract owner and repo name from GitHub URL
+  const parseGitHubUrl = (url) => {
+    try {
+      // Handle different GitHub URL formats
+      const urlObj = new URL(url);
+      const path = urlObj.pathname.split('/').filter(p => p);
+      
+      if (path.length >= 2) {
+        return {
+          owner: path[0],
+          repo: path[1]
+        };
+      }
+    } catch (error) {
+      console.error("Failed to parse GitHub URL:", error);
+    }
+    return null;
+  };
+
+  // Function to fetch GitHub repository data
+  const fetchGitHubData = async (githubUrl) => {
+    setIsLoading(true);
+    
+    const parsed = parseGitHubUrl(githubUrl);
+    if (!parsed) {
+      setIsLoading(false);
+      return;
+    }
+    
+    try {
+      // Fetch repository information
+      const repoResponse = await fetch(`https://api.github.com/repos/${parsed.owner}/${parsed.repo}`);
+      if (!repoResponse.ok) throw new Error('Failed to fetch repository data');
+      const repoJson = await repoResponse.json();
+      setRepoData(repoJson);
+      
+      // Fetch commit activity - handle the 202 status that GitHub returns when computing stats
+      let statsJson = null;
+      let retries = 3;
+      
+      while (retries > 0) {
+        const statsResponse = await fetch(`https://api.github.com/repos/${parsed.owner}/${parsed.repo}/stats/commit_activity`);
+        
+        if (statsResponse.status === 202) {
+          // GitHub is computing the stats, wait and retry
+          console.log('GitHub is computing stats, retrying...');
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          retries--;
+          continue;
+        }
+        
+        if (!statsResponse.ok) throw new Error('Failed to fetch commit activity');
+        
+        statsJson = await statsResponse.json();
+        break;
+      }
+      
+      if (statsJson) {
+        console.log('Commit data received:', statsJson);
+        setCommitData(statsJson);
+      } else {
+        // If we couldn't get commit data after retries, try a different endpoint
+        console.log('Trying commits endpoint instead...');
+        const commitsResponse = await fetch(`https://api.github.com/repos/${parsed.owner}/${parsed.repo}/commits?per_page=100`);
+        
+        if (commitsResponse.ok) {
+          const commits = await commitsResponse.json();
+          console.log('Got commits:', commits.length);
+          
+          // Transform into weekly data structure (simplified)
+          const weeklyData = processCommitsIntoWeeklyFormat(commits);
+          setCommitData(weeklyData);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching GitHub data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Helper function to process commits into a weekly format
+  const processCommitsIntoWeeklyFormat = (commits) => {
+    // Create a map to count commits by day
+    const commitsByDay = {};
+    
+    commits.forEach(commit => {
+      const date = new Date(commit.commit.author.date);
+      const dateStr = date.toISOString().split('T')[0]; // YYYY-MM-DD
+      
+      if (!commitsByDay[dateStr]) {
+        commitsByDay[dateStr] = 0;
+      }
+      commitsByDay[dateStr]++;
+    });
+    
+    // Create weekly data in the format GitHub stats API would return
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+    
+    // Go back to find the Sunday that started the current week
+    const dayOfWeek = startOfToday.getDay();
+    const startOfWeek = new Date(startOfToday);
+    startOfWeek.setDate(startOfToday.getDate() - dayOfWeek);
+    
+    // Go back 14 more weeks to get 15 total weeks
+    const startDate = new Date(startOfWeek);
+    startDate.setDate(startDate.getDate() - (14 * 7));
+    
+    const weeklyData = [];
+    for (let i = 0; i < 15; i++) {
+      const weekStart = new Date(startDate);
+      weekStart.setDate(startDate.getDate() + (i * 7));
+      
+      const days = [];
+      let total = 0;
+      
+      for (let day = 0; day < 7; day++) {
+        const date = new Date(weekStart);
+        date.setDate(weekStart.getDate() + day);
+        const dateStr = date.toISOString().split('T')[0];
+        const count = commitsByDay[dateStr] || 0;
+        days.push(count);
+        total += count;
+      }
+      
+      weeklyData.push({
+        days,
+        total,
+        week: Math.floor(weekStart.getTime() / 1000) // Unix timestamp for week start
+      });
+    }
+    
+    return weeklyData;
+  };
+
   // Typewriter effect for the message
   useEffect(() => {
     if (!isV1Tapped) return;
@@ -39,46 +189,6 @@ export default function V1Challenge({ userData, handleThirdChallengeOpen }) {
     
     return () => clearInterval(typingInterval);
   }, [isV1Tapped]);
-  
-  // Countdown timer effect
-  useEffect(() => {
-    if (!typingComplete) return;
-    
-    // Format the countdown for display
-    const formatCountdown = () => {
-      const now = new Date();
-      const timeDiff = targetDate - now;
-      
-      if (timeDiff <= 0) {
-        return "V1 Submissions are open now!";
-      }
-      
-      // Calculate remaining time
-      const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
-      
-      // Format the countdown string
-      let countdownText = "V1 Submissions open in ";
-      
-      if (days > 0) {
-        countdownText += `${days} day${days !== 1 ? 's' : ''}, `;
-      }
-      
-      countdownText += `${hours} hour${hours !== 1 ? 's' : ''}, ${minutes} min${minutes !== 1 ? 's' : ''}`;
-      
-      return countdownText;
-    };
-    
-    setCountdown(formatCountdown());
-    
-    // Update countdown every minute
-    const countdownInterval = setInterval(() => {
-      setCountdown(formatCountdown());
-    }, 60000); // Update every minute instead of every second
-    
-    return () => clearInterval(countdownInterval);
-  }, [typingComplete]);
   
   // Handle card tap
   const handleCardTap = () => {
@@ -397,17 +507,209 @@ export default function V1Challenge({ userData, handleThirdChallengeOpen }) {
     return grid;
   };
 
+  // Update the renderCommitGrid function to center around the repo creation date
+  const renderCommitGrid = () => {
+    if (!commitData || !repoData) return renderGrid(); // Fall back to the original grid if no data
+    
+    // Process commit data as before to get accurate counts
+    const commitCounts = {};
+    
+    // If we're using the stats/commit_activity endpoint response
+    if (Array.isArray(commitData) && commitData.length > 0 && commitData[0].days) {
+      commitData.forEach(week => {
+        const weekStart = new Date(week.week * 1000); // Convert Unix timestamp to Date
+        week.days.forEach((count, dayIndex) => {
+          const date = new Date(weekStart);
+          date.setDate(weekStart.getDate() + dayIndex);
+          const dateStr = date.toISOString().split('T')[0];
+          commitCounts[dateStr] = count;
+        });
+      });
+    }
+    
+    // Create a simplified grid with the same visual style as before
+    const grid = [];
+    
+    // Get repository creation date
+    const repoCreationDate = new Date(repoData.created_at);
+    
+    // Find the start of the week containing the repo creation date
+    const repoCreationDay = repoCreationDate.getDay(); // 0 = Sunday, 1 = Monday, etc.
+    const startOfCreationWeek = new Date(repoCreationDate);
+    startOfCreationWeek.setDate(repoCreationDate.getDate() - repoCreationDay);
+    startOfCreationWeek.setHours(0, 0, 0, 0);
+    
+    // Create dates centered around repo creation (showing mostly weeks after creation)
+    // We'll show about 2 weeks before and the rest after creation
+    const days = [];
+    const weeksToShowBefore = 2;
+    const totalWeeks = 15;
+    
+    // Add days from weeks before repo creation
+    for (let i = weeksToShowBefore * 7 - 1; i >= 0; i--) {
+      const date = new Date(startOfCreationWeek);
+      date.setDate(startOfCreationWeek.getDate() - i);
+      days.push(date);
+    }
+    
+    // Add days from creation week and after
+    for (let i = 0; i < (totalWeeks - weeksToShowBefore) * 7; i++) {
+      const date = new Date(startOfCreationWeek);
+      date.setDate(startOfCreationWeek.getDate() + i);
+      days.push(date);
+    }
+    
+    // Group by week
+    const weeks = [];
+    for (let i = 0; i < days.length; i += 7) {
+      weeks.push(days.slice(i, i + 7));
+    }
+    
+    // Create grid with larger squares and no labels
+    for (let rowIndex = 0; rowIndex < rows; rowIndex++) {
+      const rowSquares = [];
+      
+      for (let colIndex = 0; colIndex < cols; colIndex++) {
+        // Get the date from our weeks array if available
+        let day = null;
+        if (colIndex < weeks.length && rowIndex < weeks[colIndex].length) {
+          day = weeks[colIndex][rowIndex];
+        }
+        
+        let commitCount = 0;
+        let isRepoCreationDate = false;
+        
+        if (day) {
+          const dateStr = day.toISOString().split('T')[0];
+          commitCount = commitCounts[dateStr] || 0;
+          // Check if this is the repository creation date
+          isRepoCreationDate = 
+            repoCreationDate.toISOString().split('T')[0] === dateStr;
+        }
+        
+        // Determine color based on commit count
+        let color = '#ebedf0'; // No commits
+        let border = '#d1d5da';
+        
+        if (isRepoCreationDate) {
+          color = '#2188ff'; // Blue for creation date
+          border = '#1957be';
+        } else if (commitCount > 0) {
+          if (commitCount <= 3) {
+            color = '#9be9a8'; // Light green
+            border = '#40c463';
+          } else if (commitCount <= 6) {
+            color = '#40c463'; // Medium green
+            border = '#30a14e';
+          } else if (commitCount <= 9) {
+            color = '#30a14e'; // Darker green
+            border = '#216e39';
+          } else {
+            color = '#216e39'; // Darkest green
+            border = '#194c26';
+          }
+        }
+        
+        rowSquares.push(
+          <div
+            key={`commit-${rowIndex}-${colIndex}`}
+            style={{
+              width: 16, 
+              height: 16, 
+              borderRadius: 4, 
+              backgroundColor: color, 
+              border: "1px solid " + border,
+              margin: 1,
+            }}
+            title={day ? `${commitCount} commits on ${day.toDateString()}` : ''}
+          />
+        );
+      }
+      
+      grid.push(
+        <div key={`row-${rowIndex}`} style={{display: "flex", flexDirection: "row", gap: 2}}>
+          {rowSquares}
+        </div>
+      );
+    }
+    
+    return grid;
+  };
+
   // Handle resetting the component to initial state
   const resetComponent = () => {
-    if (isV1Tapped) {
-      setIsV1Tapped(false);
-      setDisplayText("");
-      setTypingComplete(false);
-      setCountdown("");
-    }
+    // Remove the reset of tapped state when hovering away
     setIsHovering(false);
     setAnimationFrame(0);
     setCurrentPattern(0);
+  };
+
+  // Add a new function specifically for full reset
+  const fullReset = () => {
+    setIsV1Tapped(false);
+    setDisplayText("");
+    setTypingComplete(false);
+    setIsHovering(false);
+    setAnimationFrame(0);
+    setCurrentPattern(0);
+  };
+
+  // Add this function to handle the submission
+  const handleSubmit = async (e) => {
+    e.stopPropagation();
+    
+    // Basic validation
+    if (!gameWebsiteUrl.trim()) {
+      alert("Please enter your game website URL");
+      return;
+    }
+    
+    if (!githubLink.trim()) {
+      alert("Please enter your GitHub repository link");
+      return;
+    }
+    
+    setIsSubmitting(true);
+    
+    try {
+      const response = await fetch('/api/submit-v1-challenge', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          token: userData.token,
+          gameWebsiteUrl,
+          githubLink,
+        }),
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        alert(data.message);
+        // Update local state to reflect submission
+        userData.achievements = [...(userData.achievements || []), 'v1_submitted'];
+        userData.GitHubLink = githubLink;
+        // Fetch GitHub data for the newly submitted link
+        fetchGitHubData(githubLink);
+      } else {
+        alert(data.message || 'Submission failed. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error submitting V1 challenge:', error);
+      alert('Failed to submit. Please check your connection and try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Determine which grid to show based on whether user has GitHubLink
+  const determineGridToRender = () => {
+    if (userData?.GitHubLink) {
+      return renderCommitGrid();
+    }
+    return renderGrid();
   };
 
   return (
@@ -428,70 +730,170 @@ export default function V1Challenge({ userData, handleThirdChallengeOpen }) {
       }}
       onMouseEnter={() => !isV1Tapped && setIsHovering(true)}
       onMouseLeave={resetComponent}
-      onClick={handleCardTap}
+      onClick={() => !isV1Tapped && setIsV1Tapped(true)}
     >
       <div style={{ position: 'relative', zIndex: 1 }}>
         {!isV1Tapped ? (
-          // Show the grid when not tapped
           <>
             <div style={{display: "flex", flexDirection: "column", gap: 2}}>
-              {renderGrid()}
+              {isLoading ? (
+                <div style={{
+                  display: "flex", 
+                  justifyContent: "center", 
+                  alignItems: "center",
+                  height: "180px"
+                }}>
+                  Loading GitHub data...
+                </div>
+              ) : determineGridToRender()}
+              
+              {userData?.GitHubLink && repoData && (
+                <div style={{
+                  fontSize: "12px",
+                  textAlign: "center",
+                  marginTop: "5px",
+                  color: "#586069"
+                }}>
+                  {repoData.name} • Created {new Date(repoData.created_at).toLocaleDateString()}
+                </div>
+              )}
             </div>
-            <button
-              onClick={(e) => {
-                e.stopPropagation(); // Prevent card tap handler from firing
-                handleThirdChallengeOpen();
-              }}
-              disabled={userData.achievements.includes('v1_submitted')}
-              style={{
-                padding: '4px 12px',
-                position: "absolute",
-                right: -38,
-                bottom: 48,
-                backgroundColor: '#2dba4e',
-                color: '#000',
-                opacity: userData.achievements.includes('v1_submitted')
-                  ? 0.7
-                  : 1.0,
-                border: '2px solid #000',
-                borderRadius: 4,
-                cursor: 'pointer',
-                fontWeight: 'bold',
-                transform: 'rotate(90deg)',
-                transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-              }}
-            >
-              {userData.achievements.includes('v1_submitted')
-                ? 'Submitted V1'
-                : 'Discover V1'}
-            </button>
+            
+            {!userData.achievements.includes('v1_submitted') && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation(); // Prevent card tap handler from firing
+                  handleThirdChallengeOpen();
+                }}
+                style={{
+                  padding: '4px 12px',
+                  position: "absolute",
+                  right: -38,
+                  bottom: 48,
+                  backgroundColor: '#2dba4e',
+                  color: '#000',
+                  border: '2px solid #000',
+                  borderRadius: 4,
+                  cursor: 'pointer',
+                  fontWeight: 'bold',
+                  transform: 'rotate(90deg)',
+                  transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                }}
+              >
+                Discover V1
+              </button>
+            )}
           </>
         ) : (
           // Show animated text when tapped
           <div style={{
-            padding: '16px',
+            padding: '12px',
             fontSize: '16px',
-            lineHeight: '1.0',
-            height: '180px',
+            lineHeight: '1.4',
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
+            justifyContent: 'flex-start',
             fontFamily: 'monospace',
-            color: '#276749', // Using the same green from our animation
-            position: 'relative'
+            color: '#276749',
+            position: 'relative',
+            height: 'auto',
+            width: '100%',
           }}>
-            <p>{displayText}</p>
+            <p style={{ 
+              margin: '0 0 12px 0',
+              textAlign: 'center' 
+            }}>
+              {displayText}
+            </p>
             
-            {/* Show countdown after typing is complete */}
+            {/* Show input fields after typing is complete */}
             {typingComplete && (
               <div style={{
-                marginTop: '20px',
-                textAlign: 'center',
-                fontWeight: 'bold',
-                fontSize: '14px'
+                width: '100%',
               }}>
-                <p style={{fontSize: 14}}>{countdown}</p>
+                <div style={{
+                  marginBottom: '8px',
+                }}>
+                  <label 
+                    htmlFor="gameWebsite" 
+                    style={{
+                      display: 'block',
+                      fontSize: '14px',
+                      fontWeight: 'bold',
+                      marginBottom: '4px'
+                    }}
+                  >
+                    Game Website (Itch or custom)
+                  </label>
+                  <input
+                    id="gameWebsite"
+                    type="text"
+                    value={gameWebsiteUrl}
+                    onChange={(e) => setGameWebsiteUrl(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '6px',
+                      border: '1px solid #d1d5da',
+                      borderRadius: '4px',
+                      fontSize: '14px'
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                </div>
+                
+                <div style={{
+                  marginBottom: '10px',
+                }}>
+                  <label 
+                    htmlFor="githubLink" 
+                    style={{
+                      display: 'block',
+                      fontSize: '14px',
+                      fontWeight: 'bold',
+                      marginBottom: '4px'
+                    }}
+                  >
+                    GitHub Link
+                  </label>
+                  <input
+                    id="githubLink"
+                    type="text"
+                    value={githubLink}
+                    onChange={(e) => setGithubLink(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '6px',
+                      border: '1px solid #d1d5da',
+                      borderRadius: '4px',
+                      fontSize: '14px'
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                </div>
+                
+                <div style={{
+                  marginTop: '4px',
+                }}>
+                  <button
+                    onClick={handleSubmit}
+                    disabled={isSubmitting || userData.achievements.includes('v1_submitted')}
+                    style={{
+                      width: '100%',
+                      padding: '6px 16px',
+                      backgroundColor: '#2dba4e',
+                      color: '#000',
+                      border: '2px solid #000',
+                      borderRadius: '4px',
+                      cursor: isSubmitting || userData.achievements.includes('v1_submitted') ? 'not-allowed' : 'pointer',
+                      fontWeight: 'bold',
+                      fontSize: '14px',
+                      opacity: isSubmitting || userData.achievements.includes('v1_submitted') ? 0.7 : 1,
+                      transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                    }}
+                  >
+                    {isSubmitting ? 'Submitting...' : userData.achievements.includes('v1_submitted') ? 'Submitted' : 'Submit'}
+                  </button>
+                </div>
               </div>
             )}
           </div>
