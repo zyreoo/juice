@@ -31,6 +31,7 @@ import Win7PokemonCard from '../Win7PokemonCard';
 import CardCreatorWindow from './CardCreatorWindow';
 import RabbitMessage from '../RabbitMessage';
 import V1Challenge from './V1Challenge';
+import WutIsBubbleathonWindow from './WutIsBubbleathonWindow';
 
 export default function MainView({
   isLoggedIn,
@@ -39,6 +40,9 @@ export default function MainView({
   setUserData,
   isJungle,
 }) {
+
+
+
   const [time, setTime] = React.useState(new Date());
   const [timeRemaining, setTimeRemaining] = React.useState('');
   const [selectedFile, setSelectedFile] = React.useState(null);
@@ -100,6 +104,12 @@ export default function MainView({
     y: 0,
   });
   const [wutIsPenguathonWindowPosition, setWutIsPenguathonWindowPosition] =
+    React.useState({
+      x: 400,
+      y: 150,
+    });
+
+  const [wutIsBubbleathonWindowPosition, setWutIsBubbleathonWindowPosition] =
     React.useState({
       x: 400,
       y: 150,
@@ -181,6 +191,7 @@ export default function MainView({
     zero: 300,
     wutIsPenguathon: 300,
     cardCreator: 470,
+    wutIsBubbleathon: 300,
   };
   const BASE_Z_INDEX = 1;
 
@@ -620,6 +631,9 @@ export default function MainView({
       case 'cardCreator':
         position = cardCreatorPosition;
         break;
+      case 'wutIsBubbleathon':
+        position = wutIsBubbleathonWindowPosition;
+        break
       default:
         console.log('Unknown window name:', windowName);
         position = { x: 0, y: 0 };
@@ -700,6 +714,8 @@ export default function MainView({
         setWutIsPenguathonWindowPosition(newPosition);
       } else if (activeWindow === 'cardCreator') {
         setCardCreatorPosition(newPosition);
+      } else if (activeWindow === 'wutIsBubbleathon') {
+        setWutIsBubbleathonWindowPosition(newPosition);
       }
     }
   }; // Add closing brace here
@@ -824,12 +840,12 @@ export default function MainView({
     }
   };
 
-  const handlePenguathonClick = () => {
-    if (!openWindows.includes('wutIsPenguathon')) {
-      setOpenWindows([...openWindows, 'wutIsPenguathon']);
-      setWindowOrder([...windowOrder, 'wutIsPenguathon']);
+  const handleBubbleathonClick = () => {
+    if (!openWindows.includes('wutIsBubbleathon')) {
+      setOpenWindows([...openWindows, 'wutIsBubbleathon']);
+      setWindowOrder([...windowOrder, 'wutIsBubbleathon']);
     } else {
-      handleWindowClick('wutIsPenguathon')();
+      handleWindowClick('wutIsBubbleathon')();
     }
   };
 
@@ -952,28 +968,37 @@ export default function MainView({
     }
   };
 
-  const isBeforePenguathonTime = () => {
-    return Date.now() < 1740236400000;
+  const isBeforeBubbleathonTime = () => {
+    return Date.now() < 1741447800000;
   };
 
-  const isPenguathonTime = () => {
-    return Date.now() > 1740236400000 && Date.now() < 1740294000000;
+  const isBubbleathonTime = () => {
+    return Date.now() > 1741447800000 && Date.now() < 1741465800000;
   };
 
-  const getPenguathonState = () => {
-    const penguathonStart = 1740236400000;
-    const penguathonEnd = 1740294000000;
+  const getBubbleathonState = () => {
+    const bubbleathonStart = 1741447800000;
+    const bubbleathonEnd = 1741465800000;
 
-    if (Date.now() > penguathonEnd) {
+    if (Date.now() > bubbleathonEnd) {
       return null;
     }
 
-    if (Date.now() < penguathonStart) {
+    if (Date.now() < bubbleathonStart) {
       return 'upcoming';
     }
 
     return 'happening now!';
   };
+
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setTime(new Date());
+    }, 20000); // Update every second
+
+    return () => clearInterval(timer);
+  }, []);
+
 
   React.useEffect(() => {
     const timer = setInterval(() => {
@@ -1115,9 +1140,9 @@ export default function MainView({
     if (storedCurrentDay) {
       return parseInt(storedCurrentDay, 10);
     }
-    
+
     if (!startDate) return 1;
-    
+
     // Fallback to calculation
     const start = new Date(startDate);
     const now = new Date();
@@ -1172,23 +1197,23 @@ export default function MainView({
   // Update isTamagotchiDead to use the same window logic
   const isTamagotchiDead = (userData) => {
     if (!userData?.Tamagotchi?.[0]) return false;
-    
+
     const tamagotchi = userData.Tamagotchi[0];
     if (!tamagotchi.isAlive) return true;
 
     const startDate = new Date(tamagotchi.startDate);
     const now = new Date();
-    
+
     // Don't check for death in the first 24 hours
     const timeSinceStart = Math.abs(now - startDate);
     const hoursSinceStart = timeSinceStart / (1000 * 60 * 60);
     if (hoursSinceStart < 24) return false;
 
     // Only check for death if more than 24 hours have passed since the last juicing
-    const lastJuiceTime = userData?.Loops?.['juiceLastOmgMomentAt'] 
+    const lastJuiceTime = userData?.Loops?.['juiceLastOmgMomentAt']
       ? new Date(userData.Loops['juiceLastOmgMomentAt'])
       : now;
-    
+
     const timeSinceLastJuice = Math.abs(now - lastJuiceTime);
     const hoursSinceLastJuice = timeSinceLastJuice / (1000 * 60 * 60);
 
@@ -1199,19 +1224,19 @@ export default function MainView({
   const getRemainingHours = (userData) => {
     const startDate = userData?.Tamagotchi?.[0]?.startDate;
     if (!startDate) return { hoursNeeded: '0.0', hoursLeft: '0.0' };
-    
+
     const start = new Date(startDate);
     const now = new Date();
     const hoursSinceStart = (now - start) / (1000 * 60 * 60);
     const currentPeriodEnd = new Date(start.getTime() + (Math.floor(hoursSinceStart / 24) + 1) * 24 * 60 * 60 * 1000);
     const hoursUntilNextPeriod = (currentPeriodEnd - now) / (1000 * 60 * 60);
-    
+
     // Calculate hours worked in current period
     const periodStart = new Date(currentPeriodEnd.getTime() - 24 * 60 * 60 * 1000);
     const todaysJuiceHours = getTodaysHours(userData?.juiceStretches, periodStart);
     const todaysJungleHours = getTodaysHours(userData?.jungleStretches, periodStart);
     const totalHours = todaysJuiceHours + todaysJungleHours;
-    
+
     return {
       hoursNeeded: Math.max(0, 2 - totalHours).toFixed(1),
       hoursLeft: hoursUntilNextPeriod.toFixed(1)
@@ -1224,12 +1249,12 @@ export default function MainView({
 
     const startDate = userData.Tamagotchi[0].startDate;
     if (!startDate) return 0;
-    
+
     const start = new Date(startDate);
     const now = new Date();
     const hoursSinceStart = (now - start) / (1000 * 60 * 60);
     const currentPeriodEnd = new Date(start.getTime() + (Math.floor(hoursSinceStart / 24) + 1) * 24 * 60 * 60 * 1000);
-    
+
     // Calculate hours worked in current period
     const periodStart = new Date(currentPeriodEnd.getTime() - 24 * 60 * 60 * 1000);
     const todaysJuiceHours = getTodaysHours(userData?.juiceStretches, periodStart);
@@ -1376,12 +1401,12 @@ export default function MainView({
     if (!userData?.Tamagotchi?.length) {
       return 'Click to hatch a Tamagotchi!';
     }
-    
+
     const tamagotchi = userData.Tamagotchi[0];
     if (!tamagotchi.isAlive) {
       return 'Your Tamagotchi died! Click to try again.';
     }
-    
+
     return 'Keep me alive by giving me more juice & jungle fruits yum yum yum';
   };
 
@@ -1394,7 +1419,7 @@ export default function MainView({
   // Add these new handler functions before the return statement
   const handleTamagotchiMouseDown = () => {
     if (!userData?.Tamagotchi?.length) return; // Only work if there's a Tamagotchi
-    
+
     setPressStartTime(Date.now());
     const timer = setTimeout(async () => {
       const shouldDelete = window.confirm("Are you sure you want to kill the Tamagotchi and start fresh?");
@@ -1494,7 +1519,7 @@ export default function MainView({
   // Update the syncTamagotchiDays function to track last sync time
   const syncTamagotchiDays = async () => {
     if (!isLoggedIn || !userData?.Tamagotchi?.length) return;
-    
+
     const now = Date.now();
     // Only sync if it's been more than 10 minutes since last sync
     if (now - lastSyncTime < 600000) { // 600000ms = 10 minutes
@@ -1516,7 +1541,7 @@ export default function MainView({
       }
 
       const data = await response.json();
-      
+
       // Update userData with the streak days
       setUserData(prevData => ({
         ...prevData,
@@ -1527,16 +1552,16 @@ export default function MainView({
           }
         ]
       }));
-      
+
       // Store today's hours and OMG moments in localStorage
       localStorage.setItem('tamagotchiTodayHours', JSON.stringify(data.todayHours));
       localStorage.setItem('tamagotchiDayOmgMoments', JSON.stringify(data.dayOmgMoments));
       localStorage.setItem('tamagotchiDaysWithOmgMoments', JSON.stringify(data.daysWithOmgMoments));
       localStorage.setItem('tamagotchiCurrentDay', data.currentDay.toString());
-      
+
       // Update last sync time
       setLastSyncTime(now);
-      
+
       console.log('Tamagotchi days synced:', data);
     } catch (error) {
       console.error('Error syncing Tamagotchi days:', error);
@@ -1546,19 +1571,19 @@ export default function MainView({
   // Update the useEffect that handles syncing
   React.useEffect(() => {
     // ... existing code ...
-    
+
     // Sync Tamagotchi days when component mounts and user is logged in
     if (isLoggedIn && userData?.Tamagotchi?.length) {
       syncTamagotchiDays();
     }
-    
+
     // Set up a timer to sync Tamagotchi days every 10 minutes
     const syncInterval = setInterval(() => {
       if (isLoggedIn && userData?.Tamagotchi?.length) {
         syncTamagotchiDays();
       }
     }, 600000); // 600000ms = 10 minutes
-    
+
     return () => clearInterval(syncInterval);
   }, [isLoggedIn, userData?.Tamagotchi]);
 
@@ -1594,19 +1619,19 @@ export default function MainView({
   // Add this to the useEffect that loads user data
   React.useEffect(() => {
     // ... existing code ...
-    
+
     // Sync Tamagotchi days when component mounts and user is logged in
     if (isLoggedIn && userData?.Tamagotchi?.length) {
       syncTamagotchiDays();
     }
-    
+
     // Set up a timer to sync Tamagotchi days periodically (every 10 minutes)
     const syncInterval = setInterval(() => {
       if (isLoggedIn && userData?.Tamagotchi?.length) {
         syncTamagotchiDays();
       }
     }, 10 * 60 * 1000); // Every 10 minutes
-    
+
     return () => clearInterval(syncInterval);
   }, [isLoggedIn, userData?.Tamagotchi]);
 
@@ -1622,7 +1647,7 @@ export default function MainView({
     } catch (e) {
       console.error('Error parsing today hours:', e);
     }
-    
+
     return "0.0 / 2.0 hours";
   };
 
@@ -1644,24 +1669,24 @@ export default function MainView({
   // Add a function to get moments for a specific day
   const getDayMoments = (dayNumber) => {
     if (!userData?.juiceStretches && !userData?.jungleStretches) return [];
-    
+
     const tamagotchiStartDate = userData?.Tamagotchi?.[0]?.startDate;
     if (!tamagotchiStartDate) return [];
-    
+
     const dayStart = new Date(tamagotchiStartDate);
     dayStart.setDate(dayStart.getDate() + (dayNumber - 1));
     dayStart.setHours(0, 0, 0, 0);
-    
+
     const dayEnd = new Date(tamagotchiStartDate);
     dayEnd.setDate(dayEnd.getDate() + dayNumber);
     dayEnd.setHours(0, 0, 0, 0);
-    
+
     // Helper function to process stretches
     const processStretches = (stretches, type) => {
       if (!stretches) return [];
       return stretches.reduce((acc, stretch) => {
         if (!stretch.endTime) return acc;
-        
+
         const stretchEnd = new Date(stretch.endTime);
         if (stretchEnd >= dayStart && stretchEnd < dayEnd && stretch.omgMoments && stretch.omgMoments.length > 0) {
           // Create a moment object for each omgMoment in the stretch
@@ -1679,13 +1704,13 @@ export default function MainView({
         return acc;
       }, []);
     };
-    
+
     // Get moments from both juice and jungle stretches
     const juiceMoments = processStretches(userData?.juiceStretches, 'juice');
     const jungleMoments = processStretches(userData?.jungleStretches, 'jungle');
-    
+
     // Combine and sort all moments by creation time
-    return [...juiceMoments, ...jungleMoments].sort((a, b) => 
+    return [...juiceMoments, ...jungleMoments].sort((a, b) =>
       new Date(a.created_at) - new Date(b.created_at)
     );
   };
@@ -1709,7 +1734,7 @@ export default function MainView({
 
   const navigateMoments = (direction) => {
     const newIndex = currentMomentIndex + direction;
-    
+
     // Check bounds
     if (newIndex >= 0 && newIndex < dayMoments.length) {
       setCurrentMomentIndex(newIndex);
@@ -1758,14 +1783,14 @@ export default function MainView({
             <span>{new Date(selectedMoment.created_at).toLocaleString()}</span>
             <span>Duration: {selectedMoment.hours} hours</span>
           </div>
-          <div style={{ 
+          <div style={{
             marginTop: 10,
             display: 'flex',
             gap: 8,
             alignItems: 'center',
             justifyContent: 'center'
           }}>
-            <button 
+            <button
               onClick={() => navigateMoments(-1)}
               disabled={currentMomentIndex === 0}
               style={{ opacity: currentMomentIndex === 0 ? 0.5 : 1 }}
@@ -1775,7 +1800,7 @@ export default function MainView({
             <button onClick={closePopup}>
               Close
             </button>
-            <button 
+            <button
               onClick={() => navigateMoments(1)}
               disabled={currentMomentIndex === dayMoments.length - 1}
               style={{ opacity: currentMomentIndex === dayMoments.length - 1 ? 0.5 : 1 }}
@@ -1814,7 +1839,7 @@ export default function MainView({
           <h3 style={{ margin: 0 }}>Day {dayNumber} OMG Moments</h3>
           <button onClick={onClose}>×</button>
         </div>
-        
+
         <div style={{
           display: 'flex',
           flexWrap: 'wrap',
@@ -1824,7 +1849,7 @@ export default function MainView({
           {moments.map((moment) => {
             let backgroundColor;
             let strokeColor;
-            
+
             // First determine review status colors
             if (moment.stretchReview === "Accepted") {
               backgroundColor = moment.type === 'jungle' ? "#4CAF50" : "#2196F3"; // Green for jungle, Blue for juice
@@ -1925,7 +1950,7 @@ export default function MainView({
     setIsRabbitMessageVisible(true);
     setIsRabbitShaking(true);
     setIsZoomedToRabbit(true);
-    
+
     // Stop shaking after 6 seconds
     setTimeout(() => {
       setIsRabbitShaking(false);
@@ -1941,7 +1966,7 @@ export default function MainView({
   // Update the handleGlobalClick function
   const handleGlobalClick = (e) => {
     const isRabbitClick = e.target.closest('[data-rabbit-component="true"]');
-    
+
     if (!isRabbitClick) {
       setIsRabbitMessageVisible(false);
       setIsZoomedToRabbit(false);
@@ -1973,7 +1998,7 @@ export default function MainView({
       {/* Add a new wrapper div for the zoom effect */}
       <div style={{
         transform: isZoomedToRabbit ? 'scale(5.0) translateY(-6px)' : 'scale(1) translateY(0)',
-        transition: isZoomedToRabbit 
+        transition: isZoomedToRabbit
           ? 'all 8.9s cubic-bezier(0.34, 1.56, 0.64, 1)' // Bouncy transition when zooming in
           : 'all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1)', // Smooth transition when zooming out
         transformOrigin: 'top center',
@@ -2379,17 +2404,17 @@ export default function MainView({
             </p>
 
             <div style={{position: 'relative'}} data-rabbit-component="true">
-              <RabbitMessage 
-                isVisible={isRabbitMessageVisible} 
-                onClaimLuck={handleClaimLuck} 
+              <RabbitMessage
+                isVisible={isRabbitMessageVisible}
+                onClaimLuck={handleClaimLuck}
               />
-              <img 
+              <img
                 style={{
-                  height: 24, 
-                  marginTop: 0, 
+                  height: 24,
+                  marginTop: 0,
                   cursor: 'pointer',
                   animation: isRabbitShaking ? 'rabbitIconShake 0.5s ease-in-out infinite' : 'none'
-                }} 
+                }}
                 src="./rabbit.png"
                 onClick={handleRabbitClick}
                 data-rabbit-component="true"
@@ -2716,7 +2741,7 @@ export default function MainView({
                       const hasOmgMoments = dayHasOmgMoments(dayNumber);
                       const isToday = dayNumber === currentDay;
                       const dayHours = hasOmgMoments ? getDayHours(dayNumber) : "0.0";
-                      
+
                       return (
                         <div
                           key={i}
@@ -2866,7 +2891,7 @@ export default function MainView({
                         }}
                       >
                         <p style={{ fontSize: 12, textAlign: 'center' }}>
-                          Refresh Please 
+                          Refresh Please
                         </p>
                       </div>
                     ) : (
@@ -3363,6 +3388,20 @@ export default function MainView({
             />
           )}
 
+          {openWindows.includes('wutIsBubbleathon') && (
+            <WutIsBubbleathonWindow
+              position={wutIsBubbleathonWindowPosition}
+              isDragging={isDragging && activeWindow === 'wutIsBubbleathon'}
+              isActive={windowOrder[windowOrder.length - 1] === 'wutIsBubbleathon'}
+              handleMouseDown={handleMouseDown}
+              handleDismiss={handleDismiss}
+              handleWindowClick={handleWindowClick}
+              BASE_Z_INDEX={getWindowZIndex('wutIsBubbleathon')}
+              ACTIVE_Z_INDEX={getWindowZIndex('wutIsBubbleathon')}
+            />
+          )}
+
+
           <div
             style={{
               position: 'absolute',
@@ -3571,7 +3610,7 @@ export default function MainView({
             {isLoggedIn &&
               userData?.achievements?.includes('poc_submitted') &&
               !isJungle && (
-                <V1Challenge 
+                <V1Challenge
                   userData={userData}
                   handleThirdChallengeOpen={console.log("ok")}
                 />
@@ -3579,7 +3618,7 @@ export default function MainView({
 
             {isLoggedIn &&
               userData?.achievements?.includes('pr_submitted') &&
-              !userData?.achievements?.includes('poc_submitted') && 
+              !userData?.achievements?.includes('poc_submitted') &&
               !isJungle && (
                 <div
                   className="panel-pop rainbow-glass-panel"
@@ -3653,9 +3692,9 @@ export default function MainView({
                   </div>
                 </div>
               )}
-            {getPenguathonState() && (
+            {getBubbleathonState() && (
               <div
-                onClick={handlePenguathonClick}
+                onClick={handleBubbleathonClick}
                 className="panel-pop rainbow-glass-panel"
                 style={{
                   width: 332,
@@ -3666,9 +3705,9 @@ export default function MainView({
                   overflow: 'hidden',
                   cursor: 'pointer',
                   backgroundColor:
-                    getPenguathonState() === 'sprinting'
+                    getBubbleathonState() === 'sprinting'
                       ? 'rgba(0, 255, 0, 0.1)'
-                      : getPenguathonState() === 'refueling'
+                      : getBubbleathonState() === 'refueling'
                       ? 'rgba(0, 0, 255, 0.1)'
                       : 'transparent',
                 }}
@@ -3693,9 +3732,9 @@ export default function MainView({
                           1px 1px 0 #000`,
                       }}
                     >
-                      Penguathon
+                      Bubbleathon
                     </p>
-                    {getPenguathonState() && (
+                    {getBubbleathonState() && (
                       <span
                         style={{
                           color: 'rgba(255, 255, 255, 0.8)',
@@ -3707,15 +3746,15 @@ export default function MainView({
                               1px 1px 0 #000`,
                         }}
                       >
-                        • Currently {getPenguathonState()}
+                        • Currently {getBubbleathonState()}
                       </span>
                     )}
                   </div>
                   <div style={{ display: 'flex', gap: '10px' }}>
                     <button
                       onClick={() => {
-                        if (!openWindows.includes('wutIsPenguathon')) {
-                          setOpenWindows((prev) => [...prev, 'wutIsPenguathon']);
+                        if (!openWindows.includes('wutIsBubbleathon')) {
+                          setOpenWindows((prev) => [...prev, 'wutIsBubbleathon']);
                           const audio =
                             document.getElementById('windowOpenAudio');
                           if (audio) {
@@ -3726,7 +3765,7 @@ export default function MainView({
                       }}
                       style={{
                         padding: '4px 12px',
-                        backgroundColor: '#0DF2F1',
+                        backgroundColor: '#F1CADB',
                         color: '#000',
                         border: '2px solid #000',
                         borderRadius: 4,
@@ -3735,19 +3774,19 @@ export default function MainView({
                         transition: 'transform 0.2s ease, box-shadow 0.2s ease',
                       }}
                     >
-                      What's Penguathon?
+                      What's Bubbleathon?
                     </button>
-                    {isPenguathonTime() && (
+                    {isBubbleathonTime() && (
                       <button
                         onClick={() =>
                           window.open(
-                            'https://hack.af/z-join?id=h6tp88',
+                            'https://hackclub.zoom.us/j/84884658967?pwd=zjWiAwyK03JXwxo7Tq9yAhgJKqlA3w.1',
                             '_blank'
                           )
                         }
                         style={{
                           padding: '4px 12px',
-                          backgroundColor: '#0DF2F1',
+                          backgroundColor: '#F1CADB',
                           color: '#000',
                           border: '2px solid #000',
                           borderRadius: 4,
@@ -3836,11 +3875,11 @@ export default function MainView({
               alignItems: 'end',
               bottom: 0,
               right: 16,
-              height: "100%", 
+              height: "100%",
               justifyContent: "center"
             }}
           >
-            <div 
+            <div
               style={{
                 display: "flex",
                 gap: 16,
@@ -3852,7 +3891,7 @@ export default function MainView({
               onMouseLeave={() => setIsCardsFanned(false)}
             >
               {/* Action Button - only visible when fanned out */}
-              <div 
+              <div
                 onClick={handleQuestionClick}
                 style={{
                   position: 'absolute',
@@ -3880,7 +3919,7 @@ export default function MainView({
               </div>
 
               <div style={{
-                transform: isCardsFanned 
+                transform: isCardsFanned
                   ? "rotate(-70deg) scale(1.0) translate(120px, -60px)"
                   : "rotate(-15deg) scale(0.8) translateX(65px) translateY(60px)",
                 transition: "all 0.3s ease-out",
@@ -3891,7 +3930,7 @@ export default function MainView({
 
               <div style={{
                 zIndex: 1,
-                transform: isCardsFanned 
+                transform: isCardsFanned
                   ? "translateY(-280px) scale(1.0)"
                   : "translateY(10px) scale(0.9)",
                 transition: "all 0.3s ease-out",
@@ -3930,7 +3969,7 @@ export default function MainView({
               </div>  */}
               {/* <div style={{width: 256, transform: "scale(0.9)", opacity: 0.9, backgroundColor: "#fff", borderRadius: 4, padding: 4}}>
               <p>a Hack Clubber published a game on Itch.io 5min ago</p>
-              </div>   
+              </div>
               <div style={{width: 256, transform: "scale(0.8)", opacity: 0.8, backgroundColor: "#fff", borderRadius: 4, padding: 4}}>
               <p>a Hack Clubber published a game on Itch.io 5min ago</p>
               </div>    */}
@@ -4012,4 +4051,3 @@ export default function MainView({
     </div>
   );
 }
-
